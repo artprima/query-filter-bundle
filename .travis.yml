@@ -1,0 +1,20 @@
+language: php
+
+php:
+    - 7.1
+
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.composer/cache/files
+
+env:
+  - SYMFONY_VERSION=2.7.*
+
+before_install:
+  - composer self-update
+
+install: composer install --prefer-source $COMPOSER_FLAGS
+
+script: ./vendor/bin/phpunit --coverage-text
