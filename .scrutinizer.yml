@@ -14,22 +14,20 @@ build:
             tests:
                 override:
                     - php-scrutinizer-run
-                    -
-                        command: 'vendor/bin/phpunit --coverage-clover=some-file'
-                        coverage:
-                            file: 'some-file'
-                            format: 'clover'
+                    # -
+                    #    command: 'vendor/bin/phpunit --coverage-clover=some-file'
+                    #    coverage:
+                    #        file: 'some-file'
+                    #        format: 'clover'
 before_commands:
     - "composer install --no-dev --prefer-source"
 
 tools:
-    external_code_coverage:
-        timeout: 3600
+    external_code_coverage: false
 
 filter:
     excluded_paths:
-        - docs
-        - tools
+        - Tests
 
 build_failure_conditions:
     - 'elements.rating(<= C).new.exists'                        # No new classes/methods with a rating of C or worse allowed

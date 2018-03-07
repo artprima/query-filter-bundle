@@ -58,8 +58,10 @@ final class QueryFilter
      */
     private function getPageData(ConfigInterface $config): array
     {
-        $sort['field'] = $config->getRequest()->getSortBy();
-        $sort['type'] = $config->getRequest()->getSortDir();
+        $sort = [
+            'field' => $config->getRequest()->getSortBy(),
+            'type' => $config->getRequest()->getSortDir(),
+        ];
         $curPage = $config->getRequest()->getPageNum();
 
         if ($curPage < 1) {
@@ -189,27 +191,26 @@ final class QueryFilter
 
         // (optional) 2. replace search by shortcut(s) with more complicated expressions  // **
         $aliases = $config->getSearchByAliases();
-        if (is_array($aliases)) {
-            foreach ($aliases as $alias => $value) {
-                if (!empty($searchBy[$alias])) {
-                    if (!empty($value['data'])) {
-                        $searchBy[$value['name']] = $value['data'];
-                        $searchBy[$value['name']]['val'] = $searchBy[$alias]['val'];
-                    } else {
-                        $searchBy[$value['name']] = $searchBy[$alias];
-                    }
-                    unset($searchBy[$alias]);
+        foreach ($aliases as $alias => $value) {
+            if (!empty($searchBy[$alias])) {
+                if (!empty($value['data'])) {
+                    $searchBy[$value['name']] = $value['data'];
+                    $searchBy[$value['name']]['val'] = $searchBy[$alias]['val'];
+                } else {
+                    $searchBy[$value['name']] = $searchBy[$alias];
                 }
+                unset($searchBy[$alias]);
             }
         }
 
         // (optional) 3. Set search extra filters (can be used to display entries for one particular entity,
         //               or to add some extra conditions/filterings)
         $searchByExtra = $config->getSearchByExtra();
-        if ($searchByExtra) {
-            if (is_object($searchByExtra) && ($searchByExtra instanceof \Closure)) {
-                $searchByExtra = $searchByExtra($searchBy);
-            }
+        if (!empty($searchByExtra)) {
+            // @todo: possible further extension
+            // if (is_object($searchByExtra) && ($searchByExtra instanceof \Closure)) {
+            //     $searchByExtra = $searchByExtra($searchBy);
+            // }
             $searchBy = array_merge($searchBy, $searchByExtra);
         }
 
@@ -220,7 +221,7 @@ final class QueryFilter
         foreach ($searchBy as &$item) {
             if (is_array($item) && isset($item['type'], $item['val']) && ($item['type'] === 'like') && preg_match('/[\s\.,]+/', $item['val'])) {
                 $words = preg_split('/[\s\.,]+/', $item['val']);
-                $item['val'] = implode('%', $words);
+                $item['val'] = $words ? implode('%', $words) : $item['val'];
             }
         }
         unset($item);
