@@ -14,7 +14,11 @@ build:
             tests:
                 override:
                     - php-scrutinizer-run
-
+                    -
+                        command: 'vendor/bin/phpunit --coverage-clover=some-file'
+                        coverage:
+                            file: 'some-file'
+                            format: 'clover'
 before_commands:
     - "composer install --no-dev --prefer-source"
 
