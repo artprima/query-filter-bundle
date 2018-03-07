@@ -1,0 +1,33 @@
+{
+  "name": "artprima/query-filter-bundle",
+  "description": "An easy way to filter requests in your Symfony 4 application (that uses Doctrine2 as ORM).",
+  "keywords": [ "symfony", "doctrine", "query", "filter" ],
+  "type": "symfony-bundle",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Denis Voytyuk",
+      "email": "ask@artprima.cz"
+    }
+  ],
+  "require": {
+    "php": ">=7.1.0",
+    "symfony/http-kernel": "^4.0",
+    "symfony/dependency-injection": "^4.0",
+    "symfony/config": "^4.0",
+    "doctrine/orm": "^2.6"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^7.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Artprima\\QueryFilterBundle\\": "./"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\Artprima\\QueryFilterBundle\\": "Tests/"
+    }
+  }
+}
