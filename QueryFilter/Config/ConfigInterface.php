@@ -7,19 +7,19 @@ namespace Artprima\QueryFilterBundle\QueryFilter\Config;
 use Artprima\QueryFilterBundle\Request\Request;
 
 /**
- * Interface QueryFilterConfigInterface
+ * Interface ConfigInterface
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  *
  * @package AppBundle\QueryFilter
  */
-interface QueryFilterConfigInterface
+interface ConfigInterface
 {
     /**
      * @param array $args
      * @return $this
      */
-    public function setSearchAllowedCols(array $args): QueryFilterConfigInterface;
+    public function setSearchAllowedCols(array $args): ConfigInterface;
 
     /**
      * Get allowed columns that are used in search
@@ -53,10 +53,10 @@ interface QueryFilterConfigInterface
      * @param array $expanders
      * @return $this
      */
-    public function setSearchByAliases(array $expanders): QueryFilterConfigInterface;
+    public function setSearchByAliases(array $expanders): ConfigInterface;
 
     /**
-     * Set Shortcut Expanders (for more info: {@link QueryFilterConfigInterface::setShortcutExpanders()})
+     * Set Shortcut Expanders (for more info: {@link ConfigInterface::setShortcutExpanders()})
      *
      * @return array
      */
@@ -68,7 +68,7 @@ interface QueryFilterConfigInterface
      * @param callable $extra
      * @return $this
      */
-    public function setSearchByExtra(callable $extra): QueryFilterConfigInterface;
+    public function setSearchByExtra(callable $extra): ConfigInterface;
 
     /**
      * Get extra data for search
@@ -84,7 +84,7 @@ interface QueryFilterConfigInterface
      * @param array $default
      * @return $this
      */
-    public function setSortCols(array $cols, array $default = array()): QueryFilterConfigInterface;
+    public function setSortCols(array $cols, array $default = array()): ConfigInterface;
 
     /**
      * Get allowed sort columns
@@ -105,7 +105,7 @@ interface QueryFilterConfigInterface
      * @param callable $callback
      * @return $this
      */
-    public function setRepositoryCallback(callable $callback): QueryFilterConfigInterface;
+    public function setRepositoryCallback(callable $callback): ConfigInterface;
 
     /**
      * Get repository callback [function($searchBy, $sortData, $limit, $offset)]
@@ -118,7 +118,7 @@ interface QueryFilterConfigInterface
      * @param array $allowedLimits allowed pagination limits (eg. [5, 10, 25, 50, 100])
      * @return $this
      */
-    public function setAllowedLimits(array $allowedLimits): QueryFilterConfigInterface;
+    public function setAllowedLimits(array $allowedLimits): ConfigInterface;
 
     /**
      * Get allowed pagination limits (eg. [5, 10, 25, 50, 100])
@@ -131,7 +131,7 @@ interface QueryFilterConfigInterface
      * @param callable $totalRowsCallback
      * @return $this
      */
-    public function setTotalRowsCallback(callable $totalRowsCallback): QueryFilterConfigInterface;
+    public function setTotalRowsCallback(callable $totalRowsCallback): ConfigInterface;
 
     /**
      * @return callable
@@ -139,10 +139,10 @@ interface QueryFilterConfigInterface
     public function getTotalRowsCallback(): callable;
 
     /**
-     * @param Request $requestData
-     * @return QueryFilterConfigInterface
+     * @param Request $request
+     * @return ConfigInterface
      */
-    public function setRequest(Request $requestData): QueryFilterConfigInterface;
+    public function setRequest(Request $request): ConfigInterface;
 
     /**
      * Get request data to build the filters

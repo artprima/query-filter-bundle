@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Artprima\QueryFilterBundle\QueryFilter;
 
 use Artprima\QueryFilterBundle\Exception\InvalidArgumentException;
-use Artprima\QueryFilterBundle\QueryFilter\Config\QueryFilterConfigInterface;
-use Artprima\QueryFilterBundle\Response\ResponseFactoryInterface;
+use Artprima\QueryFilterBundle\QueryFilter\Config\ConfigInterface;
 use Artprima\QueryFilterBundle\Response\ResponseInterface;
 
 /**
@@ -17,18 +16,36 @@ use Artprima\QueryFilterBundle\Response\ResponseInterface;
 final class QueryFilter
 {
     /**
-     * @var QueryFilterConfigInterface
+     * @var string
      */
-    private $config;
+    private $responseClassName;
 
     /**
-     * @var ResponseFactoryInterface
+     * QueryFilter constructor.
+     * @param string $responseClassName
+     * @throws \ReflectionException
+     * @throws InvalidArgumentException
      */
-    private $responseFactory;
-
-    public function __construct(QueryFilterConfigInterface $config)
+    public function __construct(string $responseClassName)
     {
-        $this->config = $config;
+        $refClass = new \ReflectionClass($responseClassName);
+        if (!$refClass->implementsInterface(ResponseInterface::class)) {
+            throw new InvalidArgumentException(sprintf(
+                'Response class "%s" must implement "%s"',
+                $responseClassName,
+                ResponseInterface::class
+            ));
+        }
+
+        $constructor = $refClass->getConstructor();
+        if ($constructor !== null && $constructor->getNumberOfRequiredParameters() > 0) {
+            throw new InvalidArgumentException(sprintf(
+                'Response class "%s" must have a constructor without required parameters',
+                $responseClassName
+            ));
+        }
+
+        $this->responseClassName = $responseClassName;
     }
 
     /**
@@ -39,10 +56,8 @@ final class QueryFilter
      *
      * @return array Resulting array contains two elements 'curpage' and 'sortdata' as keys with corresponding values
      */
-    private function getPageData(): array
+    private function getPageData(ConfigInterface $config): array
     {
-        $config = $this->config;
-
         $sort['field'] = $config->getRequest()->getSortBy();
         $sort['type'] = $config->getRequest()->getSortDir();
         $curPage = $config->getRequest()->getPageNum();
@@ -138,31 +153,23 @@ final class QueryFilter
     }
 
     /**
-     * @param ResponseFactoryInterface $responseFactory
-     */
-    public function setResponseFactory(ResponseFactoryInterface $responseFactory): void
-    {
-        $this->responseFactory = $responseFactory;
-    }
-
-    /**
      * Gets data for use in twig templates
      *
      * Consists of 8 steps:
      *
-     * 1. Builds searchBy (see more: {@link QueryFilter::getSearchBy()}, {@link QueryFilterConfigInterface::getAllowedCols()},
-     *   {@link QueryFilterConfigInterface::getSearchData()}, {@link QueryFilterConfigInterface::isSimpleSearch()})
+     * 1. Builds searchBy (see more: {@link QueryFilter::getSearchBy()}, {@link ConfigInterface::getAllowedCols()},
+     *   {@link ConfigInterface::getSearchData()}, {@link ConfigInterface::isSimpleSearch()})
      *
-     * 2. Modifies searchBy array with the shortcut expanders (see more: {@link QueryFilterConfigInterface::getShortcutExpanders()})
+     * 2. Modifies searchBy array with the shortcut expanders (see more: {@link ConfigInterface::getShortcutExpanders()})
      *
-     * 3. Adds searchByExtra (if any) to the initial searchBy (see more: {@link QueryFilterConfigInterface::getSearchByExtra()})
+     * 3. Adds searchByExtra (if any) to the initial searchBy (see more: {@link ConfigInterface::getSearchByExtra()})
      *
-     * 4. Obtains paging and sorting data (see more: {@link QueryFilter::getSortPageData()}, {@link QueryFilterConfigInterface::getSortCols()},
-     *    {@link QueryFilterConfigInterface::getCurPage()}, {@link QueryFilterConfigInterface::getSortBy()},
-     *    {@link QueryFilterConfigInterface::getSortColsDefault()})
+     * 4. Obtains paging and sorting data (see more: {@link QueryFilter::getSortPageData()}, {@link ConfigInterface::getSortCols()},
+     *    {@link ConfigInterface::getCurPage()}, {@link ConfigInterface::getSortBy()},
+     *    {@link ConfigInterface::getSortColsDefault()})
      *
      * 5. Obtains data to according to the conditions defined in steps 1-4 (see more:
-     *    {@link QueryFilterConfigInterface::getRepositoryCallback()}, {@link QueryFilterConfigInterface::getItemsPerPage})
+     *    {@link ConfigInterface::getRepositoryCallback()}, {@link ConfigInterface::getItemsPerPage})
      *
      * 6. Prepares and retuns the response
      *
@@ -171,11 +178,8 @@ final class QueryFilter
      * @return ResponseInterface
      * @throws InvalidArgumentException
      */
-    public function getData(): ResponseInterface
+    public function getData(ConfigInterface $config): ResponseInterface
     {
-        // shortcut to config
-        $config = $this->config;
-
         // 1. Get  search by from query params limited by specified search by keys
         $searchBy = $this->getSearchBy(
             $config->getSearchAllowedCols(),
@@ -210,7 +214,7 @@ final class QueryFilter
         }
 
         // 4. Obtain paging and sorting data
-        $pageData = $this->getPageData();
+        $pageData = $this->getPageData($config);
 
         // 4.5 Replace spaces by %
         foreach ($searchBy as &$item) {
@@ -244,15 +248,15 @@ final class QueryFilter
         }
 
         // 6. Prepare the data
-        $result = $this->responseFactory->createResponse();
-        $result->setData($filterData->getResult());
-        $result->addMeta('total_records', $filterData->getTotalRows());
-
-        $result->addMeta('metrics', array(
+        /** @var ResponseInterface $response */
+        $response = new $this->responseClassName;
+        $response->setData($filterData->getResult());
+        $response->addMeta('total_records', $filterData->getTotalRows());
+        $response->addMeta('metrics', array(
             'query_and_transformation' => $duration,
         ));
 
         // 7. Return the data
-        return $result;
+        return $response;
     }
 }

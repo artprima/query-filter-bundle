@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Artprima\QueryFilterBundle\Request;
 
-use Artprima\QueryFilterBundle\Exception\InvalidArgumentException;
 use Artprima\QueryFilterBundle\Request\Request;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use PHPUnit\Framework\TestCase;
@@ -28,7 +27,6 @@ class RequestTest extends TestCase
         ));
         self::$request = new Request($httpRequest);
     }
-
 
     public function testGetPageNum()
     {

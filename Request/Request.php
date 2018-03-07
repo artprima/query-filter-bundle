@@ -44,6 +44,11 @@ final class Request
      */
     private $simple;
 
+    /**
+     * Request constructor.
+     * @param HttpRequest $request
+     * @todo consider paramenter names not to be hard-coded
+     */
     public function __construct(HttpRequest $request)
     {
         $this->pageNum = (int)$request->query->get('page', 1);

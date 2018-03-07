@@ -13,9 +13,9 @@ namespace Artprima\QueryFilterBundle\Response;
  */
 interface ResponseInterface
 {
-    public function getData(): array;
+    public function getData();
     public function getMeta(): array;
-    public function setData(array $data): ResponseInterface;
+    public function setData($data): ResponseInterface;
     public function setMeta(array $meta): ResponseInterface;
     public function addMeta(string $field, $value): ResponseInterface;
 }

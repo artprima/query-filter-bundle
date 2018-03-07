@@ -1,13 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+<container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
-        <parameter key="app.param_converter.query_filter_config.class">AppBundle\ParamConverter\QueryFilterConfigConverter</parameter>
+        <parameter key="query_filter_bundle.param_converter.query_filter_config.class">Artprima\QueryFilterBundle\ParamConverter\ConfigConverter</parameter>
+        <parameter key="query_filter_bundle.event_listener.query_filter.class">Artprima\QueryFilterBundle\EventListener\QueryFilterListener</parameter>
+        <parameter key="query_filter_bundle.event_listener.response.class">Artprima\QueryFilterBundle\Response\Response</parameter>
+        <parameter key="query_filter_bundle.query_filter.class">Artprima\QueryFilterBundle\QueryFilter\QueryFilter</parameter>
     </parameters>
     <services>
-        <service id="app.param_converter.query_filter_config" class="%app.param_converter.query_filter_config.class%">
-            <tag name="request.param_converter" priority="3" converter="query_filter_config_converter"/>
-            <argument type="service" id="doctrine\common\persistence\managerregistry"/>
+        <service id="query_filter_bundle.param_converter.query_filter_config" class="%query_filter_bundle.param_converter.query_filter_config.class%">
+            <tag name="request.param_converter" priority="3" converter="query_filter_config_converter" />
+            <argument type="service" id="Doctrine\Common\Persistence\ManagerRegistry" />
+        </service>
+        <service id="query_filter_bundle.query_filter" class="%query_filter_bundle.query_filter.class%">
+            <argument>%query_filter_bundle.event_listener.response.class%</argument>
+        </service>
+        <service id="query_filter_bundle.event_listener.list_action_result" class="%query_filter_bundle.event_listener.query_filter.class%">
+            <tag name="kernel.event_listener" priority="2100" event="kernel.view" method="onKernelView" />
+            <argument type="service" id="query_filter_bundle.query_filter" />
         </service>
     </services>
 </container>
