@@ -1,13 +1,10 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types = 1);
 
 namespace Artprima\QueryFilterBundle\Query;
 
 use Artprima\QueryFilterBundle\Exception\InvalidArgumentException;
 use Artprima\QueryFilterBundle\Exception\MissingArgumentException;
 use Artprima\QueryFilterBundle\Query\Mysql\PaginationWalker;
-use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query as DoctrineQuery;
 

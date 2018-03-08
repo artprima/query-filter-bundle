@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types = 1);
 
 namespace Artprima\QueryFilterBundle\QueryFilter\Config;
 
@@ -23,7 +21,7 @@ class BaseConfig implements ConfigInterface
     /**
      * @var int
      */
-    protected $defaultItemsPerPage;
+    protected $defaultLimit;
 
     /**
      * @var array
@@ -178,6 +176,25 @@ class BaseConfig implements ConfigInterface
 
         return $this;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function setDefaultLimit(int $limit): ConfigInterface
+    {
+        $this->defaultLimit = $limit;
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getDefaultLimit(): int
+    {
+        return $this->defaultLimit;
+    }
+
 
     /**
      * @inheritdoc

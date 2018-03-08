@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types = 1);
 
 namespace Artprima\QueryFilterBundle\QueryFilter\Config;
 
@@ -126,6 +124,20 @@ interface ConfigInterface
      * @return array
      */
     public function getAllowedLimits(): array;
+
+    /**
+     * @var int $limit default limit in case of limit not specified or limit is not within the allowed limits
+     *
+     * @return $this
+     */
+    public function setDefaultLimit(int $limit): ConfigInterface;
+
+    /**
+     * Get default limit in case of limit not specified or limit is not within the allowed limits
+     *
+     * @return int
+     */
+    public function getDefaultLimit(): int;
 
     /**
      * @param callable $totalRowsCallback

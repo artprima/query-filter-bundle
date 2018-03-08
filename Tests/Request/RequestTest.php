@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types = 1);
 
 namespace Tests\Artprima\QueryFilterBundle\Request;
 
@@ -71,7 +69,7 @@ class RequestTest extends TestCase
         self::assertSame(1, $request->getPageNum());
     }
 
-    public function testDefaultLimit()
+    public function testNoLimit()
     {
         $httpRequest = new HttpRequest(array(
             'page' => '42',
@@ -81,7 +79,7 @@ class RequestTest extends TestCase
             'simple' => '0',
         ));
         $request = new Request($httpRequest);
-        self::assertSame(10, $request->getLimit());
+        self::assertSame(-1, $request->getLimit());
     }
 
     public function testDefaultSortDir()

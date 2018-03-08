@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types = 1);
 
 namespace Tests\Artprima\QueryFilterBundle\Request;
 
@@ -63,6 +61,8 @@ class QueryFilterTest extends TestCase
         $config->setRequest($request);
         $config->setSearchAllowedCols(['c.dummy']);
         $config->setSortCols(['c.id']);
+        $config->setAllowedLimits([10, 15, 100]);
+        $config->setDefaultLimit(10);
 
         $config->setRepositoryCallback(function(QueryFilterArgs $args) {
             self::assertSame(100, $args->getLimit());
@@ -117,6 +117,8 @@ class QueryFilterTest extends TestCase
         $config->setRequest($request);
         $config->setSearchAllowedCols(['c.hell', 'c.heaven']);
         $config->setSortCols(['c.id']);
+        $config->setAllowedLimits([10, 15, 100]);
+        $config->setDefaultLimit(10);
 
         $config->setRepositoryCallback(function(QueryFilterArgs $args) {
             self::assertSame(100, $args->getLimit());

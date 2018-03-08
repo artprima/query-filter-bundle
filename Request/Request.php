@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types = 1);
 
 namespace Artprima\QueryFilterBundle\Request;
 
@@ -52,7 +50,7 @@ final class Request
     public function __construct(HttpRequest $request)
     {
         $this->pageNum = (int)$request->query->get('page', 1);
-        $this->limit = (int)$request->query->get('limit', 10);
+        $this->limit = (int)$request->query->get('limit', -1);
         $this->query = $request->query->get('filter');
         if ($this->query !== null && !is_array($this->query)) {
             throw new InvalidArgumentException('Query filter must be an array');

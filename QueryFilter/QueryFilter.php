@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types = 1);
 
 namespace Artprima\QueryFilterBundle\QueryFilter;
 
@@ -235,12 +233,16 @@ class QueryFilter
         if (!\is_callable($repositoryCallback)) {
             throw new InvalidArgumentException('Repository callback is not callable');
         }
-        $itemsPerPage = $config->getRequest()->getLimit();
+        $limit = $config->getRequest()->getLimit();
+        $allowedLimits = $config->getAllowedLimits();
+        if ($limit === -1 || (!empty($allowedLimits) && !in_array($limit, $config->getAllowedLimits(), true))) {
+            $limit = $config->getDefaultLimit();
+        }
         $args = (new QueryFilterArgs())
             ->setSearchBy($searchBy)
             ->setSortBy($pageData['sortdata'])
-            ->setLimit($itemsPerPage)
-            ->setOffset(($pageData['curpage'] - 1) * $itemsPerPage);
+            ->setLimit($limit)
+            ->setOffset(($pageData['curpage'] - 1) * $limit);
 
         // $repositoryCallback can be an array, but since PHP 7.0 it's possible to use it as a function directly
         // i.e. without using call_user_func[_array]().
