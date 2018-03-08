@@ -13,7 +13,7 @@ use Artprima\QueryFilterBundle\Response\ResponseInterface;
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
-final class QueryFilter
+class QueryFilter
 {
     /**
      * @var string
