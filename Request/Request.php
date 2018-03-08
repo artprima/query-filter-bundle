@@ -54,7 +54,7 @@ final class Request
         $this->pageNum = (int)$request->query->get('page', 1);
         $this->limit = (int)$request->query->get('limit', 10);
         $this->query = $request->query->get('filter');
-        if (!is_array($this->query)) {
+        if ($this->query !== null && !is_array($this->query)) {
             throw new InvalidArgumentException('Query filter must be an array');
         }
         $this->sortBy = $request->query->get('sortby');

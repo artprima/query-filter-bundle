@@ -108,6 +108,10 @@ class QueryFilter
     {
         $searchBy = [];
 
+        if ($search === null) {
+            return $searchBy;
+        }
+
         foreach ($search as $data) {
             if (!empty($data) && is_array($data) && isset($data['field']) && in_array($data['field'], $allowedCols, true)) {
                 $field = $data['field'];
