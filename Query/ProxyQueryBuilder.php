@@ -157,9 +157,71 @@ class ProxyQueryBuilder
         return $expr;
     }
 
-    public function registerCondition(ConditionInterface $condition)
+    private function registerCondition(ConditionInterface $condition)
     {
         $this->conditions[$condition->getName()] = $condition;
+    }
+
+    private function checkFilterVal($val)
+    {
+        if (!is_scalar($val) && !is_array($val)) {
+            throw new InvalidArgumentException(sprintf('Unexpected val php type ("%s")', gettype($val)));
+        }
+
+        if (is_scalar($val)) {
+            return;
+        }
+
+        if (!array_key_exists('x', $val) || !array_key_exists('y', $val)) {
+            if (!array_key_exists('val', $val)) {
+                throw new MissingArgumentException('Required "val" argument not given');
+            }
+            if (!is_scalar($val['val'])) {
+                throw new InvalidArgumentException(sprintf('Unexpected val php type ("%s")', gettype($val['val'])));
+            }
+        }
+    }
+
+    private function addQueryFilters(QueryBuilder $qb, array $by): QueryBuilder
+    {
+        if (empty($by)) {
+            return $qb;
+        }
+
+        $i = 0;
+        $where = null;
+        $having = null;
+        foreach ($by as $key => $val) {
+            $this->checkFilterVal($val);
+
+            $i++;
+
+            if (is_scalar($val)) {
+                $where = $this->getConnectorExpr($where, 'and', $qb->expr()->eq($key, '?'.$i));
+                $qb->setParameter($i, $val);
+                continue;
+            }
+
+            // elseif (is_array($val) === true):
+
+            $condition = $this->getConditionExpr($i, $key, $val['type'], $val);
+
+            if (empty($val['having'])) {
+                $where = $this->getConnectorExpr($where, $val['connector'] ?? 'and', $condition);
+            } else {
+                $having = $this->getConnectorExpr($having, $val['connector'] ?? 'and', $condition);
+            }
+        }
+
+        if ($where) {
+            $qb->add('where', $where);
+        }
+
+        if ($having) {
+            $qb->add('having', $having);
+        }
+
+        return $qb;
     }
 
     /**
@@ -209,53 +271,11 @@ class ProxyQueryBuilder
     {
         $qb = $this->queryBuilder;
 
-        if (!empty($orderBy)) {
-            foreach ($orderBy as $field => $dir) {
-                $qb->addOrderBy($field, strtoupper($dir));
-            }
-        }
-        if (!empty($by)) {
-            $i = 0;
-            $where = null;
-            $having = null;
-            foreach ($by as $key => $val) {
-                $i++;
-                if (is_scalar($val)) {
-                    $where = $this->getConnectorExpr($where, 'and', $qb->expr()->eq($key, '?'.$i));
-                    $qb->setParameter($i, $val);
-                    // @todo: the following smells bad
-                    //} elseif (is_callable($val)){
-                    //    call_user_func_array($val, array(&$where, &$having, &$qb));
-                } elseif (is_array($val)) {
-                    if (!array_key_exists('x', $val) && !array_key_exists('y', $val)) {
-                        if (!array_key_exists('val', $val)) {
-                            throw new MissingArgumentException('Required "val" argument not given');
-                        }
-                        if (!is_scalar($val['val'])) {
-                            throw new InvalidArgumentException(sprintf('Unexpected val php type ("%s")', gettype($val['val'])));
-                        }
-                    }
-
-                    $condition = $this->getConditionExpr($i, $key, $val['type'], $val);
-
-                    if (empty($val['having'])) {
-                        $where = $this->getConnectorExpr($where, $val['connector'] ?? 'and', $condition);
-                    } else {
-                        $having = $this->getConnectorExpr($having, $val['connector'] ?? 'and', $condition);
-                    }
-                } else {
-                    throw new InvalidArgumentException(sprintf('Unexpected val php type ("%s")', gettype($val)));
-                }
-            }
-            if ($where) {
-                $qb->add('where', $where);
-            }
-            if ($having) {
-                $qb->add('having', $having);
-            }
+        foreach ($orderBy as $field => $dir) {
+            $qb->addOrderBy($field, strtoupper($dir));
         }
 
-        $query = $qb->getQuery();
+        $query = $this->addQueryFilters($qb, $by)->getQuery();
 
         if ($this->calcRows) {
             $query->setHint(DoctrineQuery::HINT_CUSTOM_OUTPUT_WALKER, PaginationWalker::class);
