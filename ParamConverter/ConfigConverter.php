@@ -52,6 +52,11 @@ class ConfigConverter implements ParamConverterInterface
     /**
      * Stores the object in the request.
      *
+     * Usage example:
+     * @ParamConverter("config", class="AppBundle\QueryFilter\Config\BrandFilterConfig",
+     *                           converter="query_filter_config_converter",
+     *                           options={"entity_class": "AppBundle:Brand", "repository_method": "findByOrderBy"})
+     *
      * @param HttpRequest $request The request
      * @param ParamConverter $configuration Contains the name, class and options of the object
      *
@@ -101,7 +106,7 @@ class ConfigConverter implements ParamConverterInterface
      *
      * @param ParamConverter $configuration Should be an instance of ParamConverter
      *
-     * @return bool    True if the object is supported, else false
+     * @return bool true if the object is supported, else false
      */
     public function supports(ParamConverter $configuration): bool
     {
@@ -110,7 +115,7 @@ class ConfigConverter implements ParamConverterInterface
             return false;
         }
 
-        if (null === $configuration->getClass()) {
+        if (!$configuration->getClass()) {
             return false;
         }
 
