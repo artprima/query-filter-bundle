@@ -4,6 +4,8 @@ namespace Artprima\QueryFilterBundle\Query;
 
 use Artprima\QueryFilterBundle\Exception\InvalidArgumentException;
 use Artprima\QueryFilterBundle\Exception\MissingArgumentException;
+use Artprima\QueryFilterBundle\Query\Condition;
+use Artprima\QueryFilterBundle\Query\Condition\ConditionInterface;
 use Artprima\QueryFilterBundle\Query\Mysql\PaginationWalker;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query as DoctrineQuery;
@@ -25,77 +27,49 @@ class ProxyQueryBuilder
      */
     private $calcRows;
 
+    /**
+     * @var ConditionInterface[]
+     */
+    private $conditions = [];
+
     public function __construct(QueryBuilder $queryBuilder, $calcRows = true)
     {
         $this->queryBuilder = $queryBuilder;
         $this->calcRows = $calcRows;
+
+        // this way of registering does not seem to be too smart, but for now it can work
+        $this->registerCondition(new Condition\Between());
+        $this->registerCondition(new Condition\Eq());
+        $this->registerCondition(new Condition\Gt());
+        $this->registerCondition(new Condition\Gte());
+        $this->registerCondition(new Condition\In());
+        $this->registerCondition(new Condition\IsNotNull());
+        $this->registerCondition(new Condition\IsNull());
+        $this->registerCondition(new Condition\Like());
+        $this->registerCondition(new Condition\Lt());
+        $this->registerCondition(new Condition\Lte());
+        $this->registerCondition(new Condition\MemberOf());
+        $this->registerCondition(new Condition\NotBetween());
+        $this->registerCondition(new Condition\NotEq());
+        $this->registerCondition(new Condition\NotIn());
+        $this->registerCondition(new Condition\NotLike());
     }
 
     /**
-     * @param int $i parameter id
+     * @param int $index parameter id
      * @param string $field field name
-     * @param string $condition condition type (eq, like, etc.)
+     * @param string $conditionName condition type (eq, like, etc.)
      * @param array $val condition parameters information
      * @return DoctrineQuery\Expr\Comparison|DoctrineQuery\Expr\Func|string
      * @throws InvalidArgumentException
      */
-    private function getConditionExpr(int $i, string $field, string $condition, array $val)
+    private function getConditionExpr(int $index, string $field, string $conditionName, array $val)
     {
-        $value = $val['val'] ?? '';
-        $qb = $this->queryBuilder;
-        if ($condition === 'eq') {
-            $expr = $qb->expr()->eq($field, '?'.$i);
-            $qb->setParameter($i, $value);
-        } elseif ($condition === 'not eq') {
-            $expr = $qb->expr()->not($qb->expr()->eq($field, '?' . $i));
-            $qb->setParameter($i, $value);
-        } elseif ($condition === 'like') {
-            $expr = $qb->expr()->like($field, '?'.$i);
-            $qb->setParameter($i, '%'.$value.'%');
-        } elseif ($condition === 'not like') {
-            $expr = $qb->expr()->not($qb->expr()->like($field, '?'.$i));
-            $qb->setParameter($i, '%'.$value.'%');
-        } elseif ($condition === 'between') {
-            $expr = $qb->expr()->between($field, ':x'.$i, ':y'.$i);
-            $qb->setParameter('x'.$i, $val['x']);
-            $qb->setParameter('y'.$i, $val['y']);
-        } elseif ($condition === 'not between') {
-            $expr = $qb->expr()->not($qb->expr()->between($field, ':x'.$i, ':y'.$i));
-            $qb->setParameter('x'.$i, $val['x']);
-            $qb->setParameter('y'.$i, $val['y']);
-        } elseif ($condition === 'in') {
-            $values = explode(',', $value);
-            $values = array_map('trim', $values);
-            $expr = $qb->expr()->in($field, '?'.$i);
-            $qb->setParameter($i, $values);
-        } elseif ($condition === 'not in') {
-            $values = explode(',', $value);
-            $values = array_map('trim', $values);
-            $expr = $qb->expr()->notIn($field, '?' . $i);
-            $qb->setParameter($i, $values);
-        } elseif ($condition === 'is null') {
-            $expr = $qb->expr()->isNull($field);
-        } elseif ($condition === 'is not null') {
-            $expr = $qb->expr()->isNotNull($field);
-        } elseif ($condition === 'member of') {
-            $expr = new DoctrineQuery\Expr\Comparison('?' . $i, 'MEMBER OF', $field);
-            $qb->setParameter($i, $value);
-        } elseif ($condition === 'gte') {
-            $expr = $qb->expr()->gte($field, '?' . $i);
-            $qb->setParameter($i, $value);
-        } elseif ($condition === 'gt') {
-            $expr = $qb->expr()->gt($field, '?' . $i);
-            $qb->setParameter($i, $value);
-        } elseif ($condition === 'lte') {
-            $expr = $qb->expr()->lte($field, '?' . $i);
-            $qb->setParameter($i, $value);
-        } elseif ($condition === 'lt') {
-            $expr = $qb->expr()->lt($field, '?' . $i);
-            $qb->setParameter($i, $value);
-        } else {
-            // it can be possible in future to extend to further expressions if needed, otherwise throw exception
-            throw new InvalidArgumentException(sprintf('Unexpected where type ("%s")', $condition));
+        if (!array_key_exists($conditionName, $this->conditions)) {
+            throw new InvalidArgumentException(sprintf('Condition "%s" is not registered', $conditionName));
         }
+
+        $expr = $this->conditions[$conditionName]->getExpr($this->queryBuilder, $field, $index, $val);
 
         return $expr;
     }
@@ -181,6 +155,11 @@ class ProxyQueryBuilder
         }
 
         return $expr;
+    }
+
+    public function registerCondition(ConditionInterface $condition)
+    {
+        $this->conditions[$condition->getName()] = $condition;
     }
 
     /**
