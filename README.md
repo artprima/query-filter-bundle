@@ -120,7 +120,7 @@ GET http://127.0.0.1:8000/?filter[t.name]=Doe&limit=100
 
 This request will perform a LIKE request in DQL: 
 
-```SQL
+```sql
 SELECT t FROM Item WHERE t.name LIKE "%Doe%" LIMIT 100
 ``` 
 
