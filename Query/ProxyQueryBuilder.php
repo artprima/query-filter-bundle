@@ -59,11 +59,13 @@ class ProxyQueryBuilder
             $expr = $qb->expr()->not($qb->expr()->like($field, '?'.$i));
             $qb->setParameter($i, '%'.$value.'%');
         } elseif ($condition === 'between') {
-            $expr = $qb->expr()->between('?'.$i, $val['x'], $val['y']);
-            $qb->setParameter($i, $value, Type::SMALLINT);
+            $expr = $qb->expr()->between($field, ':x'.$i, ':y'.$i);
+            $qb->setParameter('x'.$i, $val['x']);
+            $qb->setParameter('y'.$i, $val['y']);
         } elseif ($condition === 'not between') {
-            $expr = $qb->expr()->not($qb->expr()->between('?'.$i, $val['x'], $val['y']));
-            $qb->setParameter($i, $value, Type::SMALLINT);
+            $expr = $qb->expr()->not($qb->expr()->between($field, ':x'.$i, ':y'.$i));
+            $qb->setParameter('x'.$i, $val['x']);
+            $qb->setParameter('y'.$i, $val['y']);
         } elseif ($condition === 'in') {
             $values = explode(',', $value);
             $values = array_map('trim', $values);
@@ -249,11 +251,13 @@ class ProxyQueryBuilder
                     //} elseif (is_callable($val)){
                     //    call_user_func_array($val, array(&$where, &$having, &$qb));
                 } elseif (is_array($val)) {
-                    if (!array_key_exists('val', $val)) {
-                        throw new MissingArgumentException('Required "val" argument not given');
-                    }
-                    if (!is_scalar($val['val'])) {
-                        throw new InvalidArgumentException(sprintf('Unexpected val php type ("%s")', gettype($val['val'])));
+                    if (!array_key_exists('x', $val) && !array_key_exists('y', $val)) {
+                        if (!array_key_exists('val', $val)) {
+                            throw new MissingArgumentException('Required "val" argument not given');
+                        }
+                        if (!is_scalar($val['val'])) {
+                            throw new InvalidArgumentException(sprintf('Unexpected val php type ("%s")', gettype($val['val'])));
+                        }
                     }
 
                     $condition = $this->getConditionExpr($i, $key, $val['type'], $val);
