@@ -259,8 +259,8 @@ class RfmConfig extends BaseConfig
 
 _NOTE: assume that all the used fields are enabled in the configuration_
 
-* Performs `t.frequency = 10` comparison 
-  * http://127.0.0.1:8000/?filter[t.frequency]=10
+* Performs `t.name LIKE `%doe% comparison 
+  * http://127.0.0.1:8000/?filter[t.name]=doe
 * Performs `t.name = "Doe"` comparison
   * http://127.0.0.1:8000/?filter[t.name][type]=eq&filter[t.name][val]=Doe
 * Performs `t.name <> "Doe"` comparison

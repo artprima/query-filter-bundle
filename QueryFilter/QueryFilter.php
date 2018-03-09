@@ -90,7 +90,7 @@ class QueryFilter
 
         foreach ($search as $key => $val) {
             if (in_array($key, $allowedCols, true) && $val !== null) {
-                $searchBy[$key] = array(
+                $searchBy[$key] = is_array($val) ? $val : array(
                     'type' => 'like',
                     'val' => $val,
                 );
