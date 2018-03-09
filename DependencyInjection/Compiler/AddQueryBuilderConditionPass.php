@@ -17,11 +17,11 @@ class AddQueryBuilderConditionPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        if (false === $container->hasDefinition('query_filter_bundle.query.proxy_query_builder_manager')) {
+        if (false === $container->hasDefinition('Artprima\QueryFilterBundle\Query\ProxyQueryBuilderManager')) {
             return;
         }
 
-        $definition = $container->getDefinition('query_filter_bundle.query.proxy_query_builder_manager');
+        $definition = $container->getDefinition('Artprima\QueryFilterBundle\Query\ProxyQueryBuilderManager');
         $disabled = $container->getParameter('query_filter_bundle.disabled_conditions');
         $container->getParameterBag()->remove('query_filter_bundle.disabled_conditions');
 

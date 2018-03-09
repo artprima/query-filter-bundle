@@ -21,7 +21,8 @@
             <tag name="kernel.event_listener" priority="2100" event="kernel.view" method="onKernelView" />
             <argument type="service" id="query_filter_bundle.query_filter" />
         </service>
-        <service id="query_filter_bundle.query.proxy_query_builder_manager" class="Artprima\QueryFilterBundle\Query\ProxyQueryBuilderManager" />
+
+        <service id="Artprima\QueryFilterBundle\Query\ProxyQueryBuilderManager" />
 
         <service id="Artprima\QueryFilterBundle\Query\Condition\Between">
             <tag name="proxy_query_builder.condition" condition="between" />
