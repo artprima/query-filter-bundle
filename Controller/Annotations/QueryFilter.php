@@ -10,7 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
  * @author Denis Voytyuk <denis@voituk.ru>
  *
  * @package Artprima\QueryFilterBundle\Controller\Annotations
-
+ *
  * @Annotation
  */
 class QueryFilter extends Template
