@@ -141,17 +141,6 @@ class QueryFilter
         }
     }
 
-    private function replaceSpacesWithPercents(array &$searchBy)
-    {
-        // Replace spaces by %
-        foreach ($searchBy as &$item) {
-            if (is_array($item) && isset($item['type'], $item['val']) && ($item['type'] === 'like') && preg_match('/[\s\.,]+/', $item['val'])) {
-                $words = preg_split('/[\s\.,]+/', $item['val']);
-                $item['val'] = $words ? implode('%', $words) : $item['val'];
-            }
-        }
-    }
-
     /**
      * Get searchby data prepared for query builder
      *
@@ -190,9 +179,6 @@ class QueryFilter
         // Set search extra filters (can be used to display entries for one particular entity,
         // or to add some extra conditions/filterings)
         $searchBy = array_merge($searchBy, $config->getSearchByExtra());
-
-        // Replace spaces with %
-        $this->replaceSpacesWithPercents($searchBy);
 
         return $searchBy;
     }

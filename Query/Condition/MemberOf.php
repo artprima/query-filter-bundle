@@ -16,8 +16,10 @@ class MemberOf implements ConditionInterface
 {
     public function getExpr(QueryBuilder $qb, string $field, int $index, array $val)
     {
-        $expr = new DoctrineQuery\Expr\Comparison('?' . $index, 'MEMBER OF', $field);
-        $qb->setParameter($index, $val['val'] ?? '');
+        $expr = $qb->expr()->isMemberOf('?' . $index, $field);
+        $values = explode(',', $val['val'] ?? '');
+        $values = array_map('trim', $values);
+        $qb->setParameter($index, $values);
 
         return $expr;
     }

@@ -141,22 +141,11 @@ class ProxyQueryBuilder
 
     private function checkFilterVal($val)
     {
-        if (!is_scalar($val) && !is_array($val)) {
-            throw new InvalidArgumentException(sprintf('Unexpected val php type ("%s")', gettype($val)));
-        }
-
-        if (is_scalar($val)) {
+        if (is_scalar($val) || is_array($val)) {
             return;
         }
 
-        if (!array_key_exists('x', $val) || !array_key_exists('y', $val)) {
-            if (!array_key_exists('val', $val)) {
-                throw new MissingArgumentException('Required "val" argument not given');
-            }
-            if (!is_scalar($val['val'])) {
-                throw new InvalidArgumentException(sprintf('Unexpected val php type ("%s")', gettype($val['val'])));
-            }
-        }
+        throw new InvalidArgumentException(sprintf('Unexpected val php type ("%s")', gettype($val)));
     }
 
     private function addQueryFilters(QueryBuilder $qb, array $by): QueryBuilder
@@ -179,7 +168,7 @@ class ProxyQueryBuilder
                 continue;
             }
 
-            // elseif (is_array($val) === true):
+            // otherwise $val is array
 
             $condition = $this->getConditionExpr($i, $key, $val['type'], $val);
 

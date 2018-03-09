@@ -15,7 +15,7 @@ class NotBetween implements ConditionInterface
 {
     public function getExpr(QueryBuilder $qb, string $field, int $index, array $val)
     {
-        $expr = $qb->expr()->not($qb->expr()->between($field, ':x'.$index, ':y'.$index));
+        $expr = $field . ' NOT BETWEEN ' . ':x'.$index . ' AND ' . ':y'.$index;
         $qb->setParameter('x'.$index, $val['x'] ?? '');
         $qb->setParameter('y'.$index, $val['y'] ?? '');
 

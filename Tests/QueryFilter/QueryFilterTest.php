@@ -70,7 +70,7 @@ class QueryFilterTest extends TestCase
             self::assertEquals([
                 'c.dummy' => [
                     'type' => 'like',
-                    'val' => 'the%road%to%hell'
+                    'val' => 'the road to hell'
                 ],
             ], $args->getSearchBy());
             self::assertEquals([
@@ -130,7 +130,7 @@ class QueryFilterTest extends TestCase
                 ],
                 'c.heaven' => [
                     'type' => 'like',
-                    'val' => 'the%road%to%heaven'
+                    'val' => 'the road to heaven'
                 ],
             ], $args->getSearchBy());
             self::assertEquals([

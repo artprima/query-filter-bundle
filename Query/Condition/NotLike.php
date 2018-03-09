@@ -15,8 +15,16 @@ class NotLike implements ConditionInterface
 {
     public function getExpr(QueryBuilder $qb, string $field, int $index, array $val)
     {
-        $expr = $qb->expr()->not($qb->expr()->like($field, '?'.$index));
-        $qb->setParameter($index, '%'.($val['val'] ?? '').'%');
+        $expr = $qb->expr()->notLike($field, '?'.$index);
+
+        $search = trim($val['val'] ?? '');
+
+        if (empty($val['exact'])) {
+            $words = preg_split('/[\s\.,]+/', $search);
+            $search = $words ? implode('%', $words) : $search;
+        }
+
+        $qb->setParameter($index, '%'.$search.'%');
 
         return $expr;
     }

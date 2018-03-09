@@ -15,7 +15,7 @@ class NotEq implements ConditionInterface
 {
     public function getExpr(QueryBuilder $qb, string $field, int $index, array $val)
     {
-        $expr = $qb->expr()->not($qb->expr()->eq($field, '?' . $index));
+        $expr = $qb->expr()->neq($field, '?' . $index);
         $qb->setParameter($index, $val['val'] ?? '');
 
         return $expr;
