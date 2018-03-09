@@ -1,8 +1,9 @@
 <?php declare(strict_types = 1);
 
-namespace Artprima\QueryFilterBundle\Tests\Query\Condition;
+namespace Tests\Artprima\QueryFilterBundle\Query\Condition;
 
 use Artprima\QueryFilterBundle\Query\Condition\Gt;
+use Artprima\QueryFilterBundle\Query\Filter;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use PHPUnit\Framework\TestCase;
@@ -12,7 +13,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  *
- * @package Artprima\QueryFilterBundle\Tests\Query\Condition
+ * @package Tests\Artprima\QueryFilterBundle\Query\Condition
  */
 class GtTest extends TestCase
 {
@@ -35,7 +36,10 @@ class GtTest extends TestCase
 
         $condition = new Gt();
 
-        $expr = $condition->getExpr($qb, 't.dummy', 0, ['val' => 10]);
+        $expr = $condition->getExpr($qb, 0, (new Filter())
+            ->setField('t.dummy')
+            ->setX('10')
+        );
 
         self::assertSame('t.dummy > ?0', (string)$expr);
     }

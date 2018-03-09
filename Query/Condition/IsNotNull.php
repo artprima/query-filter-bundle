@@ -1,16 +1,8 @@
-<?php
-
-/*
- * This file is part of the QueryFilterBundle package.
- *
- * (c) Denis Voytyuk <ask@artprima.cz>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+<?php declare(strict_types = 1);
 
 namespace Artprima\QueryFilterBundle\Query\Condition;
 
+use Artprima\QueryFilterBundle\Query\Filter;
 use Doctrine\ORM\QueryBuilder;
 
 /**
@@ -22,16 +14,10 @@ use Doctrine\ORM\QueryBuilder;
  */
 class IsNotNull implements ConditionInterface
 {
-    public function getExpr(QueryBuilder $qb, string $field, int $index, array $val)
+    public function getExpr(QueryBuilder $qb, int $index, Filter $filter)
     {
-        $expr = $qb->expr()->isNotNull($field);
+        $expr = $qb->expr()->isNotNull($filter->getField());
 
         return $expr;
     }
-
-    public function getName(): string
-    {
-        return 'is not null';
-    }
-
 }

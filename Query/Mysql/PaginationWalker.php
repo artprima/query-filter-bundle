@@ -17,6 +17,13 @@ class PaginationWalker extends SqlWalker
      *
      * @param SelectClause $selectClause
      * @return string The SQL.
+     *
+     * Usage:
+     *
+     * <pre>
+     * $query->setHint(DoctrineQuery::HINT_CUSTOM_OUTPUT_WALKER, PaginationWalker::class);
+     * $query->setHint('mysqlWalker.sqlCalcFoundRows', true);
+     * </pre>
      */
     public function walkSelectClause($selectClause): string
     {

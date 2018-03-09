@@ -2,8 +2,8 @@
 
 namespace Artprima\QueryFilterBundle\Query\Condition;
 
+use Artprima\QueryFilterBundle\Query\Filter;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\Query as DoctrineQuery;
 
 /**
  * Class MemberOf
@@ -14,18 +14,13 @@ use Doctrine\ORM\Query as DoctrineQuery;
  */
 class MemberOf implements ConditionInterface
 {
-    public function getExpr(QueryBuilder $qb, string $field, int $index, array $val)
+    public function getExpr(QueryBuilder $qb, int $index, Filter $filter)
     {
-        $expr = $qb->expr()->isMemberOf('?' . $index, $field);
-        $values = explode(',', $val['val'] ?? '');
+        $expr = $qb->expr()->isMemberOf('?' . $index, $filter->getField());
+        $values = explode(',', $filter->getX() ?? '');
         $values = array_map('trim', $values);
         $qb->setParameter($index, $values);
 
         return $expr;
-    }
-
-    public function getName(): string
-    {
-        return 'member of';
     }
 }

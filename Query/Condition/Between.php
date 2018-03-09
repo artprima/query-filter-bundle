@@ -2,6 +2,7 @@
 
 namespace Artprima\QueryFilterBundle\Query\Condition;
 
+use Artprima\QueryFilterBundle\Query\Filter;
 use Doctrine\ORM\QueryBuilder;
 
 /**
@@ -13,17 +14,12 @@ use Doctrine\ORM\QueryBuilder;
  */
 class Between implements ConditionInterface
 {
-    public function getExpr(QueryBuilder $qb, string $field, int $index, array $val)
+    public function getExpr(QueryBuilder $qb, int $index, Filter $filter)
     {
-        $expr = $qb->expr()->between($field, ':x'.$index, ':y'.$index);
-        $qb->setParameter('x'.$index, $val['x'] ?? '');
-        $qb->setParameter('y'.$index, $val['y'] ?? '');
+        $expr = $qb->expr()->between($filter->getField(), ':x'.$index, ':y'.$index);
+        $qb->setParameter('x'.$index, $filter->getX() ?? '');
+        $qb->setParameter('y'.$index, $filter->getY() ?? '');
 
         return $expr;
-    }
-
-    public function getName(): string
-    {
-        return 'between';
     }
 }

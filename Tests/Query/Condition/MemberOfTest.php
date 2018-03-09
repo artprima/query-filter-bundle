@@ -3,6 +3,7 @@
 namespace Artprima\QueryFiMemberOferBundle\Tests\Query\Condition;
 
 use Artprima\QueryFilterBundle\Query\Condition\MemberOf;
+use Artprima\QueryFilterBundle\Query\Filter;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use PHPUnit\Framework\TestCase;
@@ -12,7 +13,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  *
- * @package Artprima\QueryFilterBundle\Tests\Query\Condition
+ * @package Tests\Artprima\QueryFilterBundle\Query\Condition
  */
 class MemberOfTest extends TestCase
 {
@@ -35,7 +36,10 @@ class MemberOfTest extends TestCase
 
         $condition = new MemberOf();
 
-        $expr = $condition->getExpr($qb, 't.dummy', 0, ['val' => '1']);
+        $expr = $condition->getExpr($qb, 0, (new Filter())
+            ->setField('t.dummy')
+            ->setX('1')
+        );
 
         self::assertSame('?0 MEMBER OF t.dummy', (string)$expr);
     }
@@ -59,7 +63,10 @@ class MemberOfTest extends TestCase
 
         $condition = new MemberOf();
 
-        $expr = $condition->getExpr($qb, 't.dummy', 0, ['val' => '1,2,3,4,5']);
+        $expr = $condition->getExpr($qb, 0, (new Filter())
+            ->setField('t.dummy')
+            ->setX('1,2,3,4,5')
+        );
 
         self::assertSame('?0 MEMBER OF t.dummy', (string)$expr);
     }

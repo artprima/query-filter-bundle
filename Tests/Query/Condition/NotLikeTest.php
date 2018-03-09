@@ -1,8 +1,9 @@
 <?php declare(strict_types = 1);
 
-namespace Artprima\QueryFilterBundle\Tests\Query\Condition;
+namespace Tests\Artprima\QueryFilterBundle\Query\Condition;
 
 use Artprima\QueryFilterBundle\Query\Condition\NotLike;
+use Artprima\QueryFilterBundle\Query\Filter;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use PHPUnit\Framework\TestCase;
@@ -12,7 +13,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  *
- * @package Artprima\QueryFilterBundle\Tests\Query\Condition
+ * @package Tests\Artprima\QueryFilterBundle\Query\Condition
  */
 class NotLikeTest extends TestCase
 {
@@ -35,7 +36,10 @@ class NotLikeTest extends TestCase
 
         $condition = new NotLike();
 
-        $expr = $condition->getExpr($qb, 't.dummy', 0, ['val' => 'road to hell']);
+        $expr = $condition->getExpr($qb, 0, (new Filter())
+            ->setField('t.dummy')
+            ->setX('road to hell')
+        );
 
         self::assertSame('t.dummy NOT LIKE ?0', (string)$expr);
     }
@@ -59,7 +63,11 @@ class NotLikeTest extends TestCase
 
         $condition = new NotLike();
 
-        $expr = $condition->getExpr($qb, 't.dummy', 0, ['val' => 'road to hell', 'exact' => '1']);
+        $expr = $condition->getExpr($qb, 0, (new Filter())
+            ->setField('t.dummy')
+            ->setX('road to hell')
+            ->setExtra('exact')
+        );
 
         self::assertSame('t.dummy NOT LIKE ?0', (string)$expr);
     }

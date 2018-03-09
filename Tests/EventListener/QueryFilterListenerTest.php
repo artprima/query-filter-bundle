@@ -9,6 +9,7 @@ use Artprima\QueryFilterBundle\Response\ResponseInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class QueryFilterListenerTest extends TestCase
 {
@@ -30,29 +31,14 @@ class QueryFilterListenerTest extends TestCase
             ->with($config)
             ->willReturn($response);
 
-        $event = self::getMockBuilder(GetResponseForControllerResultEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $request = new Request();
-        $request->attributes->set('_queryfilter', true);
-        $event
-            ->expects(self::once())
-            ->method('getRequest')
-            ->willReturn($request);
-
-        $event
-            ->expects(self::once())
-            ->method('getControllerResult')
-            ->willReturn($config);
-
-        $event
-            ->expects(self::once())
-            ->method('setControllerResult')
-            ->with($response);
+        $event = $this->getGetResponseForControllerResultEvent($config, $this->createRequest(
+            new \Artprima\QueryFilterBundle\Controller\Annotations\QueryFilter([])
+        ));
 
         $listener = new QueryFilterListener($queryFilter);
         $listener->onKernelView($event);
+
+        self::assertEquals($response, $event->getControllerResult());
     }
 
     /**
@@ -76,28 +62,12 @@ class QueryFilterListenerTest extends TestCase
             ->with($config)
             ->willReturn($response);
 
-        $event = self::getMockBuilder(GetResponseForControllerResultEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $request = new Request();
-        $event
-            ->expects(self::once())
-            ->method('getRequest')
-            ->willReturn($request);
-
-        $event
-            ->expects(self::never())
-            ->method('getControllerResult')
-            ->willReturn($config);
-
-        $event
-            ->expects(self::never())
-            ->method('setControllerResult')
-            ->with($response);
+        $event = $this->getGetResponseForControllerResultEvent($config, $this->createRequest());
 
         $listener = new QueryFilterListener($queryFilter);
         $listener->onKernelView($event);
+
+        self::assertEquals($config, $event->getControllerResult());
     }
 
     /**
@@ -120,28 +90,24 @@ class QueryFilterListenerTest extends TestCase
             ->with($config)
             ->willReturn($response);
 
-        $event = self::getMockBuilder(GetResponseForControllerResultEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $request = new Request();
-        $request->attributes->set('_queryfilter', true);
-        $event
-            ->expects(self::once())
-            ->method('getRequest')
-            ->willReturn($request);
-
-        $event
-            ->expects(self::once())
-            ->method('getControllerResult')
-            ->willReturn($config);
-
-        $event
-            ->expects(self::never())
-            ->method('setControllerResult')
-            ->with($response);
+        $event = $this->getGetResponseForControllerResultEvent($config, $this->createRequest());
 
         $listener = new QueryFilterListener($queryFilter);
         $listener->onKernelView($event);
+
+        self::assertEquals($config, $event->getControllerResult());
     }
-}
+
+    private function getGetResponseForControllerResultEvent($config, Request $request)
+    {
+        $mockKernel = $this->getMockForAbstractClass('Symfony\Component\HttpKernel\Kernel', ['', '']);
+
+        return new GetResponseForControllerResultEvent($mockKernel, $request, HttpKernelInterface::MASTER_REQUEST, $config);
+    }
+
+    private function createRequest($queryFilterAnnotation = null)
+    {
+        return new Request([], [], [
+            '_queryfilter' => $queryFilterAnnotation,
+        ]);
+    }}

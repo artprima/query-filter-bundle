@@ -3,10 +3,7 @@
 namespace Artprima\QueryFilterBundle\Query;
 
 use Artprima\QueryFilterBundle\Exception\InvalidArgumentException;
-use Artprima\QueryFilterBundle\Exception\MissingArgumentException;
-use Artprima\QueryFilterBundle\Query\Condition;
 use Artprima\QueryFilterBundle\Query\Condition\ConditionInterface;
-use Artprima\QueryFilterBundle\Query\Mysql\PaginationWalker;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query as DoctrineQuery;
 
@@ -23,30 +20,28 @@ class ProxyQueryBuilder
     private $queryBuilder;
 
     /**
-     * @var ConditionInterface[]
+     * @var ConditionManager
      */
-    private $conditions = [];
+    private $conditionManager;
 
-    public function __construct(QueryBuilder $queryBuilder)
+    public function __construct(QueryBuilder $queryBuilder, ConditionManager $conditionManager)
     {
         $this->queryBuilder = $queryBuilder;
+        $this->conditionManager = $conditionManager;
     }
 
     /**
      * @param int $index parameter id
-     * @param string $field field name
-     * @param string $conditionName condition type (eq, like, etc.)
-     * @param array $val condition parameters information
+     * @param Filter $filter
      * @return DoctrineQuery\Expr\Comparison|DoctrineQuery\Expr\Func|string
-     * @throws InvalidArgumentException
      */
-    private function getConditionExpr(int $index, string $field, string $conditionName, array $val)
+    private function getConditionExpr(int $index, Filter $filter)
     {
-        if (!array_key_exists($conditionName, $this->conditions)) {
-            throw new InvalidArgumentException(sprintf('Condition "%s" is not registered', $conditionName));
+        if (!$this->conditionManager->offsetExists($filter->getType())) {
+            throw new InvalidArgumentException(sprintf('Condition "%s" is not registered', $filter->getType()));
         }
 
-        $expr = $this->conditions[$conditionName]->getExpr($this->queryBuilder, $field, $index, $val);
+        $expr = $this->conditionManager[$filter->getType()]->getExpr($this->queryBuilder, $index, $filter);
 
         return $expr;
     }
@@ -68,7 +63,7 @@ class ProxyQueryBuilder
         $rootEntities = $this->queryBuilder->getRootEntities();
 
         if (count($rootEntities) >= 0) {
-            throw new \RuntimeException('QueryBuilder must contain exactly one root entity');
+            throw new InvalidArgumentException('QueryBuilder must contain exactly one root entity');
         }
 
         $rootEntity = reset($rootEntities);
@@ -134,48 +129,30 @@ class ProxyQueryBuilder
         return $expr;
     }
 
-    public function registerCondition(ConditionInterface $condition)
+    private function addQueryFilters(QueryBuilder $qb, array $filterBy): QueryBuilder
     {
-        $this->conditions[$condition->getName()] = $condition;
-    }
-
-    private function checkFilterVal($val)
-    {
-        if (is_scalar($val) || is_array($val)) {
-            return;
-        }
-
-        throw new InvalidArgumentException(sprintf('Unexpected val php type ("%s")', gettype($val)));
-    }
-
-    private function addQueryFilters(QueryBuilder $qb, array $by): QueryBuilder
-    {
-        if (empty($by)) {
+        if (empty($filterBy)) {
             return $qb;
         }
 
         $i = 0;
         $where = null;
         $having = null;
-        foreach ($by as $key => $val) {
-            $this->checkFilterVal($val);
+
+        /** @var Filter $val */
+        foreach ($filterBy as $val) {
+            if (!($val instanceof Filter)) {
+                throw new InvalidArgumentException(sprintf('Unexpected val php type ("%s")', gettype($val)));
+            }
 
             $i++;
 
-            if (is_scalar($val)) {
-                $where = $this->getConnectorExpr($where, 'and', $qb->expr()->eq($key, '?'.$i));
-                $qb->setParameter($i, $val);
-                continue;
-            }
+            $condition = $this->getConditionExpr($i, $val);
 
-            // otherwise $val is array
-
-            $condition = $this->getConditionExpr($i, $key, $val['type'], $val);
-
-            if (empty($val['having'])) {
-                $where = $this->getConnectorExpr($where, $val['connector'] ?? 'and', $condition);
+            if (empty($val->isHaving())) {
+                $where = $this->getConnectorExpr($where, $val->getConnector() ?? 'and', $condition);
             } else {
-                $having = $this->getConnectorExpr($having, $val['connector'] ?? 'and', $condition);
+                $having = $this->getConnectorExpr($having, $val->getConnector() ?? 'and', $condition);
             }
         }
 
@@ -188,6 +165,11 @@ class ProxyQueryBuilder
         }
 
         return $qb;
+    }
+
+    public function registerCondition(ConditionInterface $condition, string $name)
+    {
+        $this->conditionManager[$name] = $condition;
     }
 
     /**
@@ -226,13 +208,12 @@ class ProxyQueryBuilder
      *  )
      * )
      *
-     * @param array $by
+     * @param array $filterBy
      * @param array $orderBy
      *
-     * @param bool $calcRows
-     * @return DoctrineQuery
+     * @return QueryBuilder
      */
-    public function getSortedAndFilteredQuery(array $by, array $orderBy, $calcRows = true): DoctrineQuery
+    public function getSortedAndFilteredQueryBuilder(array $filterBy, array $orderBy): QueryBuilder
     {
         $qb = $this->queryBuilder;
 
@@ -240,13 +221,6 @@ class ProxyQueryBuilder
             $qb->addOrderBy($field, strtoupper($dir));
         }
 
-        $query = $this->addQueryFilters($qb, $by)->getQuery();
-
-        if ($calcRows) {
-            $query->setHint(DoctrineQuery::HINT_CUSTOM_OUTPUT_WALKER, PaginationWalker::class);
-            $query->setHint('mysqlWalker.sqlCalcFoundRows', true);
-        }
-
-        return $query;
+        return $this->addQueryFilters($qb, $filterBy);
     }
 }

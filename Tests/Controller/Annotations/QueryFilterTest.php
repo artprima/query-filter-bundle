@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Artprima\QueryFilterBundle\Tests\Controller\Annotations;
+namespace Tests\Artprima\QueryFilterBundle\Controller\Annotations;
 
 use Artprima\QueryFilterBundle\Controller\Annotations\QueryFilter;
 use PHPUnit\Framework\TestCase;
@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  *
- * @package Artprima\QueryFilterBundle\Tests\Controller\Annotations
+ * @package Tests\Artprima\QueryFilterBundle\Controller\Annotations
  */
 class QueryFilterTest extends TestCase
 {

@@ -2,6 +2,7 @@
 
 namespace Artprima\QueryFilterBundle\Query\Condition;
 
+use Artprima\QueryFilterBundle\Query\Filter;
 use Doctrine\ORM\QueryBuilder;
 
 /**
@@ -13,18 +14,13 @@ use Doctrine\ORM\QueryBuilder;
  */
 class In implements ConditionInterface
 {
-    public function getExpr(QueryBuilder $qb, string $field, int $index, array $val)
+    public function getExpr(QueryBuilder $qb, int $index, Filter $filter)
     {
-        $values = explode(',', $val['val'] ?? '');
+        $values = explode(',', $filter->getX() ?? '');
         $values = array_map('trim', $values);
-        $expr = $qb->expr()->in($field, '?'.$index);
+        $expr = $qb->expr()->in($filter->getField(), '?'.$index);
         $qb->setParameter($index, $values);
 
         return $expr;
-    }
-
-    public function getName(): string
-    {
-        return 'in';
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Artprima\QueryFilterBundle\Query\Condition;
 
+use Artprima\QueryFilterBundle\Query\Filter;
 use Doctrine\ORM\QueryBuilder;
 
 /**
@@ -13,13 +14,13 @@ use Doctrine\ORM\QueryBuilder;
  */
 class NotLike implements ConditionInterface
 {
-    public function getExpr(QueryBuilder $qb, string $field, int $index, array $val)
+    public function getExpr(QueryBuilder $qb, int $index, Filter $filter)
     {
-        $expr = $qb->expr()->notLike($field, '?'.$index);
+        $expr = $qb->expr()->notLike($filter->getField(), '?'.$index);
 
-        $search = trim($val['val'] ?? '');
+        $search = trim($filter->getX() ?? '');
 
-        if (empty($val['exact'])) {
+        if ($filter->getExtra() !== 'exact') {
             $words = preg_split('/[\s\.,]+/', $search);
             $search = $words ? implode('%', $words) : $search;
         }
@@ -27,10 +28,5 @@ class NotLike implements ConditionInterface
         $qb->setParameter($index, '%'.$search.'%');
 
         return $expr;
-    }
-
-    public function getName(): string
-    {
-        return 'not like';
     }
 }

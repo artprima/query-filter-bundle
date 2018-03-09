@@ -2,6 +2,7 @@
 
 namespace Tests\Artprima\QueryFilterBundle\Request;
 
+use Artprima\QueryFilterBundle\Query\Filter;
 use Artprima\QueryFilterBundle\QueryFilter\Config\BaseConfig;
 use Artprima\QueryFilterBundle\QueryFilter\QueryFilter;
 use Artprima\QueryFilterBundle\QueryFilter\QueryFilterArgs;
@@ -68,10 +69,10 @@ class QueryFilterTest extends TestCase
             self::assertSame(100, $args->getLimit());
             self::assertSame(200, $args->getOffset());
             self::assertEquals([
-                'c.dummy' => [
-                    'type' => 'like',
-                    'val' => 'the road to hell'
-                ],
+                (new Filter())
+                    ->setField('c.dummy')
+                    ->setType('like')
+                    ->setX('the road to hell'),
             ], $args->getSearchBy());
             self::assertEquals([
                 'c.id' => 'asc',
@@ -124,14 +125,14 @@ class QueryFilterTest extends TestCase
             self::assertSame(100, $args->getLimit());
             self::assertSame(200, $args->getOffset());
             self::assertEquals([
-                'c.hell' => [
-                    'type' => 'eq',
-                    'val' => 'the road to hell'
-                ],
-                'c.heaven' => [
-                    'type' => 'like',
-                    'val' => 'the road to heaven'
-                ],
+                (new Filter())
+                    ->setField('c.hell')
+                    ->setType('eq')
+                    ->setX('the road to hell'),
+                (new Filter())
+                    ->setField('c.heaven')
+                    ->setType('like')
+                    ->setX('the road to heaven'),
             ], $args->getSearchBy());
             self::assertEquals([
                 'c.id' => 'asc',

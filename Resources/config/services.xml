@@ -22,7 +22,7 @@
             <argument type="service" id="query_filter_bundle.query_filter" />
         </service>
 
-        <service id="Artprima\QueryFilterBundle\Query\ProxyQueryBuilderManager" />
+        <service id="Artprima\QueryFilterBundle\Query\ConditionManager" />
 
         <service id="Artprima\QueryFilterBundle\Query\Condition\Between">
             <tag name="proxy_query_builder.condition" condition="between" />

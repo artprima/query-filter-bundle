@@ -3,6 +3,7 @@
 namespace Artprima\QueryFilterBundle\QueryFilter;
 
 use Artprima\QueryFilterBundle\Exception\InvalidArgumentException;
+use Artprima\QueryFilterBundle\Query\Filter;
 use Artprima\QueryFilterBundle\QueryFilter\Config\ConfigInterface;
 use Artprima\QueryFilterBundle\Response\ResponseInterface;
 
@@ -80,6 +81,24 @@ class QueryFilter
         return $sortData;
     }
 
+    private function getFilter($field, $val): Filter
+    {
+        $filter = new Filter();
+        if (!is_array($val)) {
+            $val = [
+                'val' => $val,
+                'type' => 'like',
+            ];
+        }
+
+        $filter->setField($field);
+        $filter->setType($val['type'] ?? 'like');
+        $filter->setX($val['val'] ?? '');
+        $filter->setExtra($val['exact'] ?? null);
+
+        return $filter;
+    }
+
     private function getSimpleSearchBy(array $allowedCols, ?array $search): array
     {
         $searchBy = [];
@@ -89,14 +108,14 @@ class QueryFilter
         }
 
         foreach ($search as $key => $val) {
-            if (in_array($key, $allowedCols, true) && $val !== null) {
-                $searchBy[$key] = is_array($val) ? $val : array(
-                    'type' => 'like',
-                    'val' => $val,
-                );
-                if (strpos($key, 'GroupConcat') !== false) {
-                    $searchBy[$key]['having'] = true;
-                }
+            if (!in_array($key, $allowedCols, true) || $val === null) {
+                continue;
+            }
+
+            $searchBy[] = $this->getFilter($key, $val);
+
+            if (strpos($key, 'GroupConcat') !== false) {
+                $searchBy[count($searchBy) - 1]['having'] = true;
             }
         }
 
@@ -111,14 +130,15 @@ class QueryFilter
             return $searchBy;
         }
 
-        foreach ($search as $data) {
-            if (!empty($data) && is_array($data) && isset($data['field']) && in_array($data['field'], $allowedCols, true)) {
-                $field = $data['field'];
-                unset($data['field']);
-                $searchBy[$field] = $data;
-                if (strpos($field, 'GroupConcat') !== false) {
-                    $searchBy[$field]['having'] = true;
-                }
+        foreach ($search as $key => $data) {
+            if (empty($data) || !is_array($data) || !isset($data['field']) || !in_array($data['field'], $allowedCols, true)) {
+                continue;
+            }
+
+            $searchBy[$key] = $this->getFilter($data['field'], $data);
+
+            if (strpos($data['field'], 'GroupConcat') !== false) {
+                $searchBy[$key][$data['field']]['having'] = true;
             }
         }
 
