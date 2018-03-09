@@ -7,6 +7,7 @@
         <parameter key="query_filter_bundle.event_listener.query_filter.class">Artprima\QueryFilterBundle\EventListener\QueryFilterListener</parameter>
         <parameter key="query_filter_bundle.event_listener.response.class">Artprima\QueryFilterBundle\Response\Response</parameter>
         <parameter key="query_filter_bundle.query_filter.class">Artprima\QueryFilterBundle\QueryFilter\QueryFilter</parameter>
+        <parameter key="query_filter_bundle.disabled_conditions" type="collection" />
     </parameters>
     <services>
         <service id="query_filter_bundle.param_converter.query_filter_config" class="%query_filter_bundle.param_converter.query_filter_config.class%">
