@@ -103,12 +103,25 @@ class QueryFilterTest extends TestCase
                 [
                     'field' => 'c.hell',
                     'type' => 'eq',
-                    'val' => 'the road to hell',
+                    'x' => 'the road to hell',
                 ],
                 [
                     'field' => 'c.heaven',
                     'type' => 'like',
-                    'val' => 'the road to heaven',
+                    'x' => 'the road to heaven',
+                ],
+                [
+                    'field' => 'c.latency',
+                    'type' => 'between',
+                    'x' => '10',
+                    'y' => '100',
+                ],
+                [
+                    'field' => 'c.hell',
+                    'type' => 'like',
+                    'x' => 'the road to hell',
+                    'connector' => 'or',
+                    'extra' => 'exact',
                 ],
             ],
             'sortby' => 'c.id',
@@ -116,7 +129,7 @@ class QueryFilterTest extends TestCase
             'simple' => '0',
         ]));
         $config->setRequest($request);
-        $config->setSearchAllowedCols(['c.hell', 'c.heaven']);
+        $config->setSearchAllowedCols(['c.hell', 'c.heaven', 'c.latency']);
         $config->setSortCols(['c.id']);
         $config->setAllowedLimits([10, 15, 100]);
         $config->setDefaultLimit(10);
@@ -133,6 +146,16 @@ class QueryFilterTest extends TestCase
                     ->setField('c.heaven')
                     ->setType('like')
                     ->setX('the road to heaven'),
+                (new Filter())
+                    ->setField('c.latency')
+                    ->setType('between')
+                    ->setX('10')
+                    ->setY('100'),
+                (new Filter())
+                    ->setField('c.hell')
+                    ->setType('like')
+                    ->setX('the road to hell')
+                    ->setExtra('exact')
             ], $args->getSearchBy());
             self::assertEquals([
                 'c.id' => 'asc',

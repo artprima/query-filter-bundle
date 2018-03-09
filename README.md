@@ -262,42 +262,42 @@ _NOTE: assume that all the used fields are enabled in the configuration_
 * Performs `t.name LIKE `%doe% comparison 
   * http://127.0.0.1:8000/?filter[t.name]=doe
 * Performs `t.name = "Doe"` comparison
-  * http://127.0.0.1:8000/?filter[t.name][type]=eq&filter[t.name][val]=Doe
+  * http://127.0.0.1:8000/?filter[t.name][type]=eq&filter[t.name][x]=Doe
 * Performs `t.name <> "Doe"` comparison
-  * http://127.0.0.1:8000/?filter[t.name][type]=not%20eq&filter[t.name][val]=Doe
+  * http://127.0.0.1:8000/?filter[t.name][type]=not%20eq&filter[t.name][x]=Doe
 * Performs `t.name LIKE "Doe"` comparison
-  * http://127.0.0.1:8000/?filter[t.name][type]=like&filter[t.name][val]=Doe
+  * http://127.0.0.1:8000/?filter[t.name][type]=like&filter[t.name][x]=Doe
 * Performs `t.name NOT LIKE "Doe"` comparison
-  * http://127.0.0.1:8000/?filter[t.name][type]=not%20like&filter[t.name][val]=Doe
+  * http://127.0.0.1:8000/?filter[t.name][type]=not%20like&filter[t.name][x]=Doe
 * Performs `t.frequency BETWEEN 8 AND 10` comparison
   * http://127.0.0.1:8000/?filter[t.name][type]=between&filter[t.frequency][x]=8&filter[t.frequency][x]=10
 * Performs `t.frequency NOT BETWEEN 8 AND 10` comparison
   * http://127.0.0.1:8000/?filter[t.name][type]=not%20between&filter[t.frequency][x]=8&filter[t.frequency][x]=10
 * Performs `t.frequency > 7` comparison
-  * http://127.0.0.1:8000/?filter[t.name][type]=gt&filter[t.frequency][val]=7
+  * http://127.0.0.1:8000/?filter[t.name][type]=gt&filter[t.frequency][x]=7
 * Performs `t.frequency >= 7` comparison
-  * http://127.0.0.1:8000/?filter[t.name][type]=gte&filter[t.frequency][val]=7
+  * http://127.0.0.1:8000/?filter[t.name][type]=gte&filter[t.frequency][x]=7
 * Performs `t.frequency IN (1, 2, 3, 4, 5)` comparison
-  * http://127.0.0.1:8000/?filter[t.name][type]=in&filter[t.frequency][val]=1,2,3,4,5
+  * http://127.0.0.1:8000/?filter[t.name][type]=in&filter[t.frequency][x]=1,2,3,4,5
 * Performs `t.frequency NOT IN (1, 2, 3, 4, 5)` comparison
-  * http://127.0.0.1:8000/?filter[t.name][type]=in&filter[t.frequency][val]=1,2,3,4,5
+  * http://127.0.0.1:8000/?filter[t.name][type]=in&filter[t.frequency][x]=1,2,3,4,5
 * Performs `t.description IS NULL` comparison
   * http://127.0.0.1:8000/?filter[t.description][type]=is%20null
 * Performs `t.description IS NOT NULL` comparison
   * http://127.0.0.1:8000/?filter[t.description][type]=is%20not%20null
 * Performs `t.frequency < 7` comparison
-  * http://127.0.0.1:8000/?filter[t.name][type]=lt&filter[t.frequency][val]=7
+  * http://127.0.0.1:8000/?filter[t.name][type]=lt&filter[t.frequency][x]=7
 * Performs `t.frequency <= 7` comparison
-  * http://127.0.0.1:8000/?filter[t.name][type]=lte&filter[t.frequency][val]=7
+  * http://127.0.0.1:8000/?filter[t.name][type]=lte&filter[t.frequency][x]=7
 * Combined comparison `t.frequency < 7 AND t.monetary > 50`
-  * http://127.0.0.1:8000/?filter[t.frequency][type]=lt&filter[t.frequency][val]=7&filter[t.monetary][type]=gt&filter[t.monetary][val]=50
+  * http://127.0.0.1:8000/?filter[t.frequency][type]=lt&filter[t.frequency][x]=7&filter[t.monetary][type]=gt&filter[t.monetary][x]=50
 
 # Advanced Query Filter Example
 
 Simple mode should be enough for most of the cases, however sometimes we might need to build more complicated filters having one and the same field used.
 
 * Performs `t.frequency = 10 OR t.frequency >= 85` (NOTE: `filter[1][connector]=or` - `connector` can be `and` (default) or `or`; connector used on the first filter has no effect)
-  * http://127.0.0.1:8000/?simple=0&filter[0][field]=t.frequency&filter[0][type]=eq&filter[0][val]=10&filter[1][field]=t.frequency&filter[1][type]=gte&filter[1][val]=85&filter[1][connector]=or
+  * http://127.0.0.1:8000/?simple=0&filter[0][field]=t.frequency&filter[0][type]=eq&filter[0][x]=10&filter[1][field]=t.frequency&filter[1][type]=gte&filter[1][x]=85&filter[1][connector]=or
 
 # Pagination Examples
 * Second page (NOTE: if `page` is not given it defaults to 1)

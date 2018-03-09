@@ -86,15 +86,16 @@ class QueryFilter
         $filter = new Filter();
         if (!is_array($val)) {
             $val = [
-                'val' => $val,
+                'x' => $val,
                 'type' => 'like',
             ];
         }
 
         $filter->setField($field);
         $filter->setType($val['type'] ?? 'like');
-        $filter->setX($val['val'] ?? '');
-        $filter->setExtra($val['exact'] ?? null);
+        $filter->setX($val['x'] ?? null);
+        $filter->setY($val['y'] ?? null);
+        $filter->setExtra($val['extra'] ?? null);
 
         return $filter;
     }
