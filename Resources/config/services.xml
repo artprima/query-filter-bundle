@@ -20,5 +20,52 @@
             <tag name="kernel.event_listener" priority="2100" event="kernel.view" method="onKernelView" />
             <argument type="service" id="query_filter_bundle.query_filter" />
         </service>
+        <service id="query_filter_bundle.query.proxy_query_builder_manager" class="Artprima\QueryFilterBundle\Query\ProxyQueryBuilderManager" />
+
+        <service id="Artprima\QueryFilterBundle\Query\Condition\Between">
+            <tag name="proxy_query_builder.condition" condition="between" />
+        </service>
+        <service id="Artprima\QueryFilterBundle\Query\Condition\Eq">
+            <tag name="proxy_query_builder.condition" condition="eq" />
+        </service>
+        <service id="Artprima\QueryFilterBundle\Query\Condition\Gt">
+            <tag name="proxy_query_builder.condition" condition="gt" />
+        </service>
+        <service id="Artprima\QueryFilterBundle\Query\Condition\Gte">
+            <tag name="proxy_query_builder.condition" condition="gte" />
+        </service>
+        <service id="Artprima\QueryFilterBundle\Query\Condition\In">
+            <tag name="proxy_query_builder.condition" condition="in" />
+        </service>
+        <service id="Artprima\QueryFilterBundle\Query\Condition\IsNotNull">
+            <tag name="proxy_query_builder.condition" condition="is not null" />
+        </service>
+        <service id="Artprima\QueryFilterBundle\Query\Condition\IsNull">
+            <tag name="proxy_query_builder.condition" condition="is null" />
+        </service>
+        <service id="Artprima\QueryFilterBundle\Query\Condition\Like">
+            <tag name="proxy_query_builder.condition" condition="like" />
+        </service>
+        <service id="Artprima\QueryFilterBundle\Query\Condition\Lt">
+            <tag name="proxy_query_builder.condition" condition="lt" />
+        </service>
+        <service id="Artprima\QueryFilterBundle\Query\Condition\Lte">
+            <tag name="proxy_query_builder.condition" condition="lte" />
+        </service>
+        <service id="Artprima\QueryFilterBundle\Query\Condition\MemberOf">
+            <tag name="proxy_query_builder.condition" condition="member of" />
+        </service>
+        <service id="Artprima\QueryFilterBundle\Query\Condition\NotBetween">
+            <tag name="proxy_query_builder.condition" condition="not between" />
+        </service>
+        <service id="Artprima\QueryFilterBundle\Query\Condition\NotEq">
+            <tag name="proxy_query_builder.condition" condition="not eq" />
+        </service>
+        <service id="Artprima\QueryFilterBundle\Query\Condition\NotIn">
+            <tag name="proxy_query_builder.condition" condition="not in" />
+        </service>
+        <service id="Artprima\QueryFilterBundle\Query\Condition\NotLike">
+            <tag name="proxy_query_builder.condition" condition="not like" />
+        </service>
     </services>
 </container>

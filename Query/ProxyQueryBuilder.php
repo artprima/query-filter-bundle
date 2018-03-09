@@ -23,36 +23,13 @@ class ProxyQueryBuilder
     private $queryBuilder;
 
     /**
-     * @var bool
-     */
-    private $calcRows;
-
-    /**
      * @var ConditionInterface[]
      */
     private $conditions = [];
 
-    public function __construct(QueryBuilder $queryBuilder, $calcRows = true)
+    public function __construct(QueryBuilder $queryBuilder)
     {
         $this->queryBuilder = $queryBuilder;
-        $this->calcRows = $calcRows;
-
-        // this way of registering does not seem to be too smart, but for now it can work
-        $this->registerCondition(new Condition\Between());
-        $this->registerCondition(new Condition\Eq());
-        $this->registerCondition(new Condition\Gt());
-        $this->registerCondition(new Condition\Gte());
-        $this->registerCondition(new Condition\In());
-        $this->registerCondition(new Condition\IsNotNull());
-        $this->registerCondition(new Condition\IsNull());
-        $this->registerCondition(new Condition\Like());
-        $this->registerCondition(new Condition\Lt());
-        $this->registerCondition(new Condition\Lte());
-        $this->registerCondition(new Condition\MemberOf());
-        $this->registerCondition(new Condition\NotBetween());
-        $this->registerCondition(new Condition\NotEq());
-        $this->registerCondition(new Condition\NotIn());
-        $this->registerCondition(new Condition\NotLike());
     }
 
     /**
@@ -157,7 +134,7 @@ class ProxyQueryBuilder
         return $expr;
     }
 
-    private function registerCondition(ConditionInterface $condition)
+    public function registerCondition(ConditionInterface $condition)
     {
         $this->conditions[$condition->getName()] = $condition;
     }
@@ -263,11 +240,10 @@ class ProxyQueryBuilder
      * @param array $by
      * @param array $orderBy
      *
-     * @throws MissingArgumentException
+     * @param bool $calcRows
      * @return DoctrineQuery
-     * @throws InvalidArgumentException
      */
-    public function getSortedAndFilteredQuery(array $by, array $orderBy): DoctrineQuery
+    public function getSortedAndFilteredQuery(array $by, array $orderBy, $calcRows = true): DoctrineQuery
     {
         $qb = $this->queryBuilder;
 
@@ -277,7 +253,7 @@ class ProxyQueryBuilder
 
         $query = $this->addQueryFilters($qb, $by)->getQuery();
 
-        if ($this->calcRows) {
+        if ($calcRows) {
             $query->setHint(DoctrineQuery::HINT_CUSTOM_OUTPUT_WALKER, PaginationWalker::class);
             $query->setHint('mysqlWalker.sqlCalcFoundRows', true);
         }
