@@ -110,7 +110,7 @@ interface ConfigInterface
      *
      * @return callable
      */
-    public function getRepositoryCallback(): callable ;
+    public function getRepositoryCallback(): callable;
 
     /**
      * @param array $allowedLimits allowed pagination limits (eg. [5, 10, 25, 50, 100])
