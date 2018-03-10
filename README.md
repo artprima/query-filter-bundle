@@ -79,14 +79,28 @@ class DefaultController extends Controller
 
 namespace App\Repository;
 
+use App\Entity\Item;
+use Artprima\QueryFilterBundle\Query\Mysql\PaginationWalker;
+use Artprima\QueryFilterBundle\Query\ConditionManager;
 use Artprima\QueryFilterBundle\Query\ProxyQueryBuilder;
 use Artprima\QueryFilterBundle\QueryFilter\QueryFilterArgs;
 use Artprima\QueryFilterBundle\QueryFilter\QueryResult;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class ItemRepository extends ServiceEntityRepository
 {
-    // ...
+    /**
+     * @var ConditionManager
+     */
+    private $pqbManager;
+
+    public function __construct(RegistryInterface $registry, ConditionManager $manager)
+    {
+        parent::__construct($registry, Item::class);
+        $this->pqbManager = $manager;
+    }
+
     
     public function findByOrderBy(QueryFilterArgs $args): QueryResult
     {
@@ -95,14 +109,13 @@ class ItemRepository extends ServiceEntityRepository
             ->setFirstResult($args->getOffset())
             ->setMaxResults($args->getLimit());
 
-        // Use QueryFilterBundle provided QueryBuilder wrapper
-        $proxyQb = new ProxyQueryBuilder($qb, /* $calcRows = */ true);
-        $query = $proxyQb->getSortedAndFilteredQuery($args->getSearchBy(), $args->getSortBy());
+        $proxyQb = new ProxyQueryBuilder($qb, $this->pqbManager);
+        $qb = $proxyQb->getSortedAndFilteredQueryBuilder($args->getSearchBy(), $args->getSortBy());
+        $query = $qb->getQuery();
+        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PaginationWalker::class);
+        $query->setHint("mysqlWalker.sqlCalcFoundRows", true);
         $result = $query->getResult();
-        
-        // we can do that ProxyQueryBuilder was set to calculate rows (MySQL/MariaDB only!)
-        // otherwise we should calculate the rows manually
-        $totalRows = $this->getEntityManager()->getConnection()->query('SELECT FOUND_ROWS()')->fetchColumn();
+        $totalRows = $this->_em->getConnection()->query('SELECT FOUND_ROWS()')->fetchColumn();
         
         // return the wrapped result
         return new QueryResult($result, $totalRows);
@@ -136,7 +149,7 @@ composer require jms/serializer-bundle
 composer require artprima/query-filter-bundle
 ```
 
-Turn them on in `config/bundles.php`:
+* Turn them on in `config/bundles.php`:
 
 ```php
 <?php
@@ -152,7 +165,7 @@ return [
 
 _NOTE: you may need to add further bundles depending on your set up for FOSRestBundle and/or JMSSerializerBundle._
 
-Controller:
+* Controller:
 
 ```php
 <?php
@@ -160,7 +173,7 @@ Controller:
 namespace App\Controller;
 
 use App\QueryFilter\Response;
-use App\Repository\RfmEntryRepository;
+use App\Repository\ItemRepository;
 use Artprima\QueryFilterBundle\QueryFilter\Config\ConfigInterface as QueryFilterConfigInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\FOSRestController;
@@ -185,7 +198,7 @@ class ItemController extends FOSRestController implements ClassResourceInterface
 }
 ``` 
 
-Repository:
+* Repository:
 
 ```php
 <?php
@@ -193,6 +206,8 @@ Repository:
 namespace App\Repository;
 
 use App\Entity\Item;
+use Artprima\QueryFilterBundle\Query\Mysql\PaginationWalker;
+use Artprima\QueryFilterBundle\Query\ConditionManager;
 use Artprima\QueryFilterBundle\Query\ProxyQueryBuilder;
 use Artprima\QueryFilterBundle\QueryFilter\QueryFilterArgs;
 use Artprima\QueryFilterBundle\QueryFilter\QueryResult;
@@ -207,9 +222,15 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  */
 class ItemRepository extends ServiceEntityRepository
 {
-    public function __construct(RegistryInterface $registry)
+    /**
+     * @var ConditionManager
+     */
+    private $pqbManager;
+
+    public function __construct(RegistryInterface $registry, ConditionManager $manager)
     {
         parent::__construct($registry, Item::class);
+        $this->pqbManager = $manager;
     }
 
     public function findByOrderBy(QueryFilterArgs $args): QueryResult
@@ -218,10 +239,13 @@ class ItemRepository extends ServiceEntityRepository
             ->setFirstResult($args->getOffset())
             ->setMaxResults($args->getLimit());
 
-        $proxyQb = new ProxyQueryBuilder($qb);
-        $query = $proxyQb->getSortedAndFilteredQuery($args->getSearchBy(), $args->getSortBy());
+        $proxyQb = new ProxyQueryBuilder($qb, $this->pqbManager);
+        $qb = $proxyQb->getSortedAndFilteredQueryBuilder($args->getSearchBy(), $args->getSortBy());
+        $query = $qb->getQuery();
+        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PaginationWalker::class);
+        $query->setHint("mysqlWalker.sqlCalcFoundRows", true);
         $result = $query->getResult();
-        $totalRows = $this->getEntityManager()->getConnection()->query('SELECT FOUND_ROWS()')->fetchColumn();
+        $totalRows = $this->_em->getConnection()->query('SELECT FOUND_ROWS()')->fetchColumn();
 
         return new QueryResult($result, $totalRows);
     }
@@ -237,7 +261,7 @@ namespace App\QueryFilter\Config;
 
 use Artprima\QueryFilterBundle\QueryFilter\Config\BaseConfig;
 
-class RfmConfig extends BaseConfig
+class ItemConfig extends BaseConfig
 {
     public function __construct()
     {
