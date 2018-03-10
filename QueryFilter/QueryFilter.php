@@ -96,6 +96,7 @@ class QueryFilter
         $filter->setX($val['x'] ?? null);
         $filter->setY($val['y'] ?? null);
         $filter->setExtra($val['extra'] ?? null);
+        $filter->setConnector($val['connector'] ?? 'and');
 
         return $filter;
     }

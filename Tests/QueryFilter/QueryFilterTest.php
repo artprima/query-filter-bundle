@@ -156,6 +156,7 @@ class QueryFilterTest extends TestCase
                     ->setType('like')
                     ->setX('the road to hell')
                     ->setExtra('exact')
+                    ->setConnector('or')
             ], $args->getSearchBy());
             self::assertEquals([
                 'c.id' => 'asc',
