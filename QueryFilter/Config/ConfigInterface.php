@@ -54,7 +54,7 @@ interface ConfigInterface
     public function setSearchByAliases(array $expanders): ConfigInterface;
 
     /**
-     * Set Shortcut Expanders (for more info: {@link ConfigInterface::setShortcutExpanders()})
+     * Set Shortcut Expanders (for more info: {@link ConfigInterface::setSearchByAliases()})
      *
      * @return array
      */

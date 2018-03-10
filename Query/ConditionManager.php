@@ -3,6 +3,7 @@
 namespace Artprima\QueryFilterBundle\Query;
 
 use Artprima\QueryFilterBundle\Query\Condition\ConditionInterface;
+use Doctrine\ORM\QueryBuilder;
 
 /**
  * Class ConditionManager
@@ -17,6 +18,11 @@ class ConditionManager implements \ArrayAccess, \Iterator
      * @var ConditionInterface[]
      */
     private $conditions = [];
+
+    public function wrapQueryBuilder(QueryBuilder $qb): ProxyQueryBuilder
+    {
+        return new ProxyQueryBuilder($qb, $this);
+    }
 
     public function add(ConditionInterface $condition, string $name): void
     {
