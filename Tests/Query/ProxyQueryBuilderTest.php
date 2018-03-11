@@ -78,6 +78,25 @@ class ProxyQueryBuilderTest extends TestCase
     public function filterDataProvider()
     {
         return [
+            // no filters, no sort
+            [
+                [
+                ],
+                [
+                ],
+                'SELECT',
+            ],
+
+            // no filters, only sort
+            [
+                [
+                ],
+                [
+                    't.id' => 'asc',
+                ],
+                'SELECT ORDER BY t.id ASC',
+            ],
+
             // single
             [
                 [
