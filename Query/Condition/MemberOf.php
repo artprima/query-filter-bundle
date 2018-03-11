@@ -16,7 +16,7 @@ class MemberOf implements ConditionInterface
 {
     public function getExpr(QueryBuilder $qb, int $index, Filter $filter)
     {
-        $expr = $qb->expr()->isMemberOf('?' . $index, $filter->getField());
+        $expr = $qb->expr()->isMemberOf('?'.$index, $filter->getField());
         $values = explode(',', $filter->getX() ?? '');
         $values = array_map('trim', $values);
         $qb->setParameter($index, $values);

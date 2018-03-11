@@ -16,7 +16,7 @@ class Gte implements ConditionInterface
 {
     public function getExpr(QueryBuilder $qb, int $index, Filter $filter)
     {
-        $expr = $qb->expr()->gte($filter->getField(), '?' . $index);
+        $expr = $qb->expr()->gte($filter->getField(), '?'.$index);
         $qb->setParameter($index, $filter->getX() ?? '');
 
         return $expr;

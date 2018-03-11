@@ -41,7 +41,7 @@ class ConfigConverter implements ParamConverterInterface
         }
 
         if (!$result instanceof EntityManager) {
-            throw new InvalidArgumentException(self::class. ': expected EntityManager instance. Wrong configuration?');
+            throw new InvalidArgumentException(self::class.': expected EntityManager instance. Wrong configuration?');
         }
 
         return $result;
@@ -66,18 +66,18 @@ class ConfigConverter implements ParamConverterInterface
         $options = $this->getOptions($configuration);
 
         if (!isset($options['entity_class'])) {
-            throw new InvalidArgumentException(self::class. ': entity_class not provided. Wrong configuration?');
+            throw new InvalidArgumentException(self::class.': entity_class not provided. Wrong configuration?');
         }
 
         if (!isset($options['repository_method'])) {
-            throw new InvalidArgumentException(self::class. ': repository_method not provided. Wrong configuration?');
+            throw new InvalidArgumentException(self::class.': repository_method not provided. Wrong configuration?');
         }
 
         $configClassName = $configuration->getClass();
         $config = new $configClassName();
 
         if (!$config instanceof ConfigInterface) {
-            throw new InvalidArgumentException(self::class. ': config is not QueryFilterConfig descendant. Wrong configuration?');
+            throw new InvalidArgumentException(self::class.': config is not QueryFilterConfig descendant. Wrong configuration?');
         }
 
         $config->setRequest(new Request($request));
@@ -86,7 +86,7 @@ class ConfigConverter implements ParamConverterInterface
         $repo = $manager->getRepository($options['entity_class']);
 
         if (!is_callable(array($repo, $options['repository_method']))) {
-            throw new InvalidArgumentException(self::class. ': repository_method is not callable. Wrong configuration?');
+            throw new InvalidArgumentException(self::class.': repository_method is not callable. Wrong configuration?');
         }
 
         $config->setRepositoryCallback(array($repo, $options['repository_method']));

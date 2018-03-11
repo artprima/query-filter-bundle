@@ -16,7 +16,7 @@ class Lt implements ConditionInterface
 {
     public function getExpr(QueryBuilder $qb, int $index, Filter $filter)
     {
-        $expr = $qb->expr()->lt($filter->getField(), '?' . $index);
+        $expr = $qb->expr()->lt($filter->getField(), '?'.$index);
         $qb->setParameter($index, $filter->getX() ?? '');
 
         return $expr;

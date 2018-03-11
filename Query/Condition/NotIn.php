@@ -18,7 +18,7 @@ class NotIn implements ConditionInterface
     {
         $values = explode(',', $filter->getX() ?? '');
         $values = array_map('trim', $values);
-        $expr = $qb->expr()->notIn($filter->getField(), '?' . $index);
+        $expr = $qb->expr()->notIn($filter->getField(), '?'.$index);
         $qb->setParameter($index, $values);
 
         return $expr;

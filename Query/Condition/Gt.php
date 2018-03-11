@@ -16,7 +16,7 @@ class Gt implements ConditionInterface
 {
     public function getExpr(QueryBuilder $qb, int $index, Filter $filter)
     {
-        $expr = $qb->expr()->gt($filter->getField(), '?' . $index);
+        $expr = $qb->expr()->gt($filter->getField(), '?'.$index);
         $qb->setParameter($index, $filter->getX() ?? '');
 
         return $expr;

@@ -16,7 +16,7 @@ class Lte implements ConditionInterface
 {
     public function getExpr(QueryBuilder $qb, int $index, Filter $filter)
     {
-        $expr = $qb->expr()->lte($filter->getField(), '?' . $index);
+        $expr = $qb->expr()->lte($filter->getField(), '?'.$index);
         $qb->setParameter($index, $filter->getX() ?? '');
 
         return $expr;
