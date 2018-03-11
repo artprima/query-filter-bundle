@@ -149,7 +149,7 @@ class QueryFilter
         }
 
         foreach ($search as $key => $data) {
-            if (empty($data) || !is_array($data) || !isset($data['field']) || !in_array($data['field'], $allowedCols, true)) {
+            if (!is_array($data) || !isset($data['field']) || !in_array($data['field'], $allowedCols, true)) {
                 continue;
             }
 
