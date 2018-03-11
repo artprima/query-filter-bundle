@@ -208,25 +208,6 @@ class BaseConfig implements ConfigInterface
         return $this->defaultLimit;
     }
 
-
-    /**
-     * @inheritdoc
-     */
-    public function getTotalRowsCallback(): callable
-    {
-        return $this->totalRowsCallback;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setTotalRowsCallback(callable $totalRowsCallback): ConfigInterface
-    {
-        $this->totalRowsCallback = $totalRowsCallback;
-
-        return $this;
-    }
-
     /**
      * @return Request
      */

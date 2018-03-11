@@ -126,17 +126,6 @@ interface ConfigInterface
     public function getDefaultLimit(): int;
 
     /**
-     * @param callable $totalRowsCallback
-     * @return $this
-     */
-    public function setTotalRowsCallback(callable $totalRowsCallback): ConfigInterface;
-
-    /**
-     * @return callable
-     */
-    public function getTotalRowsCallback(): callable;
-
-    /**
      * @param Request $request
      * @return ConfigInterface
      */

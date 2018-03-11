@@ -90,9 +90,6 @@ class ConfigConverter implements ParamConverterInterface
         }
 
         $config->setRepositoryCallback(array($repo, $options['repository_method']));
-        $config->setTotalRowsCallback(function() use ($manager) {
-            return $manager->getConnection()->query('SELECT FOUND_ROWS()')->fetchColumn();
-        });
 
         $request->attributes->set($configuration->getName(), $config);
 
