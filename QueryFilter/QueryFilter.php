@@ -84,7 +84,7 @@ class QueryFilter
     }
 
     /**
-     * @param $field
+     * @param string $field
      * @param array|string $val
      * @return Filter
      */
@@ -129,10 +129,6 @@ class QueryFilter
             }
 
             $searchBy[] = $this->getFilter($key, $val);
-
-            if (strpos($key, 'GroupConcat') !== false) {
-                $searchBy[count($searchBy) - 1]->setHaving(true);
-            }
         }
 
         return $searchBy;
@@ -158,10 +154,6 @@ class QueryFilter
             }
 
             $searchBy[$key] = $this->getFilter($data['field'], $data);
-
-            if (strpos($data['field'], 'GroupConcat') !== false) {
-                $searchBy[$key]->setHaving(true);
-            }
         }
 
         return $searchBy;
