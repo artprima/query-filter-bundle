@@ -71,6 +71,10 @@ class ProxyQueryBuilderTest extends TestCase
         self::assertEquals($expected, $qb->getDQL());
     }
 
+    /**
+     * NOTE: expected results are not valid DQL expressions (as they lack from section),
+     *       but for testing purposes we don't need that
+     */
     public function filterDataProvider()
     {
         return [
@@ -123,6 +127,60 @@ class ProxyQueryBuilderTest extends TestCase
                     't.id' => 'asc',
                 ],
                 'SELECT WHERE t.id = ?1 OR t.name LIKE ?2 ORDER BY t.id ASC',
+            ],
+
+            // with OR connector
+            [
+                [
+                    (new Filter())
+                        ->setField('t.id')
+                        ->setType('eq')
+                        ->setX('100'),
+                    (new Filter())
+                        ->setField('t.name')
+                        ->setType('like')
+                        ->setX('john doe')
+                        ->setConnector('or'),
+                ],
+                [
+                    't.id' => 'asc',
+                ],
+                'SELECT WHERE t.id = ?1 OR t.name LIKE ?2 ORDER BY t.id ASC',
+            ],
+
+            // having
+            [
+                [
+                    (new Filter())
+                        ->setField('t.id')
+                        ->setType('eq')
+                        ->setX('100')
+                        ->setHaving(true),
+                ],
+                [
+                    't.id' => 'asc',
+                ],
+                'SELECT HAVING t.id = ?1 ORDER BY t.id ASC',
+            ],
+
+            // where AND having
+            [
+                [
+                    (new Filter())
+                        ->setField('t.id')
+                        ->setType('eq')
+                        ->setX('100')
+                        ->setHaving(true),
+                    (new Filter())
+                        ->setField('t.name')
+                        ->setType('like')
+                        ->setX('john doe')
+                        ->setConnector('or'),
+                ],
+                [
+                    't.id' => 'asc',
+                ],
+                'SELECT WHERE t.name LIKE ?2 HAVING t.id = ?1 ORDER BY t.id ASC',
             ],
         ];
     }

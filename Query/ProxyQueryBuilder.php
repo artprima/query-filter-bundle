@@ -96,10 +96,10 @@ class ProxyQueryBuilder
 
             $condition = $this->getConditionExpr($i, $val);
 
-            if (empty($val->isHaving())) {
-                $where = $this->getConnectorExpr($where, $val->getConnector() ?? 'and', $condition);
-            } else {
+            if ($val->isHaving()) {
                 $having = $this->getConnectorExpr($having, $val->getConnector() ?? 'and', $condition);
+            } else {
+                $where = $this->getConnectorExpr($where, $val->getConnector() ?? 'and', $condition);
             }
         }
 
