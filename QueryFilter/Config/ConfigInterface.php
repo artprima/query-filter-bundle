@@ -32,26 +32,12 @@ interface ConfigInterface
      * For example, concat(concat(concat(concat(p.firstname, ' '), p.middlename), ' '), p.lastname) can be
      * aliased by 'person_name':
      *
-     * <code>
-     * array(
-     *     'person_name' => array(
-     *         'name' => "concat(concat(concat(concat(p.firstname, ' '), p.middlename), ' '), p.lastname)",
-     *         'data' => array(
-     *             'having' => true,
-     *             'type' => 'like',
-     *         ),
-     *     ),
-     * );
-     * </code>
-     *
-     * 'data' parameter is optional but necessary when you cannot use "where" or want to change the type of comparison
-     *
      * @see QueryFilter::getTemplateData()
      *
-     * @param array $expanders
+     * @param Alias[] $aliases
      * @return $this
      */
-    public function setSearchByAliases(array $expanders): ConfigInterface;
+    public function setSearchByAliases(array $aliases): ConfigInterface;
 
     /**
      * Set Shortcut Expanders (for more info: {@link ConfigInterface::setSearchByAliases()})

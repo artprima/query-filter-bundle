@@ -3,6 +3,7 @@
 namespace Tests\Artprima\QueryFilterBundle\Request;
 
 use Artprima\QueryFilterBundle\Query\Filter;
+use Artprima\QueryFilterBundle\QueryFilter\Config\Alias;
 use Artprima\QueryFilterBundle\QueryFilter\Config\BaseConfig;
 use Artprima\QueryFilterBundle\QueryFilter\QueryFilter;
 use Artprima\QueryFilterBundle\QueryFilter\QueryFilterArgs;
@@ -157,6 +158,71 @@ class QueryFilterTest extends TestCase
                     ->setX('the road to hell')
                     ->setExtra('exact')
                     ->setConnector('or')
+            ], $args->getSearchBy());
+            self::assertEquals([
+                'c.id' => 'asc',
+            ], $args->getSortBy());
+
+            return new QueryResult([
+                ["dummy"],
+                ["wammy"],
+            ], 1000);
+        });
+        $response = $queryFilter->getData($config);
+        self::assertEquals([
+            ["dummy"],
+            ["wammy"],
+        ], $response->getData());
+        self::assertSame(1000, $response->getMeta()['total_records']);
+    }
+
+    public function testAliases()
+    {
+        $queryFilter = new QueryFilter(Response::class);
+
+        $config = new BaseConfig();
+        $request = new Request(new HttpRequest([
+            'limit' => 100,
+            'page'=> 3,
+            'filter' => [
+                [
+                    'field' => 'fullname',
+                    'type' => 'eq',
+                    'x' => 'Vassily Poupkine',
+                    'having' => '1',
+                ],
+                [
+                    'field' => 'c.heaven',
+                    'type' => 'like',
+                    'x' => 'the road to heaven',
+                ],
+            ],
+            'sortby' => 'c.id',
+            'sortdir' => 'asc',
+            'simple' => '0',
+        ]));
+        $config->setRequest($request);
+        $config->setSearchAllowedCols(['fullname', 'c.heaven']);
+        $config->setSortCols(['c.id']);
+        $config->setAllowedLimits([10, 15, 100]);
+        $config->setDefaultLimit(10);
+        $config->setSearchByAliases([
+            (new Alias('fullname', 'concat(\'c.firstname, \' \', c.lastname\')'))
+        ]);
+
+        $config->setRepositoryCallback(function(QueryFilterArgs $args) {
+            self::assertSame(100, $args->getLimit());
+            self::assertSame(200, $args->getOffset());
+            self::assertEquals([
+                (new Filter())
+                    ->setField('concat(\'c.firstname, \' \', c.lastname\')')
+                    ->setType('eq')
+                    ->setX('Vassily Poupkine')
+                    ->setHaving(true),
+                (new Filter())
+                    ->setField('c.heaven')
+                    ->setType('like')
+                    ->setX('the road to heaven'),
             ], $args->getSearchBy());
             self::assertEquals([
                 'c.id' => 'asc',

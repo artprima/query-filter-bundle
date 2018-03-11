@@ -83,7 +83,20 @@ class BaseConfig implements ConfigInterface
      */
     public function setSearchByAliases(array $aliases): ConfigInterface
     {
-        $this->searchBy['aliases'] = $aliases;
+        /** @var Alias $alias */
+        foreach ($aliases as $alias) {
+            $this->searchBy['aliases'][$alias->getName()] = $alias;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function addSearchByAliases(Alias $alias): ConfigInterface
+    {
+        $this->searchBy['aliases'][$alias->getName()] = $alias;
 
         return $this;
     }

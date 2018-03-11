@@ -4,6 +4,7 @@ namespace Artprima\QueryFilterBundle\QueryFilter;
 
 use Artprima\QueryFilterBundle\Exception\InvalidArgumentException;
 use Artprima\QueryFilterBundle\Query\Filter;
+use Artprima\QueryFilterBundle\QueryFilter\Config\Alias;
 use Artprima\QueryFilterBundle\QueryFilter\Config\ConfigInterface;
 use Artprima\QueryFilterBundle\Response\ResponseInterface;
 
@@ -48,6 +49,7 @@ class QueryFilter
     }
 
     /**
+     * @param ConfigInterface $config
      * @return int current page number
      */
     private function getCurrentPage(ConfigInterface $config): int
@@ -81,7 +83,12 @@ class QueryFilter
         return $sortData;
     }
 
-    private function getFilter($field, $val): Filter
+    /**
+     * @param $field
+     * @param array|string $val
+     * @return Filter
+     */
+    private function getFilter(string $field, $val): Filter
     {
         $filter = new Filter();
         if (!is_array($val)) {
@@ -97,12 +104,19 @@ class QueryFilter
         $filter->setY($val['y'] ?? null);
         $filter->setExtra($val['extra'] ?? null);
         $filter->setConnector($val['connector'] ?? 'and');
+        $filter->setHaving((bool)($val['having'] ?? false));
 
         return $filter;
     }
 
+    /**
+     * @param array $allowedCols
+     * @param array|null $search
+     * @return Filter[]
+     */
     private function getSimpleSearchBy(array $allowedCols, ?array $search): array
     {
+        /** @var Filter[] $searchBy */
         $searchBy = [];
 
         if ($search === null) {
@@ -117,15 +131,21 @@ class QueryFilter
             $searchBy[] = $this->getFilter($key, $val);
 
             if (strpos($key, 'GroupConcat') !== false) {
-                $searchBy[count($searchBy) - 1]['having'] = true;
+                $searchBy[count($searchBy) - 1]->setHaving(true);
             }
         }
 
         return $searchBy;
     }
 
+    /**
+     * @param array $allowedCols
+     * @param array|null $search
+     * @return Filter[]
+     */
     private function getFullSearchBy(array $allowedCols, ?array $search): array
     {
+        /** @var Filter[] $searchBy */
         $searchBy = [];
 
         if ($search === null) {
@@ -140,26 +160,23 @@ class QueryFilter
             $searchBy[$key] = $this->getFilter($data['field'], $data);
 
             if (strpos($data['field'], 'GroupConcat') !== false) {
-                $searchBy[$key][$data['field']]['having'] = true;
+                $searchBy[$key]->setHaving(true);
             }
         }
 
         return $searchBy;
     }
 
-    private function replaceSearchByAliases(array &$searchBy, array $aliases)
+    /**
+     * @param Filter[] $searchBy
+     * @param Alias[] $aliases
+     */
+    private function replaceSearchByAliases(array $searchBy, array $aliases)
     {
-        foreach ($aliases as $alias => $value) {
-            if (empty($searchBy[$alias])) {
-                continue;
+        foreach ($searchBy as $filter) {
+            if (array_key_exists($filter->getField(), $aliases)) {
+                $filter->setField($aliases[$filter->getField()]->getExpr());
             }
-            if (!empty($value['data'])) {
-                $searchBy[$value['name']] = $value['data'];
-                $searchBy[$value['name']]['val'] = $searchBy[$alias]['val'];
-            } else {
-                $searchBy[$value['name']] = $searchBy[$alias];
-            }
-            unset($searchBy[$alias]);
         }
     }
 
@@ -205,6 +222,10 @@ class QueryFilter
         return $searchBy;
     }
 
+    /**
+     * @param ConfigInterface $config
+     * @return QueryFilterArgs
+     */
     private function getQueryFilterArgs(ConfigInterface $config): QueryFilterArgs
     {
         $searchBy = $this->getSearchBy($config);
@@ -226,6 +247,11 @@ class QueryFilter
         return $args;
     }
 
+    /**
+     * @param ConfigInterface $config
+     * @param QueryFilterArgs $args
+     * @return QueryResult
+     */
     private function getFilterData(ConfigInterface $config, QueryFilterArgs $args): QueryResult
     {
         // Query database to obtain corresponding entities
