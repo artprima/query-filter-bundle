@@ -32,7 +32,7 @@ class QueryFilterListener
     {
         $request = $event->getRequest();
 
-        /** @var QueryFilter $configuration */
+        /** @var QueryFilter|null $configuration */
         $configuration = $request->attributes->get('_queryfilter');
 
         if (!$configuration) {
