@@ -41,11 +41,12 @@ class ProxyQueryBuilder
             throw new InvalidArgumentException(sprintf('Condition "%s" is not registered', $filter->getType()));
         }
 
-        if (!($this->conditionManager[$filter->getType()] instanceof ConditionInterface)) {
+        $conditionManager = $this->conditionManager[$filter->getType()];
+        if (!$conditionManager instanceof ConditionInterface) {
             throw new InvalidArgumentException(sprintf('Condition "%s" is of invalid type "%s"', $filter->getType(), gettype($this->conditionManager[$filter->getType()])));
         }
 
-        $expr = $this->conditionManager[$filter->getType()]->getExpr($this->queryBuilder, $index, $filter);
+        $expr = $conditionManager->getExpr($this->queryBuilder, $index, $filter);
 
         return $expr;
     }
