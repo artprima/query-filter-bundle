@@ -226,7 +226,7 @@ class QueryFilter
 
         $limit = $config->getRequest()->getLimit();
         $allowedLimits = $config->getAllowedLimits();
-        if ($limit === -1 || (!empty($allowedLimits) && !in_array($limit, $config->getAllowedLimits(), true))) {
+        if ($limit === -1 || !in_array($limit, $allowedLimits, true)) {
             $limit = $config->getDefaultLimit();
         }
 

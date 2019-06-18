@@ -13,6 +13,8 @@ use Artprima\QueryFilterBundle\Request\Request;
  */
 class BaseConfig implements ConfigInterface
 {
+    private const DEFAULT_LIMIT = 10;
+
     /**
      * @var Request
      */
@@ -106,7 +108,7 @@ class BaseConfig implements ConfigInterface
      */
     public function getSearchByAliases(): array
     {
-        return $this->searchBy['aliases'];
+        return $this->searchBy['aliases'] ?? [];
     }
 
     /**
@@ -177,7 +179,7 @@ class BaseConfig implements ConfigInterface
      */
     public function getAllowedLimits(): array
     {
-        return $this->allowedLimits;
+        return $this->allowedLimits ?? [];
     }
 
     /**
@@ -205,7 +207,7 @@ class BaseConfig implements ConfigInterface
      */
     public function getDefaultLimit(): int
     {
-        return $this->defaultLimit;
+        return $this->defaultLimit ?? self::DEFAULT_LIMIT;
     }
 
     /**
