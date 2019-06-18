@@ -109,7 +109,7 @@ interface ConfigInterface
      *
      * @return array
      */
-    public function getAllowedLimits(): ?array;
+    public function getAllowedLimits(): array;
 
     /**
      * @var int $limit default limit in case of limit not specified or limit is not within the allowed limits
