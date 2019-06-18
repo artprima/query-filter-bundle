@@ -112,7 +112,7 @@ class BaseConfig implements ConfigInterface
     /**
      * @inheritdoc
      */
-    public function setSearchByExtra(callable $extra): ConfigInterface
+    public function setSearchByExtra(array $extra): ConfigInterface
     {
         $this->searchBy['extra'] = $extra;
 

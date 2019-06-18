@@ -52,7 +52,7 @@ interface ConfigInterface
      * @param callable $extra
      * @return $this
      */
-    public function setSearchByExtra(callable $extra): ConfigInterface;
+    public function setSearchByExtra(array $extra): ConfigInterface;
 
     /**
      * Get extra data for search
