@@ -4,7 +4,7 @@ namespace Artprima\QueryFilterBundle\EventListener;
 
 use Artprima\QueryFilterBundle\QueryFilter\Config\ConfigInterface;
 use Artprima\QueryFilterBundle\QueryFilter\QueryFilter;
-use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
+use Symfony\Component\HttpKernel\Event\ViewEvent;
 
 /**
  * Class QueryFilterListener
@@ -26,9 +26,9 @@ class QueryFilterListener
     }
 
     /**
-     * @param GetResponseForControllerResultEvent $event
+     * @param ViewEvent $event
      */
-    public function onKernelView(GetResponseForControllerResultEvent $event)
+    public function onKernelView(ViewEvent $event)
     {
         $request = $event->getRequest();
 

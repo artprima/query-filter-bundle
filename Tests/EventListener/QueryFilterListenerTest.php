@@ -8,7 +8,7 @@ use Artprima\QueryFilterBundle\QueryFilter\QueryFilter;
 use Artprima\QueryFilterBundle\Response\ResponseInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
+use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class QueryFilterListenerTest extends TestCase
@@ -31,7 +31,7 @@ class QueryFilterListenerTest extends TestCase
             ->with($config)
             ->willReturn($response);
 
-        $event = $this->getGetResponseForControllerResultEvent($config, $this->createRequest(
+        $event = $this->getViewEvent($config, $this->createRequest(
             new \Artprima\QueryFilterBundle\Controller\Annotations\QueryFilter([])
         ));
 
@@ -62,7 +62,7 @@ class QueryFilterListenerTest extends TestCase
             ->with($config)
             ->willReturn($response);
 
-        $event = $this->getGetResponseForControllerResultEvent($config, $this->createRequest());
+        $event = $this->getViewEvent($config, $this->createRequest());
 
         $listener = new QueryFilterListener($queryFilter);
         $listener->onKernelView($event);
@@ -90,7 +90,7 @@ class QueryFilterListenerTest extends TestCase
             ->with($config)
             ->willReturn($response);
 
-        $event = $this->getGetResponseForControllerResultEvent($config, $this->createRequest());
+        $event = $this->getViewEvent($config, $this->createRequest());
 
         $listener = new QueryFilterListener($queryFilter);
         $listener->onKernelView($event);
@@ -98,11 +98,11 @@ class QueryFilterListenerTest extends TestCase
         self::assertEquals($config, $event->getControllerResult());
     }
 
-    private function getGetResponseForControllerResultEvent($config, Request $request)
+    private function getViewEvent($config, Request $request)
     {
         $mockKernel = $this->getMockForAbstractClass('Symfony\Component\HttpKernel\Kernel', ['', '']);
 
-        return new GetResponseForControllerResultEvent($mockKernel, $request, HttpKernelInterface::MASTER_REQUEST, $config);
+        return new ViewEvent($mockKernel, $request, HttpKernelInterface::MASTER_REQUEST, $config);
     }
 
     private function createRequest($queryFilterAnnotation = null)
