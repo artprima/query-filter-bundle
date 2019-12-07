@@ -22,16 +22,16 @@ class ConfigConverterTest extends TestCase
 {
     public function testSupports()
     {
-        $manager = self::getMockBuilder(EntityManager::class)
+        $manager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $registry = self::getMockBuilder(ManagerRegistry::class)
+        $registry = $this->getMockBuilder(ManagerRegistry::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $registry
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getManagers')
             ->willReturn([$manager]);
 
@@ -44,32 +44,33 @@ class ConfigConverterTest extends TestCase
 
     public function testApply()
     {
-        $repo = self::getMockBuilder(ObjectRepository::class)
+        $repo = $this->getMockBuilder(ObjectRepository::class)
             ->disableOriginalConstructor()
             ->setMethods(['getData', 'findAll', 'findBy', 'findOneBy', 'getClassName', 'find'])
             ->getMock();
 
-        $manager = self::getMockBuilder(EntityManager::class)
+        $manager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $manager
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getRepository')
             ->with('DummyClass')
             ->willReturn($repo);
 
-        $registry = self::getMockBuilder(ManagerRegistry::class)
+        $registry = $this->getMockBuilder(ManagerRegistry::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $registry
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getManagerForClass')
             ->with('DummyClass')
             ->willReturn($manager);
 
         $configuration = new ParamConverter([]);
+        $configuration->setName('dummy');
         $configuration->setClass(BaseConfig::class);
         $configuration->setOptions([
             'entity_manager' => null,
@@ -78,7 +79,9 @@ class ConfigConverterTest extends TestCase
         ]);
 
         $converter = new ConfigConverter($registry);
-        self::assertTrue($converter->apply(new HttpRequest([
+
+
+        $request = new HttpRequest([
             'limit' => 100,
             'page'=> 3,
             'filter' => [
@@ -86,6 +89,22 @@ class ConfigConverterTest extends TestCase
             ],
             'sortby' => 'c.id',
             'sortdir' => 'asc',
-        ]), $configuration));
+        ]);
+
+        $result = $converter->apply($request, $configuration);
+
+        $this->assertIsObject($request->attributes->get('dummy'));
+        /** @var BaseConfig $v */
+        $v = $request->attributes->get('dummy');
+        $this->assertInstanceOf(BaseConfig::class, $v);
+        $this->assertEquals(100, $v->getRequest()->getLimit());
+        $this->assertEquals(3, $v->getRequest()->getPageNum());
+        $this->assertEquals(['c.dummy' => 'the road to hell'], $v->getRequest()->getQuery());
+        $this->assertEquals('c.id', $v->getRequest()->getSortBy());
+        $this->assertEquals('asc', $v->getRequest()->getSortDir());
+        $this->assertEquals('asc', $v->getRequest()->getSortDir());
+        $this->assertIsCallable($v->getRepositoryCallback());
+
+        $this->assertTrue($result);
     }
 }
