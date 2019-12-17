@@ -209,7 +209,7 @@ class QueryFilter
 
         // Set search extra filters (can be used to display entries for one particular entity,
         // or to add some extra conditions/filterings)
-        $searchBy = array_merge($searchBy, $config->getSearchByExtra());
+        $searchBy = array_merge($config->getSearchByExtra(), $searchBy);
 
         return $searchBy;
     }
