@@ -80,12 +80,12 @@ class DefaultController extends Controller
 namespace App\Repository;
 
 use App\Entity\Item;
-use Artprima\QueryFilterBundle\Query\Mysql\PaginationWalker;
 use Artprima\QueryFilterBundle\Query\ConditionManager;
 use Artprima\QueryFilterBundle\Query\ProxyQueryBuilder;
 use Artprima\QueryFilterBundle\QueryFilter\QueryFilterArgs;
 use Artprima\QueryFilterBundle\QueryFilter\QueryResult;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class ItemRepository extends ServiceEntityRepository
@@ -112,13 +112,10 @@ class ItemRepository extends ServiceEntityRepository
         $proxyQb = new ProxyQueryBuilder($qb, $this->pqbManager);
         $qb = $proxyQb->getSortedAndFilteredQueryBuilder($args->getSearchBy(), $args->getSortBy());
         $query = $qb->getQuery();
-        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PaginationWalker::class);
-        $query->setHint("mysqlWalker.sqlCalcFoundRows", true);
-        $result = $query->getResult();
-        $totalRows = $this->_em->getConnection()->query('SELECT FOUND_ROWS()')->fetchColumn();
-        
+        $paginator = new Paginator($query);
+
         // return the wrapped result
-        return new QueryResult($result, $totalRows);
+        return new QueryResult($paginator->getIterator()->getArrayCopy(), count($paginator));
     }    
     
     // ...
@@ -206,12 +203,12 @@ class ItemController extends FOSRestController implements ClassResourceInterface
 namespace App\Repository;
 
 use App\Entity\Item;
-use Artprima\QueryFilterBundle\Query\Mysql\PaginationWalker;
 use Artprima\QueryFilterBundle\Query\ConditionManager;
 use Artprima\QueryFilterBundle\Query\ProxyQueryBuilder;
 use Artprima\QueryFilterBundle\QueryFilter\QueryFilterArgs;
 use Artprima\QueryFilterBundle\QueryFilter\QueryResult;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
@@ -242,12 +239,9 @@ class ItemRepository extends ServiceEntityRepository
         $proxyQb = new ProxyQueryBuilder($qb, $this->pqbManager);
         $qb = $proxyQb->getSortedAndFilteredQueryBuilder($args->getSearchBy(), $args->getSortBy());
         $query = $qb->getQuery();
-        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PaginationWalker::class);
-        $query->setHint("mysqlWalker.sqlCalcFoundRows", true);
-        $result = $query->getResult();
-        $totalRows = $this->_em->getConnection()->query('SELECT FOUND_ROWS()')->fetchColumn();
+        $paginator = new Paginator($query);
 
-        return new QueryResult($result, $totalRows);
+        return new QueryResult($paginator->getIterator()->getArrayCopy(), count($paginator));
     }
 }
 ```
