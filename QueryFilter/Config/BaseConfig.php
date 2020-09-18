@@ -63,6 +63,11 @@ class BaseConfig implements ConfigInterface
     protected $simple = true;
 
     /**
+     * @var bool
+     */
+    protected $strictColumns = false;
+
+    /**
      * @inheritdoc
      */
     public function setSearchAllowedCols(array $args): ConfigInterface
@@ -226,5 +231,23 @@ class BaseConfig implements ConfigInterface
         $this->request = $request;
 
         return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setStrictColumns(bool $strict): ConfigInterface
+    {
+        $this->strictColumns = $strict;
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isStrictColumns(): bool
+    {
+        return $this->strictColumns;
     }
 }

@@ -54,6 +54,9 @@ class DefaultController extends Controller
         $config->setSortCols(['t.id'], ['t.id' => 'asc']);
         $config->setRequest(new Request($request));
         
+        // Throws an UnexpectedValueException when invalid filter column, sort column or sort type is specified
+        $config->setStrictColumns(true);
+        
         // here we provide a repository callback that will be used internally in the QueryFilter
         // The signature of the method must be as follows: function functionName(QueryFilterArgs $args): QueryResult;
         $config->setRepositoryCallback([$repository, 'findByOrderBy']);
