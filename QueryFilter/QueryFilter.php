@@ -74,14 +74,28 @@ class QueryFilter
             'field' => $config->getRequest()->getSortBy(),
             'type' => $config->getRequest()->getSortDir(),
         ];
-        $sortData = $config->getSortColsDefault();
-        if (isset($sort['field'], $sort['type'])) {
-            if (in_array($sort['type'], array('asc', 'desc'), true) && in_array($sort['field'], $config->getSortCols(), true)) {
-                $sortData = array($sort['field'] => $sort['type']);
+
+        if (!isset($sort['field'], $sort['type'])) {
+            return $config->getSortColsDefault();
+        }
+
+        $isValidSortColumn = in_array($sort['field'], $config->getSortCols(), true);
+        $isValidSortType = in_array($sort['type'], array('asc', 'desc'), true);
+
+        if ($isValidSortColumn && $isValidSortType) {
+            return array($sort['field'] => $sort['type']);
+        }
+
+        if ($config->isStrictColumns()) {
+            if (!$isValidSortColumn) {
+                throw new UnexpectedValueException(sprintf('Invalid sort column requested %s', $sort['field']));
+            }
+            if (!$isValidSortType) {
+                throw new UnexpectedValueException(sprintf('Invalid sort type requested %s', $sort['type']));
             }
         }
 
-        return $sortData;
+        return $config->getSortColsDefault();
     }
 
     /**
