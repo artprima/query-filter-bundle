@@ -3,6 +3,7 @@
 namespace Artprima\QueryFilterBundle\QueryFilter;
 
 use Artprima\QueryFilterBundle\Exception\InvalidArgumentException;
+use Artprima\QueryFilterBundle\Exception\UnexpectedValueException;
 use Artprima\QueryFilterBundle\Query\Filter;
 use Artprima\QueryFilterBundle\QueryFilter\Config\Alias;
 use Artprima\QueryFilterBundle\QueryFilter\Config\ConfigInterface;
@@ -112,9 +113,10 @@ class QueryFilter
     /**
      * @param array $allowedCols
      * @param array|null $search
+     * @param bool $throw
      * @return Filter[]
      */
-    private function getSimpleSearchBy(array $allowedCols, ?array $search): array
+    private function getSimpleSearchBy(array $allowedCols, ?array $search, bool $throw): array
     {
         /** @var Filter[] $searchBy */
         $searchBy = [];
@@ -124,11 +126,14 @@ class QueryFilter
         }
 
         foreach ($search as $key => $val) {
-            if (!in_array($key, $allowedCols, true) || $val === null) {
+            if (in_array($key, $allowedCols, true) && $val !== null) {
+                $searchBy[] = $this->getFilter($key, $val);
                 continue;
             }
 
-            $searchBy[] = $this->getFilter($key, $val);
+            if ($throw) {
+                throw new UnexpectedValueException(sprintf('Invalid filter column requested %s', $key));
+            }
         }
 
         return $searchBy;
@@ -137,9 +142,10 @@ class QueryFilter
     /**
      * @param array $allowedCols
      * @param array|null $search
+     * @param bool $throw
      * @return Filter[]
      */
-    private function getFullSearchBy(array $allowedCols, ?array $search): array
+    private function getFullSearchBy(array $allowedCols, ?array $search, bool $throw): array
     {
         /** @var Filter[] $searchBy */
         $searchBy = [];
@@ -150,6 +156,10 @@ class QueryFilter
 
         foreach ($search as $key => $data) {
             if (!is_array($data) || !isset($data['field']) || !in_array($data['field'], $allowedCols, true)) {
+                if ($throw) {
+                    throw new UnexpectedValueException(sprintf('Invalid filter column requested %s', $key));
+                }
+
                 continue;
             }
 
@@ -201,8 +211,8 @@ class QueryFilter
     {
         // Get basic search by
         $searchBy = $config->getRequest()->isSimple()
-            ? $this->getSimpleSearchBy($config->getSearchAllowedCols(), $config->getRequest()->getQuery())
-            : $this->getFullSearchBy($config->getSearchAllowedCols(), $config->getRequest()->getQuery());
+            ? $this->getSimpleSearchBy($config->getSearchAllowedCols(), $config->getRequest()->getQuery(), $config->isStrictColumns())
+            : $this->getFullSearchBy($config->getSearchAllowedCols(), $config->getRequest()->getQuery(), $config->isStrictColumns());
 
         // Set search aliases to more complicated expressions
         $this->replaceSearchByAliases($searchBy, $config->getSearchByAliases());
