@@ -155,15 +155,14 @@ class QueryFilter
         }
 
         foreach ($search as $key => $data) {
-            if (!is_array($data) || !isset($data['field']) || !in_array($data['field'], $allowedCols, true)) {
-                if ($throw) {
-                    throw new UnexpectedValueException(sprintf('Invalid filter column requested %s', $key));
-                }
-
+            if (is_array($data) && isset($data['field']) && in_array($data['field'], $allowedCols, true)) {
+                $searchBy[$key] = $this->getFilter($data['field'], $data);
                 continue;
             }
 
-            $searchBy[$key] = $this->getFilter($data['field'], $data);
+            if ($throw) {
+                throw new UnexpectedValueException(sprintf('Invalid filter column requested %s', $key));
+            }
         }
 
         return $searchBy;
