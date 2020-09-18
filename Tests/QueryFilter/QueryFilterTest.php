@@ -92,6 +92,49 @@ class QueryFilterTest extends TestCase
         self::assertSame(1000, $response->getMeta()['total_records']);
     }
 
+    /**
+     * @test
+     * @expectedException \Artprima\QueryFilterBundle\Exception\UnexpectedValueException
+     */
+    public function testGetDataInvalidFilter()
+    {
+        $queryFilter = new QueryFilter(Response::class);
+
+        $config = new BaseConfig();
+        $request = new Request(new HttpRequest([
+            'filter' => [
+                'c.unknownColumn' => 'the road to hell',
+            ],
+        ]));
+        $config->setRequest($request);
+        $config->setSearchAllowedCols(['c.dummy']);
+        $config->setStrictColumns(true);
+
+        $response = $queryFilter->getData($config);
+        $response->getData();
+    }
+
+    /**
+     * @test
+     * @expectedException \Artprima\QueryFilterBundle\Exception\UnexpectedValueException
+     */
+    public function testGetDataInvalidSortColumn()
+    {
+        $queryFilter = new QueryFilter(Response::class);
+
+        $config = new BaseConfig();
+        $request = new Request(new HttpRequest([
+            'sortby' => 'c.invalidColumn',
+            'sortdir' => 'asc',
+        ]));
+        $config->setRequest($request);
+        $config->setSortCols(['c.id']);
+        $config->setStrictColumns(true);
+
+        $response = $queryFilter->getData($config);
+        $response->getData();
+    }
+
     public function testGetDataAdvancedBaseCase()
     {
         $queryFilter = new QueryFilter(Response::class);
