@@ -137,4 +137,15 @@ interface ConfigInterface
      * @return Request
      */
     public function getRequest(): Request;
+
+    /**
+     * @param bool $strict
+     * @return ConfigInterface
+     */
+    public function setStrictColumns(bool $strict): ConfigInterface;
+
+    /**
+     * @return bool
+     */
+    public function isStrictColumns(): bool;
 }
