@@ -10,8 +10,6 @@ use Doctrine\ORM\QueryBuilder;
  * Class NeighborRecords
  *
  * @author Denis Voytyuk <ask@artprima.cz>
- *
- * @package Artprima\QueryFilterBundle\Query
  */
 class NeighborRecords
 {

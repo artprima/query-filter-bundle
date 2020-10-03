@@ -7,9 +7,7 @@ use Artprima\QueryFilterBundle\Request\Request;
 /**
  * Class BaseConfig
  *
- * @author Denis Voytyuk <denis@voituk.ru>
- *
- * @package Artprima\QueryFilterBundle\QueryFilter\Config
+ * @author Denis Voytyuk <ask@artprima.cz>
  */
 class BaseConfig implements ConfigInterface
 {

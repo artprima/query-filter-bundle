@@ -84,7 +84,6 @@ namespace App\Repository;
 
 use App\Entity\Item;
 use Artprima\QueryFilterBundle\Query\ConditionManager;
-use Artprima\QueryFilterBundle\Query\ProxyQueryBuilder;
 use Artprima\QueryFilterBundle\QueryFilter\QueryFilterArgs;
 use Artprima\QueryFilterBundle\QueryFilter\QueryResult;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -112,7 +111,7 @@ class ItemRepository extends ServiceEntityRepository
             ->setFirstResult($args->getOffset())
             ->setMaxResults($args->getLimit());
 
-        $proxyQb = new ProxyQueryBuilder($qb, $this->pqbManager);
+        $proxyQb = $this->pqbManager->wrapQueryBuilder($qb);
         $qb = $proxyQb->getSortedAndFilteredQueryBuilder($args->getSearchBy(), $args->getSortBy());
         $query = $qb->getQuery();
         $paginator = new Paginator($query);
@@ -207,7 +206,6 @@ namespace App\Repository;
 
 use App\Entity\Item;
 use Artprima\QueryFilterBundle\Query\ConditionManager;
-use Artprima\QueryFilterBundle\Query\ProxyQueryBuilder;
 use Artprima\QueryFilterBundle\QueryFilter\QueryFilterArgs;
 use Artprima\QueryFilterBundle\QueryFilter\QueryResult;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -239,7 +237,7 @@ class ItemRepository extends ServiceEntityRepository
             ->setFirstResult($args->getOffset())
             ->setMaxResults($args->getLimit());
 
-        $proxyQb = new ProxyQueryBuilder($qb, $this->pqbManager);
+        $proxyQb = $this->pqbManager->wrapQueryBuilder($qb);
         $qb = $proxyQb->getSortedAndFilteredQueryBuilder($args->getSearchBy(), $args->getSortBy());
         $query = $qb->getQuery();
         $paginator = new Paginator($query);
@@ -262,15 +260,13 @@ class ItemConfig extends BaseConfig
 {
     public function __construct()
     {
-        $this->setSearchAllowedCols(array(
+        $this->setSearchAllowedCols([
             't.name',
-        ));
+        ]);
 
         $this->setSortCols(
-            array(
-                't.id',
-            ),
-            array('t.id' => 'desc') // default
+            ['t.id'],
+            ['t.id' => 'desc'] // default
         );
     }
 }

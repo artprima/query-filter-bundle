@@ -10,13 +10,34 @@
         <parameter key="query_filter_bundle.disabled_conditions" type="collection" />
     </parameters>
     <services>
+        <!--
+        `query_filter_bundle.param_converter.query_filter_config` service is to be used as a controller annotation (more in README.md):
+            /**
+             * @ParamConverter("config", class="App\QueryFilter\Config\ItemConfig",
+             *                           converter="query_filter_config_converter",
+             *                           options={"entity_class": "App\Entity\Item", "repository_method": "findByOrderBy"})
+             */
+        -->
         <service id="query_filter_bundle.param_converter.query_filter_config" class="%query_filter_bundle.param_converter.query_filter_config.class%">
             <tag name="request.param_converter" priority="3" converter="query_filter_config_converter" />
-            <argument type="service" id="Doctrine\Common\Persistence\ManagerRegistry" />
+            <argument type="service" id="doctrine" />
         </service>
+
+        <!--
+        `query_filter_bundle.query_filter` service is a dependency for `query_filter_bundle.event_listener.list_action_result`
+        -->
         <service id="query_filter_bundle.query_filter" class="%query_filter_bundle.query_filter.class%">
             <argument>%query_filter_bundle.event_listener.response.class%</argument>
         </service>
+
+        <!--
+        `query_filter_bundle.event_listener.list_action_result` service is meant to be used together with @QueryFilter annotation (more in README.md)
+        If @QueryFilter controller annotation is set, the controller should return an object implementing `Artprima\QueryFilterBundle\QueryFilter\Config\ConfigInterface`.
+        The result of `ConfigInterface::getData($config) will be set as a controller result.
+
+        NOTE: this is meant only as an intermediatory result and it should be cought by further listeners. For example, you can use
+        @View annotation from the FOSRestBundle: https://symfony.com/doc/current/bundles/FOSRestBundle/view_response_listener.html
+        -->
         <service id="query_filter_bundle.event_listener.list_action_result" class="%query_filter_bundle.event_listener.query_filter.class%">
             <tag name="kernel.event_listener" priority="2100" event="kernel.view" method="onKernelView" />
             <argument type="service" id="query_filter_bundle.query_filter" />

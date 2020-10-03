@@ -5,7 +5,7 @@ namespace Artprima\QueryFilterBundle\QueryFilter;
 /**
  * Class QueryResult
  *
- * @author Denis Voytyuk <denis@voituk.ru>
+ * @author Denis Voytyuk <ask@artprima.cz>
  */
 class QueryResult
 {

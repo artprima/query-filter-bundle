@@ -11,8 +11,6 @@ use Symfony\Component\DependencyInjection\Reference;
  * Class AddQueryBuilderConditionPass
  *
  * @author Denis Voytyuk <ask@artprima.cz>
- *
- * @package Artprima\QueryFilterBundle\DependencyInjection\Compiler
  */
 class AddQueryBuilderConditionPass implements CompilerPassInterface
 {

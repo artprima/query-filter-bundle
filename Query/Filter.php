@@ -6,8 +6,6 @@ namespace Artprima\QueryFilterBundle\Query;
  * Class Filter
  *
  * @author Denis Voytyuk <ask@artprima.cz>
- *
- * @package Artprima\QueryFilterBundle\Query
  */
 class Filter
 {

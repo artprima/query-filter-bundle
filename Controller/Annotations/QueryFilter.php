@@ -7,9 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 /**
  * Class QueryFilter
  *
- * @author Denis Voytyuk <denis@voituk.ru>
- *
- * @package Artprima\QueryFilterBundle\Controller\Annotations
+ * @author Denis Voytyuk <ask@artprima.cz>
  *
  * @Annotation
  */

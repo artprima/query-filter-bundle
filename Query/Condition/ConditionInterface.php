@@ -9,8 +9,6 @@ use Doctrine\ORM\QueryBuilder;
  * Interface ConditionInterface
  *
  * @author Denis Voytyuk <ask@artprima.cz>
- *
- * @package Artprima\QueryFilterBundle\Query\Condition
  */
 interface ConditionInterface
 {
