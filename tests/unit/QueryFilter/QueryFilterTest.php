@@ -145,7 +145,7 @@ class QueryFilterTest extends TestCase
 
     public function testGetDataInvalidSimpleFilterWithThrow()
     {
-        self::expectException(UnexpectedValueException::class);
+        $this->expectException(UnexpectedValueException::class);
         $queryFilter = new QueryFilter(Response::class);
 
         $config = new BaseConfig();
@@ -164,8 +164,8 @@ class QueryFilterTest extends TestCase
 
     public function testGetDataInvalidFullFilterWithThrow()
     {
-        self::expectException(UnexpectedValueException::class);
-        self::expectExceptionMessage('Invalid filter column requested t.unknownColumn');
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage('Invalid filter column requested t.unknownColumn');
         $queryFilter = new QueryFilter(Response::class);
 
         $config = new BaseConfig();
@@ -193,8 +193,8 @@ class QueryFilterTest extends TestCase
 
     public function testGetDataInvalidFullFilterFormatWithThrow()
     {
-        self::expectException(UnexpectedValueException::class);
-        self::expectExceptionMessage('Invalid filter column requested [1]');
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage('Invalid filter column requested [1]');
         $queryFilter = new QueryFilter(Response::class);
 
         $config = new BaseConfig();
@@ -263,7 +263,9 @@ class QueryFilterTest extends TestCase
                     'type' => 'eq',
                     'x' => 'shla sasha po shosse i sosala sushku'
                 ],
-                [ // will be ignored
+
+                // will be ignored
+                [
                     'field' => 't.unknownColumn',
                     'type' => 'eq',
                     'x' => 'the road to hell'
@@ -334,8 +336,8 @@ class QueryFilterTest extends TestCase
 
     public function testGetDataInvalidRepositoryCallback()
     {
-        self::expectException(MissingArgumentException::class);
-        self::expectExceptionMessage('Repository callback is not set');
+        $this->expectException(MissingArgumentException::class);
+        $this->expectExceptionMessage('Repository callback is not set');
         $queryFilter = new QueryFilter(Response::class);
 
         $config = new BaseConfig();
@@ -356,8 +358,8 @@ class QueryFilterTest extends TestCase
 
     public function testGetDataInvalidSortColumn()
     {
-        self::expectException(UnexpectedValueException::class);
-        self::expectExceptionMessage('Invalid sort column requested c.invalidColumn');
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage('Invalid sort column requested c.invalidColumn');
         $queryFilter = new QueryFilter(Response::class);
 
         $config = new BaseConfig();
@@ -374,8 +376,8 @@ class QueryFilterTest extends TestCase
 
     public function testGetDataInvalidSortColumnType()
     {
-        self::expectException(UnexpectedValueException::class);
-        self::expectExceptionMessage('Invalid sort type requested to_the_left');
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage('Invalid sort type requested to_the_left');
         $queryFilter = new QueryFilter(Response::class);
 
         $config = new BaseConfig();
