@@ -17,7 +17,7 @@ class LikeTest extends TestCase
 {
     public function testGetExpr()
     {
-        $qb = self::getMockBuilder(QueryBuilder::class)
+        $qb = $this->getMockBuilder(QueryBuilder::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -44,7 +44,7 @@ class LikeTest extends TestCase
 
     public function testGetExprExact()
     {
-        $qb = self::getMockBuilder(QueryBuilder::class)
+        $qb = $this->getMockBuilder(QueryBuilder::class)
             ->disableOriginalConstructor()
             ->getMock();
 

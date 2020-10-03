@@ -18,7 +18,7 @@ class ConditionManagerTest extends TestCase
 {
     public function testWrapQueryBuilder()
     {
-        $em = self::getMockBuilder(EntityManager::class)
+        $em = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -29,7 +29,7 @@ class ConditionManagerTest extends TestCase
 
     public function testAdd()
     {
-        $condition = self::getMockBuilder(ConditionInterface::class)
+        $condition = $this->getMockBuilder(ConditionInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -41,11 +41,11 @@ class ConditionManagerTest extends TestCase
     public function testArrayFuncitonality()
     {
         $conditions = [];
-        $conditions['dummy1'] = self::getMockBuilder(ConditionInterface::class)
+        $conditions['dummy1'] = $this->getMockBuilder(ConditionInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $conditions['dummy2'] = self::getMockBuilder(ConditionInterface::class)
+        $conditions['dummy2'] = $this->getMockBuilder(ConditionInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 

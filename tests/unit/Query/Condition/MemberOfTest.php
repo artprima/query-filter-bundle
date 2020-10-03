@@ -17,7 +17,7 @@ class MemberOfTest extends TestCase
 {
     public function testGetExpr()
     {
-        $qb = self::getMockBuilder(QueryBuilder::class)
+        $qb = $this->getMockBuilder(QueryBuilder::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -44,7 +44,7 @@ class MemberOfTest extends TestCase
 
     public function testGetExprMultipleValues()
     {
-        $qb = self::getMockBuilder(QueryBuilder::class)
+        $qb = $this->getMockBuilder(QueryBuilder::class)
             ->disableOriginalConstructor()
             ->getMock();
 

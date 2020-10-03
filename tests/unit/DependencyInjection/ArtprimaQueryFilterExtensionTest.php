@@ -23,7 +23,7 @@ class ArtprimaQueryFilterExtensionTest extends TestCase
 
         $extension->load([$config], $container);
 
-        self::assertInternalType('array', $container->getParameter('query_filter_bundle.disabled_conditions'));
+        self::assertIsArray($container->getParameter('query_filter_bundle.disabled_conditions'));
     }
 
     public function testAssertProxyQueryBuilderManagerService()

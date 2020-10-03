@@ -60,7 +60,7 @@ final class Request
         if (!is_string($this->sortDir)) {
             throw new InvalidArgumentException('Query sort direction must be a string');
         }
-        $this->simple = (bool)$request->query->get('simple', true);
+        $this->simple = (bool)$request->query->get('simple', '1');
     }
 
     /**

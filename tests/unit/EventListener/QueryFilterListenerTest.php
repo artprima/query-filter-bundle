@@ -15,13 +15,13 @@ class QueryFilterListenerTest extends TestCase
 {
     public function testOnKernelView()
     {
-        $response = self::getMockBuilder(ResponseInterface::class)
+        $response = $this->getMockBuilder(ResponseInterface::class)
             ->getMock();
 
-        $config = self::getMockBuilder(ConfigInterface::class)
+        $config = $this->getMockBuilder(ConfigInterface::class)
             ->getMock();
 
-        $queryFilter = self::getMockBuilder(QueryFilter::class)
+        $queryFilter = $this->getMockBuilder(QueryFilter::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -46,13 +46,13 @@ class QueryFilterListenerTest extends TestCase
      */
     public function onKernelView_should_do_nothing_on_queryfilter_attribute_not_set()
     {
-        $response = self::getMockBuilder(ResponseInterface::class)
+        $response = $this->getMockBuilder(ResponseInterface::class)
             ->getMock();
 
-        $config = self::getMockBuilder(ConfigInterface::class)
+        $config = $this->getMockBuilder(ConfigInterface::class)
             ->getMock();
 
-        $queryFilter = self::getMockBuilder(QueryFilter::class)
+        $queryFilter = $this->getMockBuilder(QueryFilter::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -75,12 +75,12 @@ class QueryFilterListenerTest extends TestCase
      */
     public function onKernelView_should_do_nothing_on_controller_result_not_instance_of_ConfigInterface()
     {
-        $response = self::getMockBuilder(ResponseInterface::class)
+        $response = $this->getMockBuilder(ResponseInterface::class)
             ->getMock();
 
         $config = 'idiocracy';
 
-        $queryFilter = self::getMockBuilder(QueryFilter::class)
+        $queryFilter = $this->getMockBuilder(QueryFilter::class)
             ->disableOriginalConstructor()
             ->getMock();
 

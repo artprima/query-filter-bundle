@@ -17,7 +17,7 @@ class LtTest extends TestCase
 {
     public function testGetExpr()
     {
-        $qb = self::getMockBuilder(QueryBuilder::class)
+        $qb = $this->getMockBuilder(QueryBuilder::class)
             ->disableOriginalConstructor()
             ->getMock();
 

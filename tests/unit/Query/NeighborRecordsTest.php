@@ -15,7 +15,7 @@ class NeighborRecordsTest extends TestCase
 {
     public function testGetQueryBuilderFilteredByNeighborRecord()
     {
-        $manager = self::getMockBuilder(EntityManager::class)
+        $manager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 

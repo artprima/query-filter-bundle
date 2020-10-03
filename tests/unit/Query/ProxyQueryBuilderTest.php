@@ -52,7 +52,7 @@ class ProxyQueryBuilderTest extends TestCase
      */
     public function testGetSortedAndFilteredQuery($filterBy, $sortBy, $expected)
     {
-        $em = self::getMockBuilder(EntityManager::class)
+        $em = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
