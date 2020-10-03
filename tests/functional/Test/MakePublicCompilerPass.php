@@ -18,7 +18,7 @@ class MakePublicCompilerPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         if (false === $container->hasDefinition($this->class)) {
-            throw new LogicException($this->class . ' must be registered');
+            throw new LogicException($this->class.' must be registered');
         }
 
         $conditionManagerDefinition = $container->getDefinition($this->class);
