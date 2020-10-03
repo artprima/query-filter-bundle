@@ -20,7 +20,7 @@ build:
                             file: 'coverage.clover'
                             format: 'clover'
 before_commands:
-    - "composer install --prefer-source"
+    - "composer install --no-dev --prefer-source"
 
 tools:
     external_code_coverage: false
