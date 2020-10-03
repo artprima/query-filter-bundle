@@ -57,8 +57,8 @@ final class Request
         }
         $this->sortBy = $request->query->get('sortby');
         $this->sortDir = $request->query->get('sortdir', 'asc');
-        if (!is_string($this->sortDir) || !in_array(strtolower($this->sortDir), ['asc', 'desc'], true)) {
-            throw new InvalidArgumentException('Query sort direction must be one of those: asc or desc');
+        if (!is_string($this->sortDir)) {
+            throw new InvalidArgumentException('Query sort direction must be a string');
         }
         $this->simple = (bool)$request->query->get('simple', true);
     }

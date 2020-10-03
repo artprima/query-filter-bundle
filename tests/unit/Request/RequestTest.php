@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Artprima\QueryFilterBundle\Request;
 
+use Artprima\QueryFilterBundle\Exception\InvalidArgumentException;
 use Artprima\QueryFilterBundle\Request\Request;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use PHPUnit\Framework\TestCase;
@@ -108,12 +109,10 @@ class RequestTest extends TestCase
         self::assertSame(true, $request->isSimple());
     }
 
-    /**
-     * @expectedException \Artprima\QueryFilterBundle\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Query filter must be an array
-     */
     public function testInvalidQueryException()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Query filter must be an array");
         $httpRequest = new HttpRequest(array(
             'page' => '42',
             'limit' => '4242',
@@ -126,8 +125,7 @@ class RequestTest extends TestCase
     }
 
     /**
-     * @expectedException \Artprima\QueryFilterBundle\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Query sort direction must be one of those: asc or desc
+     * @doesNotPerformAssertions should not throw exceptions
      */
     public function testInvalidSortDirException1()
     {
@@ -142,12 +140,10 @@ class RequestTest extends TestCase
         $request = new Request($httpRequest);
     }
 
-    /**
-     * @expectedException \Artprima\QueryFilterBundle\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Query sort direction must be one of those: asc or desc
-     */
     public function testInvalidSortDirException2()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Query sort direction must be a string');
         $httpRequest = new HttpRequest(array(
             'page' => '42',
             'limit' => '4242',
