@@ -100,7 +100,7 @@ class QueryFilterListenerTest extends TestCase
 
     private function getViewEvent($config, Request $request)
     {
-        $mockKernel = $this->getMockForAbstractClass('Symfony\Component\HttpKernel\Kernel', ['', '']);
+        $mockKernel = $this->getMockForAbstractClass('Symfony\Component\HttpKernel\Kernel', ['test', '']);
 
         return new ViewEvent($mockKernel, $request, HttpKernelInterface::MASTER_REQUEST, $config);
     }
@@ -110,4 +110,5 @@ class QueryFilterListenerTest extends TestCase
         return new Request([], [], [
             '_queryfilter' => $queryFilterAnnotation,
         ]);
-    }}
+    }
+}
