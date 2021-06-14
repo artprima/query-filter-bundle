@@ -1,0 +1,58 @@
+name: Symfony
+
+on:
+  push:
+    branches: [ master, develop ]
+  pull_request:
+    branches: [ master, develop ]
+
+jobs:
+  run:
+    runs-on: ${{ matrix.operating-system }}
+    services:
+      mysql:
+        image: mariadb:10.5.5
+        env:
+          MYSQL_ROOT_PASSWORD: '12345678'
+          MYSQL_USER: 'shortener'
+          MYSQL_PASSWORD: '12345678'
+          MYSQL_DATABASE: 'shortener_db'
+        ports:
+        - 32574:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    strategy:
+      matrix:
+        operating-system: [ubuntu-latest]
+        symfony-versions: ['4.4', '5.2', '5.3']
+        php-versions: ['7.3', '7.4', '8.0']
+    name: PHP ${{ matrix.php-versions }} / Symfony ${{ matrix.symfony-versions }} Test on ${{ matrix.operating-system }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-versions }}
+        extensions: mbstring, intl
+        ini-values: post_max_size=256M
+        coverage: xdebug        
+        tools: php-cs-fixer, phpunit
+    - name: Download Symfony Binary
+      run:  wget https://get.symfony.com/cli/installer -O - | bash
+    - name: Install Symfony
+      run: |
+        git config --global user.email "${{ github.actor }}"
+        git config --global user.name ""github-action-${{ github.actor }}@users.noreply.github.com""
+        /home/runner/.symfony/bin/symfony new symfony --version=${{ matrix.symfony-versions }}
+    - name: Configure Symfony to run integration tests
+      run: |
+        php .integration/patch.php
+        cd symfony
+        composer upgrade -n --no-progress
+        composer require phpunit -n --no-progress
+    - name: Run Integration tests
+      run: |
+        cp -rf .integration/symfony/* symfony/
+        cd symfony
+        php bin/phpunit

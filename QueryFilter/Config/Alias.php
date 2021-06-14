@@ -6,8 +6,6 @@ namespace Artprima\QueryFilterBundle\QueryFilter\Config;
  * Class Alias
  *
  * @author Denis Voytyuk <ask@artprima.cz>
- *
- * @package Artprima\QueryFilterBundle\QueryFilter\Config
  */
 class Alias
 {

@@ -9,8 +9,6 @@ use Doctrine\ORM\QueryBuilder;
  * Class IsNotNull
  *
  * @author Denis Voytyuk <ask@artprima.cz>
- *
- * @package Artprima\QueryFilterBundle\Query\Condition
  */
 class IsNotNull implements ConditionInterface
 {

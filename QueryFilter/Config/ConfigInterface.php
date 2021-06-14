@@ -8,8 +8,6 @@ use Artprima\QueryFilterBundle\Request\Request;
  * Interface ConfigInterface
  *
  * @author Denis Voytyuk <ask@artprima.cz>
- *
- * @package AppBundle\QueryFilter
  */
 interface ConfigInterface
 {

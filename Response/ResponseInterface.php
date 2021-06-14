@@ -5,9 +5,7 @@ namespace Artprima\QueryFilterBundle\Response;
 /**
  * Interface ResponseInterface
  *
- * @author Denis Voytyuk <denis@voituk.ru>
- *
- * @package Artprima\QueryFilterBundle\Response
+ * @author Denis Voytyuk <ask@artprima.cz>
  */
 interface ResponseInterface
 {

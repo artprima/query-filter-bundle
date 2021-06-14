@@ -9,8 +9,6 @@ use Doctrine\ORM\QueryBuilder;
  * Class ConditionManager
  *
  * @author Denis Voytyuk <ask@artprima.cz>
- *
- * @package Artprima\QueryFilterBundle\Query
  */
 class ConditionManager implements \ArrayAccess, \Iterator
 {

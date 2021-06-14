@@ -86,15 +86,15 @@ class QueryFilter
             return array($sort['field'] => $sort['type']);
         }
 
-        if ($config->isStrictColumns()) {
-            if (!$isValidSortColumn) {
-                throw new UnexpectedValueException(sprintf('Invalid sort column requested %s', $sort['field']));
-            }
-            if (!$isValidSortType) {
-                throw new UnexpectedValueException(sprintf('Invalid sort type requested %s', $sort['type']));
-            }
+        if ($config->isStrictColumns() && !$isValidSortColumn) {
+            throw new UnexpectedValueException(sprintf('Invalid sort column requested %s', $sort['field']));
         }
 
+        if ($config->isStrictColumns() && !$isValidSortType) {
+            throw new UnexpectedValueException(sprintf('Invalid sort type requested %s', $sort['type']));
+        }
+
+        // we should never reach this point, but let's keep it
         return $config->getSortColsDefault();
     }
 
@@ -169,13 +169,12 @@ class QueryFilter
         }
 
         foreach ($search as $key => $data) {
-            if (is_array($data) && isset($data['field']) && in_array($data['field'], $allowedCols, true)) {
-                $searchBy[$key] = $this->getFilter($data['field'], $data);
-                continue;
+            $valid = is_array($data) && isset($data['field']) && in_array($data['field'], $allowedCols, true);
+            if (!$valid && $throw) {
+                throw new UnexpectedValueException(sprintf('Invalid filter column requested %s', $data['field'] ?? '['.$key.']'));
             }
-
-            if ($throw) {
-                throw new UnexpectedValueException(sprintf('Invalid filter column requested %s', $key));
+            if ($valid) {
+                $searchBy[$key] = $this->getFilter($data['field'], $data);
             }
         }
 
@@ -269,19 +268,7 @@ class QueryFilter
      */
     private function getFilterData(ConfigInterface $config, QueryFilterArgs $args): QueryResult
     {
-        // Query database to obtain corresponding entities
-        $repositoryCallback = $config->getRepositoryCallback();
-
-        // $repositoryCallback can be an array, but since PHP 7.0 it's possible to use it as a function directly
-        // i.e. without using call_user_func[_array]().
-        // For the reference: https://trowski.com/2015/06/20/php-callable-paradox/
-        if (!\is_callable($repositoryCallback)) {
-            throw new InvalidArgumentException('Repository callback is not callable');
-        }
-
-        $filterData = $repositoryCallback($args);
-
-        return $filterData;
+        return $config->getRepositoryCallback()($args);
     }
 
     /**

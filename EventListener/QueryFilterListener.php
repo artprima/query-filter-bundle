@@ -9,9 +9,7 @@ use Symfony\Component\HttpKernel\Event\ViewEvent;
 /**
  * Class QueryFilterListener
  *
- * @author Denis Voytyuk <denis@voituk.ru>
- *
- * @package AppBundle\EventListener
+ * @author Denis Voytyuk <ask@artprima.cz>
  */
 class QueryFilterListener
 {

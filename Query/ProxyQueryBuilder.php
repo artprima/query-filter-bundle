@@ -158,12 +158,10 @@ class ProxyQueryBuilder
      */
     public function getSortedAndFilteredQueryBuilder(array $filterBy, array $orderBy): QueryBuilder
     {
-        $qb = $this->queryBuilder;
-
         foreach ($orderBy as $field => $dir) {
-            $qb->addOrderBy($field, strtoupper($dir));
+            $this->queryBuilder->addOrderBy($field, strtoupper($dir));
         }
 
-        return $this->addQueryFilters($qb, $filterBy);
+        return $this->addQueryFilters($this->queryBuilder, $filterBy);
     }
 }

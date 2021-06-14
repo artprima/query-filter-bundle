@@ -2,14 +2,13 @@
 
 namespace Artprima\QueryFilterBundle\QueryFilter\Config;
 
+use Artprima\QueryFilterBundle\Exception\MissingArgumentException;
 use Artprima\QueryFilterBundle\Request\Request;
 
 /**
  * Class BaseConfig
  *
- * @author Denis Voytyuk <denis@voituk.ru>
- *
- * @package Artprima\QueryFilterBundle\QueryFilter\Config
+ * @author Denis Voytyuk <ask@artprima.cz>
  */
 class BaseConfig implements ConfigInterface
 {
@@ -176,6 +175,10 @@ class BaseConfig implements ConfigInterface
      */
     public function getRepositoryCallback(): callable
     {
+        if ($this->repositoryCallback === null) {
+            throw new MissingArgumentException('Repository callback is not set');
+        }
+
         return $this->repositoryCallback;
     }
 
