@@ -6,7 +6,6 @@ namespace Artprima\QueryFilterBundle\Query;
 
 use Artprima\QueryFilterBundle\Exception\InvalidArgumentException;
 use Artprima\QueryFilterBundle\Query\Condition\ConditionInterface;
-use Doctrine\ORM\Query as DoctrineQuery;
 use Doctrine\ORM\QueryBuilder;
 use Stringable;
 
