@@ -9,25 +9,19 @@ namespace Artprima\QueryFilterBundle\QueryFilter\Config;
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
-class Alias
+final class Alias
 {
     /**
-     * @var string alias name, eg.: fullname
+     * Alias constructor.
+     *
+     * @param string|null $name alias name, eg.: fullname
+     * @param string|null $expr expression, eg.: concat(concat(concat(concat(p.firstname, ' '), p.middlename), ' '), p.lastname)
      */
-    private $name;
-
-    /**
-     * @var string expression, eg.: concat(concat(concat(concat(p.firstname, ' '), p.middlename), ' '), p.lastname)
-     */
-    private $expr;
-
-    public function __construct(string $name = null, string $expr = null)
+    public function __construct(private ?string $name = null, private ?string $expr = null)
     {
-        $this->name = $name;
-        $this->expr = $expr;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -39,7 +33,7 @@ class Alias
         return $this;
     }
 
-    public function getExpr(): string
+    public function getExpr(): ?string
     {
         return $this->expr;
     }

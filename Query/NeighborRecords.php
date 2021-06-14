@@ -12,28 +12,10 @@ use Doctrine\ORM\QueryBuilder;
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
-class NeighborRecords
+final class NeighborRecords
 {
-    /**
-     * @var string
-     */
-    private $primaryKeyColumn;
-
-    /**
-     * @var string
-     */
-    private $rootEntity;
-
-    /**
-     * @var EntityManager
-     */
-    private $entityManager;
-
-    public function __construct(string $from, EntityManager $entityManager, string $primaryKeyColumn = 'c.id')
+    public function __construct(private string $rootEntity, private EntityManager $entityManager, private string $primaryKeyColumn = 'c.id')
     {
-        $this->rootEntity = $from;
-        $this->entityManager = $entityManager;
-        $this->primaryKeyColumn = $primaryKeyColumn;
     }
 
     /**

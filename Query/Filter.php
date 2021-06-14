@@ -11,30 +11,13 @@ namespace Artprima\QueryFilterBundle\Query;
  */
 class Filter
 {
-    /**
-     * @var string
-     */
-    private $field;
-
-    /**
-     * @var string
-     */
-    private $type;
-
-    /**
-     * @var string
-     */
-    private $connector = 'and';
-
-    /**
-     * @var bool
-     */
-    private $having = false;
-
-    private $x;
-    private $y;
-
-    private $extra;
+    private string $field;
+    private string $type;
+    private string $connector = 'and';
+    private bool $having = false;
+    private mixed $x;
+    private mixed $y;
+    private mixed $extra;
 
     public function getField(): string
     {
@@ -84,54 +67,36 @@ class Filter
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getX()
+    public function getX(): mixed
     {
         return $this->x;
     }
 
-    /**
-     * @param mixed $x
-     */
-    public function setX($x): Filter
+    public function setX(mixed $x): Filter
     {
         $this->x = $x;
 
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getY()
+    public function getY(): mixed
     {
         return $this->y;
     }
 
-    /**
-     * @param mixed $y
-     */
-    public function setY($y): Filter
+    public function setY(mixed $y): Filter
     {
         $this->y = $y;
 
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getExtra()
+    public function getExtra(): mixed
     {
         return $this->extra;
     }
 
-    /**
-     * @param mixed $extra
-     */
-    public function setExtra($extra): Filter
+    public function setExtra(mixed $extra): Filter
     {
         $this->extra = $extra;
 

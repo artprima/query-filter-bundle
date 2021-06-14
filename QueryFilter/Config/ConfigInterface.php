@@ -16,7 +16,7 @@ interface ConfigInterface
     /**
      * @return $this
      */
-    public function setSearchAllowedCols(array $args): ConfigInterface;
+    public function setSearchAllowedCols(array $args): self;
 
     /**
      * Get allowed columns that are used in search.
@@ -35,7 +35,7 @@ interface ConfigInterface
      *
      * @return $this
      */
-    public function setSearchByAliases(array $aliases): ConfigInterface;
+    public function setSearchByAliases(array $aliases): self;
 
     /**
      * Set Shortcut Expanders (for more info: {@link ConfigInterface::setSearchByAliases()}).
@@ -49,7 +49,7 @@ interface ConfigInterface
      *
      * @return $this
      */
-    public function setSearchByExtra(array $extra): ConfigInterface;
+    public function setSearchByExtra(array $extra): self;
 
     /**
      * Get extra data for search.
@@ -61,7 +61,7 @@ interface ConfigInterface
      *
      * @return $this
      */
-    public function setSortCols(array $cols, array $default = []): ConfigInterface;
+    public function setSortCols(array $cols, array $default = []): self;
 
     /**
      * Get allowed sort columns.
@@ -78,7 +78,7 @@ interface ConfigInterface
      *
      * @return $this
      */
-    public function setRepositoryCallback(callable $callback): ConfigInterface;
+    public function setRepositoryCallback(callable $callback): self;
 
     /**
      * Get repository callback [function($searchBy, $sortData, $limit, $offset)].
@@ -90,7 +90,7 @@ interface ConfigInterface
      *
      * @return $this
      */
-    public function setAllowedLimits(array $allowedLimits): ConfigInterface;
+    public function setAllowedLimits(array $allowedLimits): self;
 
     /**
      * Get allowed pagination limits (eg. [5, 10, 25, 50, 100]).
@@ -102,21 +102,21 @@ interface ConfigInterface
      *
      * @return $this
      */
-    public function setDefaultLimit(int $limit): ConfigInterface;
+    public function setDefaultLimit(int $limit): self;
 
     /**
      * Get default limit in case of limit not specified or limit is not within the allowed limits.
      */
     public function getDefaultLimit(): int;
 
-    public function setRequest(Request $request): ConfigInterface;
+    public function setRequest(Request $request): self;
 
     /**
      * Get request data to build the filters.
      */
     public function getRequest(): Request;
 
-    public function setStrictColumns(bool $strict): ConfigInterface;
+    public function setStrictColumns(bool $strict): self;
 
     public function isStrictColumns(): bool;
 }

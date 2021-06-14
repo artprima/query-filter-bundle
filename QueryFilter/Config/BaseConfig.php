@@ -16,34 +16,15 @@ class BaseConfig implements ConfigInterface
 {
     private const DEFAULT_LIMIT = 10;
 
-    /**
-     * @var Request
-     */
-    protected $request;
-
-    /**
-     * @var int
-     */
-    protected $defaultLimit;
-
-    /**
-     * @var array
-     */
-    protected $allowedLimits;
-
-    /**
-     * @var array
-     */
-    protected $searchBy = [
+    protected Request $request;
+    protected int $defaultLimit = self::DEFAULT_LIMIT;
+    protected array $allowedLimits = [];
+    protected array $searchBy = [
         'args' => [],
         'aliases' => [],
         'extra' => [],
     ];
-
-    /**
-     * @var array
-     */
-    protected $sort = [
+    protected array $sort = [
         'cols' => [],
         'default' => [],
     ];
@@ -58,20 +39,13 @@ class BaseConfig implements ConfigInterface
      */
     protected $totalRowsCallback;
 
-    /**
-     * @var bool
-     */
-    protected $simple = true;
-
-    /**
-     * @var bool
-     */
-    protected $strictColumns = false;
+    protected bool $simple = true;
+    protected bool $strictColumns = false;
 
     /**
      * {@inheritdoc}
      */
-    public function setSearchAllowedCols(array $args): ConfigInterface
+    public function setSearchAllowedCols(array $args): self
     {
         $this->searchBy['args'] = $args;
 
@@ -89,7 +63,7 @@ class BaseConfig implements ConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function setSearchByAliases(array $aliases): ConfigInterface
+    public function setSearchByAliases(array $aliases): self
     {
         /** @var Alias $alias */
         foreach ($aliases as $alias) {
@@ -102,7 +76,7 @@ class BaseConfig implements ConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function addSearchByAliases(Alias $alias): ConfigInterface
+    public function addSearchByAliases(Alias $alias): self
     {
         $this->searchBy['aliases'][$alias->getName()] = $alias;
 
@@ -120,7 +94,7 @@ class BaseConfig implements ConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function setSearchByExtra(array $extra): ConfigInterface
+    public function setSearchByExtra(array $extra): self
     {
         $this->searchBy['extra'] = $extra;
 
@@ -138,7 +112,7 @@ class BaseConfig implements ConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function setSortCols(array $cols, array $default = []): ConfigInterface
+    public function setSortCols(array $cols, array $default = []): self
     {
         $this->sort['cols'] = $cols;
         $this->sort['default'] = $default;
@@ -165,7 +139,7 @@ class BaseConfig implements ConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function setRepositoryCallback(callable $callback): ConfigInterface
+    public function setRepositoryCallback(callable $callback): self
     {
         $this->repositoryCallback = $callback;
 
@@ -184,40 +158,28 @@ class BaseConfig implements ConfigInterface
         return $this->repositoryCallback;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAllowedLimits(): array
     {
-        return $this->allowedLimits ?? [];
+        return $this->allowedLimits;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setAllowedLimits(array $allowedLimits): ConfigInterface
+    public function setAllowedLimits(array $allowedLimits): self
     {
         $this->allowedLimits = $allowedLimits;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDefaultLimit(int $limit): ConfigInterface
+    public function setDefaultLimit(int $limit): self
     {
         $this->defaultLimit = $limit;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDefaultLimit(): int
     {
-        return $this->defaultLimit ?? self::DEFAULT_LIMIT;
+        return $this->defaultLimit;
     }
 
     public function getRequest(): Request
@@ -225,29 +187,20 @@ class BaseConfig implements ConfigInterface
         return $this->request;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setRequest(Request $request): ConfigInterface
+    public function setRequest(Request $request): self
     {
         $this->request = $request;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setStrictColumns(bool $strict): ConfigInterface
+    public function setStrictColumns(bool $strict): self
     {
         $this->strictColumns = $strict;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isStrictColumns(): bool
     {
         return $this->strictColumns;

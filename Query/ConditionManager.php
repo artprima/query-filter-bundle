@@ -4,20 +4,22 @@ declare(strict_types=1);
 
 namespace Artprima\QueryFilterBundle\Query;
 
+use ArrayAccess;
 use Artprima\QueryFilterBundle\Query\Condition\ConditionInterface;
 use Doctrine\ORM\QueryBuilder;
+use Iterator;
 
 /**
  * Class ConditionManager.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
-class ConditionManager implements \ArrayAccess, \Iterator
+class ConditionManager implements ArrayAccess, Iterator
 {
     /**
      * @var ConditionInterface[]
      */
-    private $conditions = [];
+    private array $conditions = [];
 
     public function wrapQueryBuilder(QueryBuilder $qb): ProxyQueryBuilder
     {

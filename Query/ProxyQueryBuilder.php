@@ -8,6 +8,7 @@ use Artprima\QueryFilterBundle\Exception\InvalidArgumentException;
 use Artprima\QueryFilterBundle\Query\Condition\ConditionInterface;
 use Doctrine\ORM\Query as DoctrineQuery;
 use Doctrine\ORM\QueryBuilder;
+use Stringable;
 
 /**
  * Class ProxyQueryBuilder.
@@ -16,28 +17,14 @@ use Doctrine\ORM\QueryBuilder;
  */
 class ProxyQueryBuilder
 {
-    /**
-     * @var QueryBuilder
-     */
-    private $queryBuilder;
-
-    /**
-     * @var ConditionManager
-     */
-    private $conditionManager;
-
-    public function __construct(QueryBuilder $queryBuilder, ConditionManager $conditionManager)
+    public function __construct(private QueryBuilder $queryBuilder, private ConditionManager $conditionManager)
     {
-        $this->queryBuilder = $queryBuilder;
-        $this->conditionManager = $conditionManager;
     }
 
     /**
      * @param int $index parameter id
-     *
-     * @return DoctrineQuery\Expr\Comparison|DoctrineQuery\Expr\Func|string
      */
-    private function getConditionExpr(int $index, Filter $filter)
+    private function getConditionExpr(int $index, Filter $filter): string|Stringable
     {
         if (!$this->conditionManager->offsetExists($filter->getType())) {
             throw new InvalidArgumentException(sprintf('Condition "%s" is not registered', $filter->getType()));
@@ -56,15 +43,9 @@ class ProxyQueryBuilder
     /**
      * Get connector expression based on `and`, `or` or `null`.
      *
-     * @param $prev
-     * @param $connector
-     * @param $condition
-     *
-     * @return DoctrineQuery\Expr\Andx|DoctrineQuery\Expr\Orx
-     *
      * @throws InvalidArgumentException
      */
-    private function getConnectorExpr($prev, $connector, $condition)
+    private function getConnectorExpr($prev, $connector, $condition): string|Stringable
     {
         $qb = $this->queryBuilder;
 
