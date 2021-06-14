@@ -4,37 +4,19 @@ declare(strict_types=1);
 
 namespace Artprima\QueryFilterBundle\QueryFilter;
 
-class QueryFilterArgs
+final class QueryFilterArgs
 {
-    /**
-     * @var array
-     */
-    private $searchBy;
-
-    /**
-     * @var array
-     */
-    private $sortBy;
-
-    /**
-     * @var int
-     */
-    private $offset;
-
-    /**
-     * @var int
-     */
-    private $limit;
+    private array $searchBy;
+    private array $sortBy;
+    private int $offset;
+    private int $limit;
 
     public function getSearchBy(): array
     {
         return $this->searchBy;
     }
 
-    /**
-     * @return $this
-     */
-    public function setSearchBy(array $searchBy): QueryFilterArgs
+    public function setSearchBy(array $searchBy): self
     {
         $this->searchBy = $searchBy;
 
@@ -46,10 +28,7 @@ class QueryFilterArgs
         return $this->sortBy;
     }
 
-    /**
-     * @return $this
-     */
-    public function setSortBy(array $sortBy): QueryFilterArgs
+    public function setSortBy(array $sortBy): self
     {
         $this->sortBy = $sortBy;
 
@@ -61,10 +40,7 @@ class QueryFilterArgs
         return $this->offset;
     }
 
-    /**
-     * @return $this
-     */
-    public function setOffset(int $offset): QueryFilterArgs
+    public function setOffset(int $offset): self
     {
         $this->offset = $offset;
 
@@ -76,10 +52,7 @@ class QueryFilterArgs
         return $this->limit;
     }
 
-    /**
-     * @return $this
-     */
-    public function setLimit(int $limit): QueryFilterArgs
+    public function setLimit(int $limit): self
     {
         $this->limit = $limit;
 

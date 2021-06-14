@@ -10,6 +10,8 @@ use Artprima\QueryFilterBundle\Query\Filter;
 use Artprima\QueryFilterBundle\QueryFilter\Config\Alias;
 use Artprima\QueryFilterBundle\QueryFilter\Config\ConfigInterface;
 use Artprima\QueryFilterBundle\Response\ResponseInterface;
+use ReflectionClass;
+use ReflectionException;
 
 /**
  * Class QueryFilter.
@@ -19,19 +21,14 @@ use Artprima\QueryFilterBundle\Response\ResponseInterface;
 class QueryFilter
 {
     /**
-     * @var string
-     */
-    private $responseClassName;
-
-    /**
      * QueryFilter constructor.
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      * @throws InvalidArgumentException
      */
-    public function __construct(string $responseClassName)
+    public function __construct(private string $responseClassName)
     {
-        $refClass = new \ReflectionClass($responseClassName);
+        $refClass = new ReflectionClass($responseClassName);
         if (!$refClass->implementsInterface(ResponseInterface::class)) {
             throw new InvalidArgumentException(sprintf('Response class "%s" must implement "%s"', $responseClassName, ResponseInterface::class));
         }
@@ -40,8 +37,6 @@ class QueryFilter
         if (null !== $constructor && $constructor->getNumberOfRequiredParameters() > 0) {
             throw new InvalidArgumentException(sprintf('Response class "%s" must have a constructor without required parameters', $responseClassName));
         }
-
-        $this->responseClassName = $responseClassName;
     }
 
     /**

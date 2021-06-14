@@ -9,22 +9,10 @@ namespace Artprima\QueryFilterBundle\QueryFilter;
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
-class QueryResult
+final class QueryResult
 {
-    /**
-     * @var array
-     */
-    private $result;
-
-    /**
-     * @var int
-     */
-    private $totalRows;
-
-    public function __construct(array $result, int $totalRows)
+    public function __construct(private array $result, private int $totalRows)
     {
-        $this->result = $result;
-        $this->totalRows = $totalRows;
     }
 
     public function getResult(): array

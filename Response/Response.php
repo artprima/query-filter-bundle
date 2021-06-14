@@ -9,25 +9,17 @@ namespace Artprima\QueryFilterBundle\Response;
  *
  * @author Denis Voytyuk <denis.voytyuk@feedo.cz>
  */
-class Response implements ResponseInterface
+final class Response implements ResponseInterface
 {
     /**
-     * @var mixed filtered data
+     * @param mixed $data filtered data
+     * @param array $meta meta data (e.g. pagination info)
      */
-    private $data;
-
-    /**
-     * @var array meta data (e.g. pagination info)
-     */
-    private $meta;
-
-    public function __construct($data = null, array $meta = [])
+    public function __construct(private mixed $data = null, private array $meta = [])
     {
-        $this->data = $data;
-        $this->meta = $meta;
     }
 
-    public function getData()
+    public function getData(): mixed
     {
         return $this->data;
     }

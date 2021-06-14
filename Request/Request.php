@@ -14,35 +14,12 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
  */
 final class Request
 {
-    /**
-     * @var int
-     */
-    private $pageNum;
-
-    /**
-     * @var string
-     */
-    private $sortBy;
-
-    /**
-     * @var string
-     */
-    private $sortDir;
-
-    /**
-     * @var array
-     */
-    private $query;
-
-    /**
-     * @var int
-     */
-    private $limit;
-
-    /**
-     * @var bool
-     */
-    private $simple;
+    private int $pageNum;
+    private ?string $sortBy;
+    private ?string $sortDir;
+    private ?array $query;
+    private int $limit;
+    private bool $simple;
 
     /**
      * Request constructor.
@@ -53,15 +30,25 @@ final class Request
     {
         $this->pageNum = (int) $request->query->get('page', 1);
         $this->limit = (int) $request->query->get('limit', -1);
-        $this->query = $request->query->get('filter');
-        if (null !== $this->query && !is_array($this->query)) {
+
+        $query = $request->query->get('filter');
+        if (null !== $query && !is_array($query)) {
             throw new InvalidArgumentException('Query filter must be an array');
         }
-        $this->sortBy = $request->query->get('sortby');
-        $this->sortDir = $request->query->get('sortdir', 'asc');
-        if (!is_string($this->sortDir)) {
-            throw new InvalidArgumentException('Query sort direction must be a string');
+        $this->query = $query;
+
+        $sortBy = (string) $request->query->get('sortby');
+        if (null !== $sortBy && !is_string($sortBy)) {
+            throw new InvalidArgumentException('Sort by must be string or null');
         }
+        $this->sortBy = $sortBy;
+
+        $sortDir = $request->query->get('sortdir', 'asc');
+        if (null !== $sortDir && !is_string($sortDir)) {
+            throw new InvalidArgumentException('Query sort direction must be string or null');
+        }
+        $this->sortDir = $sortDir;
+
         $this->simple = (bool) $request->query->get('simple', '1');
     }
 

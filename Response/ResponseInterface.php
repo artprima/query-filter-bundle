@@ -11,7 +11,7 @@ namespace Artprima\QueryFilterBundle\Response;
  */
 interface ResponseInterface
 {
-    public function getData();
+    public function getData(): mixed;
 
     public function getMeta(): array;
 
