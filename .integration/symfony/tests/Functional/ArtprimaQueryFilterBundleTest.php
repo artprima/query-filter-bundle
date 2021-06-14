@@ -4,7 +4,7 @@ namespace App\Tests\Functional;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class ArtprimaPrometheusBundleTest extends WebTestCase
+class ArtprimaQueryFilterBundleTest extends WebTestCase
 {
     public function testSearchProductsActionSuccess()
     {
