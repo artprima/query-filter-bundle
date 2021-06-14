@@ -9,7 +9,7 @@ namespace Artprima\QueryFilterBundle\Response;
  *
  * @author Denis Voytyuk <denis.voytyuk@feedo.cz>
  */
-final class Response implements ResponseInterface
+class Response implements ResponseInterface
 {
     /**
      * @param mixed $data filtered data
