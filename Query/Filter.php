@@ -15,9 +15,9 @@ class Filter
     private string $type;
     private string $connector = 'and';
     private bool $having = false;
-    private mixed $x;
-    private mixed $y;
-    private mixed $extra;
+    private mixed $x = null;
+    private mixed $y = null;
+    private mixed $extra = null;
 
     public function getField(): string
     {
