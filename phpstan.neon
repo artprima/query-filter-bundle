@@ -1,0 +1,16 @@
+parameters:
+  checkMissingIterableValueType: false
+  checkGenericClassInNonGenericObjectType: false
+  reportUnmatchedIgnoredErrors: false
+  ignoreErrors:
+    - '#Service "Doctrine\\ORM\\EntityManagerInterface" is private\.#'
+    - '#has no return typehint specified\.#'
+    - '#has no typehint specified\.#'
+    - '#has parameter .+ with no typehint specified\.#'
+  bootstrapFiles:
+    - bin/.phpunit/phpunit/vendor/autoload.php
+  level: max
+  paths:
+    - src
+  symfony:
+    container_xml_path: var/cache/dev/App_KernelDevDebugContainer.xml

@@ -1,15 +1,16 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Unit\Artprima\QueryFilterBundle\Query\Condition;
 
 use Artprima\QueryFilterBundle\Query\Condition\NotBetween;
 use Artprima\QueryFilterBundle\Query\Filter;
-use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class NotBetweenTest
+ * Class NotBetweenTest.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
@@ -39,6 +40,6 @@ class NotBetweenTest extends TestCase
             ->setY('10')
         );
 
-        self::assertSame('t.dummy NOT BETWEEN :x0 AND :y0', (string)$expr);
+        self::assertSame('t.dummy NOT BETWEEN :x0 AND :y0', (string) $expr);
     }
 }

@@ -1,9 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Artprima\QueryFilterBundle\QueryFilter\Config;
 
 /**
- * Class Alias
+ * Class Alias.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
@@ -25,18 +27,11 @@ class Alias
         $this->expr = $expr;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     * @return Alias
-     */
     public function setName(string $name): Alias
     {
         $this->name = $name;
@@ -44,18 +39,11 @@ class Alias
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getExpr(): string
     {
         return $this->expr;
     }
 
-    /**
-     * @param string $expr
-     * @return Alias
-     */
     public function setExpr(string $expr): Alias
     {
         $this->expr = $expr;

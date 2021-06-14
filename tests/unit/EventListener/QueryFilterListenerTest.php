@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Unit\Artprima\QueryFilterBundle\EventListener;
 
@@ -44,7 +46,7 @@ class QueryFilterListenerTest extends TestCase
     /**
      * @test
      */
-    public function onKernelView_should_do_nothing_on_queryfilter_attribute_not_set()
+    public function onKernelViewShouldDoNothingOnQueryfilterAttributeNotSet()
     {
         $response = $this->getMockBuilder(ResponseInterface::class)
             ->getMock();
@@ -73,7 +75,7 @@ class QueryFilterListenerTest extends TestCase
     /**
      * @test
      */
-    public function onKernelView_should_do_nothing_on_controller_result_not_instance_of_ConfigInterface()
+    public function onKernelViewShouldDoNothingOnControllerResultNotInstanceOfConfigInterface()
     {
         $response = $this->getMockBuilder(ResponseInterface::class)
             ->getMock();

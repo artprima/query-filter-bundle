@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Unit\Artprima\QueryFilterBundle\DependencyInjection;
 
@@ -8,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * Class ArtprimaQueryFilterExtensionTest
+ * Class ArtprimaQueryFilterExtensionTest.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */

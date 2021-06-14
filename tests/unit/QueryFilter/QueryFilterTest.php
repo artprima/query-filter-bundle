@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Unit\Artprima\QueryFilterBundle\QueryFilter;
 
@@ -14,9 +16,9 @@ use Artprima\QueryFilterBundle\QueryFilter\QueryResult;
 use Artprima\QueryFilterBundle\Request\Request;
 use Artprima\QueryFilterBundle\Response\Response;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Tests\Unit\Artprima\QueryFilterBundle\Fixtures\Response\ResponseConstructorWithRequiredArguments;
 use Tests\Unit\Artprima\QueryFilterBundle\Fixtures\Response\ResponseNotImplementingResponseInterface;
-use Symfony\Component\HttpFoundation\Request as HttpRequest;
 
 class QueryFilterTest extends TestCase
 {
@@ -24,7 +26,7 @@ class QueryFilterTest extends TestCase
      * @test
      * @doesNotPerformAssertions
      */
-    public function constructor_should_throw_no_exceptions_with_proper_argument()
+    public function constructorShouldThrowNoExceptionsWithProperArgument()
     {
         new QueryFilter(Response::class);
     }
@@ -32,7 +34,7 @@ class QueryFilterTest extends TestCase
     /**
      * @test
      */
-    public function constructor_should_throw_exception_for_response_not_implementing_ResponseInterface()
+    public function constructorShouldThrowExceptionForResponseNotImplementingResponseInterface()
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
@@ -44,7 +46,7 @@ class QueryFilterTest extends TestCase
     /**
      * @test
      */
-    public function constructor_should_throw_exception_for_response_constructor_having_required_arguments()
+    public function constructorShouldThrowExceptionForResponseConstructorHavingRequiredArguments()
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
@@ -60,7 +62,7 @@ class QueryFilterTest extends TestCase
         $config = new BaseConfig();
         $request = new Request(new HttpRequest([
             'limit' => 100,
-            'page'=> 3,
+            'page' => 3,
             'filter' => [
                 'c.dummy' => 'the road to hell',
             ],
@@ -73,7 +75,7 @@ class QueryFilterTest extends TestCase
         $config->setAllowedLimits([10, 15, 100]);
         $config->setDefaultLimit(10);
 
-        $config->setRepositoryCallback(function(QueryFilterArgs $args) {
+        $config->setRepositoryCallback(function (QueryFilterArgs $args) {
             self::assertSame(100, $args->getLimit());
             self::assertSame(200, $args->getOffset());
             self::assertEquals([
@@ -87,14 +89,14 @@ class QueryFilterTest extends TestCase
             ], $args->getSortBy());
 
             return new QueryResult([
-                ["dummy"],
-                ["wammy"],
+                ['dummy'],
+                ['wammy'],
             ], 1000);
         });
         $response = $queryFilter->getData($config);
         self::assertEquals([
-            ["dummy"],
-            ["wammy"],
+            ['dummy'],
+            ['wammy'],
         ], $response->getData());
         self::assertSame(1000, $response->getMeta()['total_records']);
     }
@@ -106,7 +108,7 @@ class QueryFilterTest extends TestCase
         $config = new BaseConfig();
         $request = new Request(new HttpRequest([
             'limit' => 100,
-            'page'=> 3,
+            'page' => 3,
             'filter' => [
                 'c.dummy' => 'the road to hell',
             ],
@@ -117,7 +119,7 @@ class QueryFilterTest extends TestCase
         $config->setAllowedLimits([10, 15, 100]);
         $config->setDefaultLimit(10);
 
-        $config->setRepositoryCallback(function(QueryFilterArgs $args) {
+        $config->setRepositoryCallback(function (QueryFilterArgs $args) {
             self::assertSame(100, $args->getLimit());
             self::assertSame(200, $args->getOffset());
             self::assertEquals([
@@ -131,14 +133,14 @@ class QueryFilterTest extends TestCase
             ], $args->getSortBy());
 
             return new QueryResult([
-                ["dummy"],
-                ["wammy"],
+                ['dummy'],
+                ['wammy'],
             ], 1000);
         });
         $response = $queryFilter->getData($config);
         self::assertEquals([
-            ["dummy"],
-            ["wammy"],
+            ['dummy'],
+            ['wammy'],
         ], $response->getData());
         self::assertSame(1000, $response->getMeta()['total_records']);
     }
@@ -175,13 +177,13 @@ class QueryFilterTest extends TestCase
                 [
                     'field' => 't.knownColumn',
                     'type' => 'eq',
-                    'x' => 'shla sasha po shosse i sosala sushku'
+                    'x' => 'shla sasha po shosse i sosala sushku',
                 ],
                 [
                     'field' => 't.unknownColumn',
                     'type' => 'eq',
-                    'x' => 'the road to hell'
-                ]
+                    'x' => 'the road to hell',
+                ],
             ],
         ]));
         $config->setRequest($request);
@@ -204,7 +206,7 @@ class QueryFilterTest extends TestCase
                 [
                     'field' => 't.knownColumn',
                     'type' => 'eq',
-                    'x' => 'shla sasha po shosse i sosala sushku'
+                    'x' => 'shla sasha po shosse i sosala sushku',
                 ],
                 't.unknownColumn',
             ],
@@ -231,22 +233,23 @@ class QueryFilterTest extends TestCase
         $config->setSearchAllowedCols(['t.knownColumn']);
         $config->setStrictColumns(false);
 
-        $config->setRepositoryCallback(function(QueryFilterArgs $args) {
+        $config->setRepositoryCallback(function (QueryFilterArgs $args) {
             self::assertEquals([
                 (new Filter())
                     ->setField('t.knownColumn')
                     ->setType('like')
                     ->setX('shla sasha po shosse i sosala sushku'),
             ], $args->getSearchBy());
+
             return new QueryResult([
-                ["dummy"],
-                ["wammy"],
+                ['dummy'],
+                ['wammy'],
             ], 1000);
         });
         $response = $queryFilter->getData($config);
         self::assertEquals([
-            ["dummy"],
-            ["wammy"],
+            ['dummy'],
+            ['wammy'],
         ], $response->getData());
     }
 
@@ -261,37 +264,38 @@ class QueryFilterTest extends TestCase
                 [
                     'field' => 't.knownColumn',
                     'type' => 'eq',
-                    'x' => 'shla sasha po shosse i sosala sushku'
+                    'x' => 'shla sasha po shosse i sosala sushku',
                 ],
 
                 // will be ignored
                 [
                     'field' => 't.unknownColumn',
                     'type' => 'eq',
-                    'x' => 'the road to hell'
-                ]
+                    'x' => 'the road to hell',
+                ],
             ],
         ]));
         $config->setRequest($request);
         $config->setSearchAllowedCols(['t.knownColumn']);
         $config->setStrictColumns(false);
 
-        $config->setRepositoryCallback(function(QueryFilterArgs $args) {
+        $config->setRepositoryCallback(function (QueryFilterArgs $args) {
             self::assertEquals([
                 (new Filter())
                     ->setField('t.knownColumn')
                     ->setType('eq')
                     ->setX('shla sasha po shosse i sosala sushku'),
             ], $args->getSearchBy());
+
             return new QueryResult([
-                ["dummy"],
-                ["wammy"],
+                ['dummy'],
+                ['wammy'],
             ], 1000);
         });
         $response = $queryFilter->getData($config);
         self::assertEquals([
-            ["dummy"],
-            ["wammy"],
+            ['dummy'],
+            ['wammy'],
         ], $response->getData());
     }
 
@@ -306,7 +310,7 @@ class QueryFilterTest extends TestCase
                 [
                     'field' => 't.knownColumn',
                     'type' => 'eq',
-                    'x' => 'shla sasha po shosse i sosala sushku'
+                    'x' => 'shla sasha po shosse i sosala sushku',
                 ],
                 't.unknownColumn', // will be ignored
             ],
@@ -315,22 +319,23 @@ class QueryFilterTest extends TestCase
         $config->setSearchAllowedCols(['t.knownColumn']);
         $config->setStrictColumns(false);
 
-        $config->setRepositoryCallback(function(QueryFilterArgs $args) {
+        $config->setRepositoryCallback(function (QueryFilterArgs $args) {
             self::assertEquals([
                 (new Filter())
                     ->setField('t.knownColumn')
                     ->setType('eq')
                     ->setX('shla sasha po shosse i sosala sushku'),
             ], $args->getSearchBy());
+
             return new QueryResult([
-                ["dummy"],
-                ["wammy"],
+                ['dummy'],
+                ['wammy'],
             ], 1000);
         });
         $response = $queryFilter->getData($config);
         self::assertEquals([
-            ["dummy"],
-            ["wammy"],
+            ['dummy'],
+            ['wammy'],
         ], $response->getData());
     }
 
@@ -347,7 +352,7 @@ class QueryFilterTest extends TestCase
                 [
                     'field' => 't.knownColumn',
                     'type' => 'eq',
-                    'x' => 'shla sasha po shosse i sosala sushku'
+                    'x' => 'shla sasha po shosse i sosala sushku',
                 ],
             ],
         ]));
@@ -399,7 +404,7 @@ class QueryFilterTest extends TestCase
         $config = new BaseConfig();
         $request = new Request(new HttpRequest([
             'limit' => 100,
-            'page'=> 3,
+            'page' => 3,
             'filter' => [
                 [
                     'field' => 'c.hell',
@@ -435,7 +440,7 @@ class QueryFilterTest extends TestCase
         $config->setAllowedLimits([10, 15, 100]);
         $config->setDefaultLimit(10);
 
-        $config->setRepositoryCallback(function(QueryFilterArgs $args) {
+        $config->setRepositoryCallback(function (QueryFilterArgs $args) {
             self::assertSame(100, $args->getLimit());
             self::assertSame(200, $args->getOffset());
             self::assertEquals([
@@ -457,21 +462,21 @@ class QueryFilterTest extends TestCase
                     ->setType('like')
                     ->setX('the road to hell')
                     ->setExtra('exact')
-                    ->setConnector('or')
+                    ->setConnector('or'),
             ], $args->getSearchBy());
             self::assertEquals([
                 'c.id' => 'asc',
             ], $args->getSortBy());
 
             return new QueryResult([
-                ["dummy"],
-                ["wammy"],
+                ['dummy'],
+                ['wammy'],
             ], 1000);
         });
         $response = $queryFilter->getData($config);
         self::assertEquals([
-            ["dummy"],
-            ["wammy"],
+            ['dummy'],
+            ['wammy'],
         ], $response->getData());
         self::assertSame(1000, $response->getMeta()['total_records']);
     }
@@ -483,7 +488,7 @@ class QueryFilterTest extends TestCase
         $config = new BaseConfig();
         $request = new Request(new HttpRequest([
             'limit' => 100,
-            'page'=> 3,
+            'page' => 3,
             'filter' => [
                 [
                     'field' => 'fullname',
@@ -507,10 +512,10 @@ class QueryFilterTest extends TestCase
         $config->setAllowedLimits([10, 15, 100]);
         $config->setDefaultLimit(10);
         $config->setSearchByAliases([
-            (new Alias('fullname', 'concat(\'c.firstname, \' \', c.lastname\')'))
+            (new Alias('fullname', 'concat(\'c.firstname, \' \', c.lastname\')')),
         ]);
 
-        $config->setRepositoryCallback(function(QueryFilterArgs $args) {
+        $config->setRepositoryCallback(function (QueryFilterArgs $args) {
             self::assertSame(100, $args->getLimit());
             self::assertSame(200, $args->getOffset());
             self::assertEquals([
@@ -529,14 +534,14 @@ class QueryFilterTest extends TestCase
             ], $args->getSortBy());
 
             return new QueryResult([
-                ["dummy"],
-                ["wammy"],
+                ['dummy'],
+                ['wammy'],
             ], 1000);
         });
         $response = $queryFilter->getData($config);
         self::assertEquals([
-            ["dummy"],
-            ["wammy"],
+            ['dummy'],
+            ['wammy'],
         ], $response->getData());
         self::assertSame(1000, $response->getMeta()['total_records']);
     }

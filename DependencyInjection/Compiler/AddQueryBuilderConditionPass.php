@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Artprima\QueryFilterBundle\DependencyInjection\Compiler;
 
@@ -8,13 +10,13 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**
- * Class AddQueryBuilderConditionPass
+ * Class AddQueryBuilderConditionPass.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
 class AddQueryBuilderConditionPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         if (false === $container->hasDefinition(ConditionManager::class)) {
             return;
@@ -26,7 +28,7 @@ class AddQueryBuilderConditionPass implements CompilerPassInterface
 
         foreach ($container->findTaggedServiceIds('proxy_query_builder.condition') as $id => $tags) {
             foreach ($tags as $tag) {
-                $name = isset($tag['condition']) ? $tag['condition'] : null;
+                $name = $tag['condition'] ?? null;
 
                 if (null !== $name && in_array($name, $disabled)) {
                     continue;

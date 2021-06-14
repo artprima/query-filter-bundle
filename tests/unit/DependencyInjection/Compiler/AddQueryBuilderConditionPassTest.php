@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Unit\Artprima\QueryFilterBundle\DependencyInjection\Compiler;
 
@@ -10,7 +12,7 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**
- * Class AddQueryBuilderConditionPass
+ * Class AddQueryBuilderConditionPass.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */

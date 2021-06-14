@@ -1,9 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Artprima\QueryFilterBundle\Response;
 
 /**
- * Class Response
+ * Class Response.
  *
  * @author Denis Voytyuk <denis.voytyuk@feedo.cz>
  */
@@ -19,7 +21,7 @@ class Response implements ResponseInterface
      */
     private $meta;
 
-    public function __construct($data = null, array $meta = array())
+    public function __construct($data = null, array $meta = [])
     {
         $this->data = $data;
         $this->meta = $meta;
@@ -37,9 +39,6 @@ class Response implements ResponseInterface
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getMeta(): array
     {
         return $this->meta;

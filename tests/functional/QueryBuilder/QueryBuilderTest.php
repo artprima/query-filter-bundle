@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Artprima\QueryFilterBundle\tests\functional\QueryBuilder;
 
 use Artprima\QueryFilterBundle\ArtprimaQueryFilterBundle;
 use Artprima\QueryFilterBundle\DependencyInjection\ArtprimaQueryFilterExtension;
 use Artprima\QueryFilterBundle\ParamConverter\ConfigConverter;
+use Artprima\QueryFilterBundle\Query\Condition;
 use Artprima\QueryFilterBundle\Query\ConditionManager;
 use Artprima\QueryFilterBundle\QueryFilter\QueryFilter;
 use Artprima\QueryFilterBundle\tests\functional\Test\MakePublicCompilerPass;
@@ -12,7 +15,6 @@ use Doctrine\Bundle\DoctrineBundle\DependencyInjection\DoctrineExtension;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
-use Artprima\QueryFilterBundle\Query\Condition;
 
 class QueryBuilderTest extends TestCase
 {

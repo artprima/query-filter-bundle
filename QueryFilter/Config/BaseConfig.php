@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Artprima\QueryFilterBundle\QueryFilter\Config;
 
@@ -6,7 +8,7 @@ use Artprima\QueryFilterBundle\Exception\MissingArgumentException;
 use Artprima\QueryFilterBundle\Request\Request;
 
 /**
- * Class BaseConfig
+ * Class BaseConfig.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
@@ -67,7 +69,7 @@ class BaseConfig implements ConfigInterface
     protected $strictColumns = false;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setSearchAllowedCols(array $args): ConfigInterface
     {
@@ -77,7 +79,7 @@ class BaseConfig implements ConfigInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getSearchAllowedCols(): array
     {
@@ -85,7 +87,7 @@ class BaseConfig implements ConfigInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setSearchByAliases(array $aliases): ConfigInterface
     {
@@ -98,7 +100,7 @@ class BaseConfig implements ConfigInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function addSearchByAliases(Alias $alias): ConfigInterface
     {
@@ -108,7 +110,7 @@ class BaseConfig implements ConfigInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getSearchByAliases(): array
     {
@@ -116,7 +118,7 @@ class BaseConfig implements ConfigInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setSearchByExtra(array $extra): ConfigInterface
     {
@@ -126,7 +128,7 @@ class BaseConfig implements ConfigInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getSearchByExtra(): array
     {
@@ -134,7 +136,7 @@ class BaseConfig implements ConfigInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setSortCols(array $cols, array $default = []): ConfigInterface
     {
@@ -145,7 +147,7 @@ class BaseConfig implements ConfigInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getSortCols(): array
     {
@@ -153,7 +155,7 @@ class BaseConfig implements ConfigInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getSortColsDefault(): array
     {
@@ -161,7 +163,7 @@ class BaseConfig implements ConfigInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setRepositoryCallback(callable $callback): ConfigInterface
     {
@@ -171,11 +173,11 @@ class BaseConfig implements ConfigInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getRepositoryCallback(): callable
     {
-        if ($this->repositoryCallback === null) {
+        if (null === $this->repositoryCallback) {
             throw new MissingArgumentException('Repository callback is not set');
         }
 
@@ -183,7 +185,7 @@ class BaseConfig implements ConfigInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getAllowedLimits(): array
     {
@@ -191,7 +193,7 @@ class BaseConfig implements ConfigInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setAllowedLimits(array $allowedLimits): ConfigInterface
     {
@@ -201,7 +203,7 @@ class BaseConfig implements ConfigInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setDefaultLimit(int $limit): ConfigInterface
     {
@@ -211,23 +213,20 @@ class BaseConfig implements ConfigInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getDefaultLimit(): int
     {
         return $this->defaultLimit ?? self::DEFAULT_LIMIT;
     }
 
-    /**
-     * @return Request
-     */
     public function getRequest(): Request
     {
         return $this->request;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setRequest(Request $request): ConfigInterface
     {
@@ -237,7 +236,7 @@ class BaseConfig implements ConfigInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setStrictColumns(bool $strict): ConfigInterface
     {
@@ -247,7 +246,7 @@ class BaseConfig implements ConfigInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isStrictColumns(): bool
     {

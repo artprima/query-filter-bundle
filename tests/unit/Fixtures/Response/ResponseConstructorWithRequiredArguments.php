@@ -1,11 +1,13 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Unit\Artprima\QueryFilterBundle\Fixtures\Response;
 
 use Artprima\QueryFilterBundle\Response\Response;
 
 /**
- * Class ResponseConstructorWithRequiredArguments
+ * Class ResponseConstructorWithRequiredArguments.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */

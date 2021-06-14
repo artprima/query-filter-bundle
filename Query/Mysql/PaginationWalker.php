@@ -1,12 +1,14 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Artprima\QueryFilterBundle\Query\Mysql;
 
-use Doctrine\ORM\Query\SqlWalker;
 use Doctrine\ORM\Query\AST\SelectClause;
+use Doctrine\ORM\Query\SqlWalker;
 
 /**
- * Class PaginationWalker
+ * Class PaginationWalker.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
@@ -16,6 +18,7 @@ class PaginationWalker extends SqlWalker
      * Walks down a SelectClause AST node, thereby generating the appropriate SQL.
      *
      * @param SelectClause $selectClause
+     *
      * @return string The SQL.
      *
      * Usage:
@@ -29,7 +32,7 @@ class PaginationWalker extends SqlWalker
     {
         $sql = parent::walkSelectClause($selectClause);
 
-        if ($this->getQuery()->getHint('mysqlWalker.sqlCalcFoundRows') === true) {
+        if (true === $this->getQuery()->getHint('mysqlWalker.sqlCalcFoundRows')) {
             if ($selectClause->isDistinct) {
                 $sql = str_replace('SELECT DISTINCT', 'SELECT DISTINCT SQL_CALC_FOUND_ROWS', $sql);
             } else {

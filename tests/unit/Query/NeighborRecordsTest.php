@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Unit\Artprima\QueryFilterBundle\Tests\Query;
 
@@ -7,7 +9,7 @@ use Doctrine\ORM\EntityManager;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class NeighborRecordsTest
+ * Class NeighborRecordsTest.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */

@@ -1,14 +1,16 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Artprima\QueryFilterBundle\Query;
 
 use Artprima\QueryFilterBundle\Exception\InvalidArgumentException;
 use Artprima\QueryFilterBundle\Query\Condition\ConditionInterface;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query as DoctrineQuery;
+use Doctrine\ORM\QueryBuilder;
 
 /**
- * Class ProxyQueryBuilder
+ * Class ProxyQueryBuilder.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
@@ -32,7 +34,7 @@ class ProxyQueryBuilder
 
     /**
      * @param int $index parameter id
-     * @param Filter $filter
+     *
      * @return DoctrineQuery\Expr\Comparison|DoctrineQuery\Expr\Func|string
      */
     private function getConditionExpr(int $index, Filter $filter)
@@ -52,23 +54,25 @@ class ProxyQueryBuilder
     }
 
     /**
-     * Get connector expression based on `and`, `or` or `null`
+     * Get connector expression based on `and`, `or` or `null`.
      *
      * @param $prev
      * @param $connector
      * @param $condition
+     *
      * @return DoctrineQuery\Expr\Andx|DoctrineQuery\Expr\Orx
+     *
      * @throws InvalidArgumentException
      */
     private function getConnectorExpr($prev, $connector, $condition)
     {
         $qb = $this->queryBuilder;
 
-        if ($prev === null) {
+        if (null === $prev) {
             $expr = $condition;
-        } elseif ($connector === null || $connector === 'and') {
+        } elseif (null === $connector || 'and' === $connector) {
             $expr = $qb->expr()->andX($prev, $condition);
-        } elseif ($connector === 'or') {
+        } elseif ('or' === $connector) {
             $expr = $qb->expr()->orX($prev, $condition);
         } else {
             throw new InvalidArgumentException(sprintf('Wrong connector type: %s', $connector));
@@ -93,7 +97,7 @@ class ProxyQueryBuilder
                 throw new InvalidArgumentException(sprintf('Unexpected val php type ("%s")', gettype($val)));
             }
 
-            $i++;
+            ++$i;
 
             $condition = $this->getConditionExpr($i, $val);
 
@@ -116,7 +120,7 @@ class ProxyQueryBuilder
     }
 
     /**
-     * Add filter and order by conditions to the given QueryBuilder
+     * Add filter and order by conditions to the given QueryBuilder.
      *
      * Example data
      *
@@ -150,11 +154,6 @@ class ProxyQueryBuilder
      *      'e.name' => 'asc'
      *  )
      * )
-     *
-     * @param array $filterBy
-     * @param array $orderBy
-     *
-     * @return QueryBuilder
      */
     public function getSortedAndFilteredQueryBuilder(array $filterBy, array $orderBy): QueryBuilder
     {

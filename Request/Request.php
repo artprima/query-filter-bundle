@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Artprima\QueryFilterBundle\Request;
 
@@ -6,7 +8,7 @@ use Artprima\QueryFilterBundle\Exception\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 
 /**
- * Class Request
+ * Class Request.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
@@ -44,15 +46,15 @@ final class Request
 
     /**
      * Request constructor.
-     * @param HttpRequest $request
+     *
      * @todo consider paramenter names not to be hard-coded
      */
     public function __construct(HttpRequest $request)
     {
-        $this->pageNum = (int)$request->query->get('page', 1);
-        $this->limit = (int)$request->query->get('limit', -1);
+        $this->pageNum = (int) $request->query->get('page', 1);
+        $this->limit = (int) $request->query->get('limit', -1);
         $this->query = $request->query->get('filter');
-        if ($this->query !== null && !is_array($this->query)) {
+        if (null !== $this->query && !is_array($this->query)) {
             throw new InvalidArgumentException('Query filter must be an array');
         }
         $this->sortBy = $request->query->get('sortby');
@@ -60,52 +62,34 @@ final class Request
         if (!is_string($this->sortDir)) {
             throw new InvalidArgumentException('Query sort direction must be a string');
         }
-        $this->simple = (bool)$request->query->get('simple', '1');
+        $this->simple = (bool) $request->query->get('simple', '1');
     }
 
-    /**
-     * @return int
-     */
     public function getPageNum(): int
     {
         return $this->pageNum;
     }
 
-    /**
-     * @return string|null
-     */
     public function getSortBy(): ?string
     {
         return $this->sortBy;
     }
 
-    /**
-     * @return string|null
-     */
     public function getSortDir(): ?string
     {
         return $this->sortDir;
     }
 
-    /**
-     * @return int
-     */
     public function getLimit(): int
     {
         return $this->limit;
     }
 
-    /**
-     * @return array|null
-     */
     public function getQuery(): ?array
     {
         return $this->query;
     }
 
-    /**
-     * @return bool
-     */
     public function isSimple(): bool
     {
         return $this->simple;
