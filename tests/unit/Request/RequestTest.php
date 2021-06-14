@@ -145,7 +145,7 @@ class RequestTest extends TestCase
     public function testInvalidSortDirException2()
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Query sort direction must be a string');
+        $this->expectExceptionMessage('Query sort direction must be string or null');
         $httpRequest = new HttpRequest([
             'page' => '42',
             'limit' => '4242',
