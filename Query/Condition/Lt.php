@@ -13,7 +13,7 @@ use Stringable;
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
-class Lt implements ConditionInterface
+final class Lt implements ConditionInterface
 {
     public function getExpr(QueryBuilder $qb, int $index, Filter $filter): string|Stringable
     {

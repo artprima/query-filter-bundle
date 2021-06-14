@@ -6,6 +6,7 @@ namespace Artprima\QueryFilterBundle\Query\Condition;
 
 use Artprima\QueryFilterBundle\Query\Filter;
 use Doctrine\ORM\QueryBuilder;
+use Stringable;
 
 /**
  * Interface ConditionInterface.
@@ -14,5 +15,5 @@ use Doctrine\ORM\QueryBuilder;
  */
 interface ConditionInterface
 {
-    public function getExpr(QueryBuilder $qb, int $index, Filter $filter): string|\Stringable;
+    public function getExpr(QueryBuilder $qb, int $index, Filter $filter): string|Stringable;
 }
