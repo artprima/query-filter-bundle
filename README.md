@@ -265,7 +265,9 @@ class ItemConfig extends BaseConfig
         ]);
 
         $this->setSortFields(
-            ['t.id'],
+            ['t.id']
+        );
+        $this->setSortDefaults(
             ['t.id' => 'desc'] // default
         );
     }
