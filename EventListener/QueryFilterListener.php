@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Artprima\QueryFilterBundle\EventListener;
 
@@ -7,26 +9,13 @@ use Artprima\QueryFilterBundle\QueryFilter\QueryFilter;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 
 /**
- * Class QueryFilterListener
+ * Class QueryFilterListener.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
-class QueryFilterListener
+final class QueryFilterListener
 {
-    /**
-     * @var QueryFilter
-     */
-    private $queryFilter;
-
-    public function __construct(QueryFilter $queryFilter)
-    {
-        $this->queryFilter = $queryFilter;
-    }
-
-    /**
-     * @param ViewEvent $event
-     */
-    public function onKernelView(ViewEvent $event)
+    public function onKernelView(ViewEvent $event): void
     {
         $request = $event->getRequest();
 
@@ -43,7 +32,8 @@ class QueryFilterListener
             return;
         }
 
-        $result = $this->queryFilter->getData($config);
+        $queryFilter = new QueryFilter($config);
+        $result = $queryFilter->getData();
         $event->setControllerResult($result);
     }
 }

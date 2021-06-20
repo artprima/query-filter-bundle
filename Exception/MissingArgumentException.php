@@ -1,8 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Artprima\QueryFilterBundle\Exception;
 
-class MissingArgumentException extends \RuntimeException
-{
+use RuntimeException;
 
+class MissingArgumentException extends RuntimeException
+{
 }

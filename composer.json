@@ -11,17 +11,22 @@
     }
   ],
   "require": {
-    "php": ">=7.3.0",
-    "symfony/http-kernel": "^4.4|^5.2",
-    "symfony/dependency-injection": "^4.4|^5.2",
-    "symfony/config": "^4.4|^5.2",
-    "doctrine/orm": "^2.7",
-    "doctrine/persistence": "^2.0",
-    "sensio/framework-extra-bundle": "^5.1.5|^6.0",
-    "doctrine/doctrine-bundle": "^2.2"
+    "php": ">=8.0",
+    "doctrine/doctrine-bundle": "^2.2",
+    "doctrine/orm": "^2.9",
+    "doctrine/persistence": "^2.2",
+    "sensio/framework-extra-bundle": "^6.1",
+    "symfony/config": "^5.3",
+    "symfony/dependency-injection": "^5.3",
+    "symfony/http-kernel": "^5.3"
   },
   "require-dev": {
-    "phpunit/phpunit": "^8.0|^9.0"
+    "phpunit/phpunit": "^9.0",
+    "escapestudios/symfony2-coding-standard": "3.x-dev",
+    "friendsofphp/php-cs-fixer": "^2.18",
+    "phpstan/extension-installer": "^1.0",
+    "phpstan/phpstan-symfony": "^0.12.20",
+    "squizlabs/php_codesniffer": "^3.5"
   },
   "autoload": {
     "psr-4": {
@@ -33,5 +38,15 @@
       "Tests\\Unit\\Artprima\\QueryFilterBundle\\": "tests/unit",
       "Tests\\Functional\\Artprima\\QueryFilterBundle\\": "tests/functional"
     }
+  },
+  "scripts": {
+    "php-cs-fixer": "php-cs-fixer --config=./.php_cs.dist",
+    "php-cs-fixer-check": "php-cs-fixer fix --config=.php-cs-fixer.dist.php -v --diff --allow-risky=yes --ansi --dry-run",
+    "php-cs-fixer-fix": "php-cs-fixer fix --config=.php-cs-fixer.dist.php -v --diff --allow-risky=yes --ansi",
+    "phpcs-check": "phpcs",
+    "phpstan-check": "php -d memory_limit=1024M vendor/bin/phpstan analyse src tests --ansi",
+    "post-install-cmd": [
+      "phpcs --config-set installed_paths vendor/escapestudios/symfony2-coding-standard || echo 'phpcs is only configured for the dev environment.'"
+    ]
   }
 }

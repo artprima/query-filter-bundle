@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Unit\Artprima\QueryFilterBundle\Query\Condition;
 
@@ -9,7 +11,7 @@ use Doctrine\ORM\QueryBuilder;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class IsNullTest
+ * Class IsNullTest.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
@@ -36,6 +38,6 @@ class IsNullTest extends TestCase
             ->setField('t.dummy')
         );
 
-        self::assertSame('t.dummy IS NULL', (string)$expr);
+        self::assertSame('t.dummy IS NULL', (string) $expr);
     }
 }

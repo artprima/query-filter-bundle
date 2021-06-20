@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Unit\Artprima\QueryFilterBundle\Query;
 
@@ -7,12 +9,12 @@ use Artprima\QueryFilterBundle\Query\ConditionManager;
 use Artprima\QueryFilterBundle\Query\Filter;
 use Artprima\QueryFilterBundle\Query\ProxyQueryBuilder;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use PHPUnit\Framework\TestCase;
-use Doctrine\ORM\Query;
 
 /**
- * Class ProxyQueryBuilderTest
+ * Class ProxyQueryBuilderTest.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
@@ -23,23 +25,23 @@ class ProxyQueryBuilderTest extends TestCase
 
     public function setUp(): void
     {
-        $this->expressionBuilder = new Query\Expr;
+        $this->expressionBuilder = new Query\Expr();
         $expressions = [
-            'between' => new Condition\Between,
-            'eq' => new Condition\Eq,
-            'gt' => new Condition\Gt,
-            'gte' => new Condition\Gte,
-            'in' => new Condition\In,
-            'is not null' => new Condition\IsNotNull,
-            'is null' => new Condition\IsNull,
-            'like' => new Condition\Like,
-            'lt' => new Condition\Lt,
-            'lte' => new Condition\Lte,
-            'member of' => new Condition\MemberOf,
-            'not between' => new Condition\NotBetween,
-            'not eq' => new Condition\NotEq,
-            'not in' => new Condition\NotIn,
-            'not like' => new Condition\NotLike,
+            'between' => new Condition\Between(),
+            'eq' => new Condition\Eq(),
+            'gt' => new Condition\Gt(),
+            'gte' => new Condition\Gte(),
+            'in' => new Condition\In(),
+            'is not null' => new Condition\IsNotNull(),
+            'is null' => new Condition\IsNull(),
+            'like' => new Condition\Like(),
+            'lt' => new Condition\Lt(),
+            'lte' => new Condition\Lte(),
+            'member of' => new Condition\MemberOf(),
+            'not between' => new Condition\NotBetween(),
+            'not eq' => new Condition\NotEq(),
+            'not in' => new Condition\NotIn(),
+            'not like' => new Condition\NotLike(),
         ];
         $this->conditionManager = new ConditionManager();
         foreach ($expressions as $key => $expression) {
@@ -71,7 +73,7 @@ class ProxyQueryBuilderTest extends TestCase
 
     /**
      * NOTE: expected results are not valid DQL expressions (as they lack from section),
-     *       but for testing purposes we don't need that
+     *       but for testing purposes we don't need that.
      */
     public function filterDataProvider()
     {

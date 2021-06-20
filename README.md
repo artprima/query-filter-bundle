@@ -4,10 +4,10 @@
 | [![Coverage Status][Master coverage image]][Master coverage] |
 | [![Quality Status][Master quality image]][Master quality] |
 
-Query Filter Bundle for Symfony 4.3 and Symfony 5
+Query Filter Bundle for Symfony 5.3 (and later)
 =================================================
 
-Query Filter Bundle brings request filtering and pagination functionality to Symfony 4.3 / 5 applications that use Doctrine 2.
+Query Filter Bundle brings request filtering and pagination functionality to Symfony 5.3 (and later) applications that use Doctrine 2.
 
 # Installation
 
@@ -48,10 +48,10 @@ class DefaultController extends Controller
     {
         // set up the config
         $config = new BaseConfig();
-        $config->setSearchAllowedCols(['t.name']);
+        $config->setSearchAllowedFields(['t.name']);
         $config->setAllowedLimits([10, 25, 50, 100]);
         $config->setDefaultLimit(10);
-        $config->setSortCols(['t.id'], ['t.id' => 'asc']);
+        $config->setSortFields(['t.id'], ['t.id' => 'asc']);
         $config->setRequest(new Request($request));
         
         // Throws an UnexpectedValueException when invalid filter column, sort column or sort type is specified
@@ -260,12 +260,14 @@ class ItemConfig extends BaseConfig
 {
     public function __construct()
     {
-        $this->setSearchAllowedCols([
+        $this->setSearchAllowedFields([
             't.name',
         ]);
 
-        $this->setSortCols(
-            ['t.id'],
+        $this->setSortFields(
+            ['t.id']
+        );
+        $this->setSortDefaults(
             ['t.id' => 'desc'] // default
         );
     }

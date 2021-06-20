@@ -1,10 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Artprima\QueryFilterBundle\ParamConverter;
 
 use Artprima\QueryFilterBundle\Exception\InvalidArgumentException;
 use Artprima\QueryFilterBundle\QueryFilter\Config\ConfigInterface;
-use Artprima\QueryFilterBundle\Request\Request;
+use Artprima\QueryFilterBundle\QueryFilter\Request;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -13,23 +15,17 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
 
 class ConfigConverter implements ParamConverterInterface
 {
-    /**
-     * @var ManagerRegistry
-     */
-    private $registry;
-
-    public function __construct(ManagerRegistry $registry = null)
+    public function __construct(private ?ManagerRegistry $registry)
     {
-        $this->registry = $registry;
     }
 
     private function getOptions(ParamConverter $configuration): array
     {
-        return array_replace(array(
+        return array_replace([
             'entity_manager' => null,
             'entity_class' => null,
             'repository_method' => null,
-        ), $configuration->getOptions());
+        ], $configuration->getOptions());
     }
 
     private function getManager($name, $class): EntityManager
@@ -51,14 +47,16 @@ class ConfigConverter implements ParamConverterInterface
      * Stores the object in the request.
      *
      * Usage example:
+     *
      * @ParamConverter("config", class="AppBundle\QueryFilter\Config\BrandFilterConfig",
      *                           converter="query_filter_config_converter",
      *                           options={"entity_class": "AppBundle:Brand", "repository_method": "findByOrderBy"})
      *
-     * @param HttpRequest $request The request
+     * @param HttpRequest    $request       The request
      * @param ParamConverter $configuration Contains the name, class and options of the object
      *
-     * @return bool    True if the object has been successfully set, else false
+     * @return bool True if the object has been successfully set, else false
+     *
      * @throws \RuntimeException
      */
     public function apply(HttpRequest $request, ParamConverter $configuration): bool
@@ -85,11 +83,11 @@ class ConfigConverter implements ParamConverterInterface
         $manager = $this->getManager($options['entity_manager'], $options['entity_class']);
         $repo = $manager->getRepository($options['entity_class']);
 
-        if (!is_callable(array($repo, $options['repository_method']))) {
+        if (!is_callable([$repo, $options['repository_method']])) {
             throw new InvalidArgumentException(self::class.': repository_method is not callable. Wrong configuration?');
         }
 
-        $config->setRepositoryCallback(array($repo, $options['repository_method']));
+        $config->setRepositoryCallback([$repo, $options['repository_method']]);
 
         $request->attributes->set($configuration->getName(), $config);
 

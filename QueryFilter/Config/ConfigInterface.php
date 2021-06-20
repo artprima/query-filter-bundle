@@ -1,149 +1,128 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Artprima\QueryFilterBundle\QueryFilter\Config;
 
-use Artprima\QueryFilterBundle\Request\Request;
+use Artprima\QueryFilterBundle\Query\Filter;
+use Artprima\QueryFilterBundle\QueryFilter\QueryFilterArgs;
+use Artprima\QueryFilterBundle\QueryFilter\QueryResult;
+use Artprima\QueryFilterBundle\QueryFilter\Request;
 
 /**
- * Interface ConfigInterface
+ * Interface ConfigInterface.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
 interface ConfigInterface
 {
     /**
-     * @param array $args
-     * @return $this
+     * @param string[]
      */
-    public function setSearchAllowedCols(array $args): ConfigInterface;
+    public function setSearchAllowedFields(array $args): self;
 
     /**
-     * Get allowed columns that are used in search
-     *
-     * @return array
+     * Get allowed columns that are used in search.
      */
-    public function getSearchAllowedCols(): array;
+    public function getSearchAllowedFields(): array;
 
     /**
      * Set shortcut expanders (aliaces).
      *
      * For example, concat(concat(concat(concat(p.firstname, ' '), p.middlename), ' '), p.lastname) can be
-     * aliased by 'person_name':
+     * aliased as 'person_name':
      *
      * @see QueryFilter::getTemplateData()
      *
      * @param Alias[] $aliases
+     *
      * @return $this
      */
-    public function setSearchByAliases(array $aliases): ConfigInterface;
+    public function setSearchAliases(array $aliases): self;
 
     /**
-     * Set Shortcut Expanders (for more info: {@link ConfigInterface::setSearchByAliases()})
-     *
-     * @return array
+     * Set Shortcut Expanders (for more info: {@link ConfigInterface::setSearchAliases()}).
      */
-    public function getSearchByAliases(): array;
+    public function getSearchAliases(): array;
 
     /**
-     * Set extra data for search
+     * Set extra data for search (can be used by.
+     * @param Filter[] $extra
+     */
+    public function setExtraFilters(array $extra): self;
+
+    /**
+     * Get extra data for search.
+     * @return Filter[]
+     */
+    public function getExtraFilters(): array;
+
+    /**
+     * Set sort columns (allowed and default).
      *
-     * @param callable $extra
      * @return $this
      */
-    public function setSearchByExtra(array $extra): ConfigInterface;
+    public function setSortFields(array $cols): self;
 
     /**
-     * Get extra data for search
-     *
-     * @return array
+     * Get allowed sort columns.
      */
-    public function getSearchByExtra(): array;
+    public function getSortFields(): array;
 
     /**
-     * Set sort columns (allowed and default)
+     * Set default sort column data.
+     */
+    public function setSortDefaults(array $defaults): self;
+
+    /**
+     * Get default sort column data.
+     */
+    public function getSortDefaults(): array;
+
+    /**
+     * Set repository callback [function($searchBy, $sortData, $limit, $offset)].
      *
-     * @param array $cols
-     * @param array $default
      * @return $this
      */
-    public function setSortCols(array $cols, array $default = array()): ConfigInterface;
+    public function setRepositoryCallback(callable $callback): self;
 
     /**
-     * Get allowed sort columns
-     * @return array
-     */
-    public function getSortCols(): array;
-
-    /**
-     * Get default sort column data
-     *
-     * @return array
-     */
-    public function getSortColsDefault(): array;
-
-    /**
-     * Set repository callback [function($searchBy, $sortData, $limit, $offset)]
-     *
-     * @param callable $callback
-     * @return $this
-     */
-    public function setRepositoryCallback(callable $callback): ConfigInterface;
-
-    /**
-     * Get repository callback [function($searchBy, $sortData, $limit, $offset)]
-     *
-     * @return callable
+     * Get repository callback [function (QueryFilterArgs $args): QueryResult].
      */
     public function getRepositoryCallback(): callable;
 
     /**
      * @param array $allowedLimits allowed pagination limits (eg. [5, 10, 25, 50, 100])
+     *
      * @return $this
      */
-    public function setAllowedLimits(array $allowedLimits): ConfigInterface;
+    public function setAllowedLimits(array $allowedLimits): self;
 
     /**
-     * Get allowed pagination limits (eg. [5, 10, 25, 50, 100])
-     *
-     * @return array
+     * Get allowed pagination limits (eg. [5, 10, 25, 50, 100]).
      */
     public function getAllowedLimits(): array;
 
     /**
-     * @var int $limit default limit in case of limit not specified or limit is not within the allowed limits
+     * @var int default limit in case of limit not specified or limit is not within the allowed limits
      *
      * @return $this
      */
-    public function setDefaultLimit(int $limit): ConfigInterface;
+    public function setDefaultLimit(int $limit): self;
 
     /**
-     * Get default limit in case of limit not specified or limit is not within the allowed limits
-     *
-     * @return int
+     * Get default limit in case of limit not specified or limit is not within the allowed limits.
      */
     public function getDefaultLimit(): int;
 
-    /**
-     * @param Request $request
-     * @return ConfigInterface
-     */
-    public function setRequest(Request $request): ConfigInterface;
+    public function setRequest(Request $request): self;
 
     /**
-     * Get request data to build the filters
-     *
-     * @return Request
+     * Get request data to build the filters.
      */
     public function getRequest(): Request;
 
-    /**
-     * @param bool $strict
-     * @return ConfigInterface
-     */
-    public function setStrictColumns(bool $strict): ConfigInterface;
+    public function setStrictColumns(bool $strict): self;
 
-    /**
-     * @return bool
-     */
     public function isStrictColumns(): bool;
 }

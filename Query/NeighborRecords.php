@@ -1,46 +1,28 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Artprima\QueryFilterBundle\Query;
 
-use Artprima\QueryFilterBundle\Exception\InvalidArgumentException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
 
 /**
- * Class NeighborRecords
+ * Class NeighborRecords.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
-class NeighborRecords
+final class NeighborRecords
 {
-    /**
-     * @var string
-     */
-    private $primaryKeyColumn;
-
-    /**
-     * @var string
-     */
-    private $rootEntity;
-
-    /**
-     * @var EntityManager
-     */
-    private $entityManager;
-
-    public function __construct(string $from, EntityManager $entityManager, string $primaryKeyColumn = 'c.id')
+    public function __construct(private string $rootEntity, private EntityManager $entityManager, private string $primaryKeyColumn = 'c.id')
     {
-        $this->rootEntity = $from;
-        $this->entityManager = $entityManager;
-        $this->primaryKeyColumn = $primaryKeyColumn;
     }
 
     /**
-     * Get neighbor (prev or next) record id for use in navigation
+     * Get neighbor (prev or next) record id for use in navigation.
      *
-     * @param int $id record id
-     * @param boolean $prev if true - get prev id, otherwise - next id
-     * @return QueryBuilder
+     * @param int  $id   record id
+     * @param bool $prev if true - get prev id, otherwise - next id
      */
     public function getQueryBuilderFilteredByNeighborRecord(int $id, bool $prev): QueryBuilder
     {

@@ -1,18 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Artprima\QueryFilterBundle\tests\functional\QueryBuilder;
 
 use Artprima\QueryFilterBundle\ArtprimaQueryFilterBundle;
 use Artprima\QueryFilterBundle\DependencyInjection\ArtprimaQueryFilterExtension;
 use Artprima\QueryFilterBundle\ParamConverter\ConfigConverter;
+use Artprima\QueryFilterBundle\Query\Condition;
 use Artprima\QueryFilterBundle\Query\ConditionManager;
-use Artprima\QueryFilterBundle\QueryFilter\QueryFilter;
 use Artprima\QueryFilterBundle\tests\functional\Test\MakePublicCompilerPass;
 use Doctrine\Bundle\DoctrineBundle\DependencyInjection\DoctrineExtension;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
-use Artprima\QueryFilterBundle\Query\Condition;
 
 class QueryBuilderTest extends TestCase
 {
@@ -46,7 +47,6 @@ class QueryBuilderTest extends TestCase
         // I could have of course used the WebTestCase but it's too heavy for my tasks
         $container->addCompilerPass(new MakePublicCompilerPass(ConditionManager::class));
         $container->addCompilerPass(new MakePublicCompilerPass('query_filter_bundle.param_converter.query_filter_config'));
-        $container->addCompilerPass(new MakePublicCompilerPass('query_filter_bundle.query_filter'));
 
         $extension = new ArtprimaQueryFilterExtension();
         $container->setParameter('kernel.debug', true);
@@ -61,8 +61,6 @@ class QueryBuilderTest extends TestCase
         self::assertInstanceOf(ConditionManager::class, $conditionManager);
         $queryFilterConfig = $container->get('query_filter_bundle.param_converter.query_filter_config');
         self::assertInstanceOf(ConfigConverter::class, $queryFilterConfig);
-        $queryFilter = $container->get('query_filter_bundle.query_filter');
-        self::assertInstanceOf(QueryFilter::class, $queryFilter);
 
         // check registered conditions
         $conditions = $conditionManager->all();
@@ -87,7 +85,6 @@ class QueryBuilderTest extends TestCase
         // I could have of course used the WebTestCase but it's too heavy for my tasks
         $container->addCompilerPass(new MakePublicCompilerPass(ConditionManager::class));
         $container->addCompilerPass(new MakePublicCompilerPass('query_filter_bundle.param_converter.query_filter_config'));
-        $container->addCompilerPass(new MakePublicCompilerPass('query_filter_bundle.query_filter'));
 
         $extension = new ArtprimaQueryFilterExtension();
         $container->setParameter('kernel.debug', true);

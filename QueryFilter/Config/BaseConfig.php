@@ -1,12 +1,15 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Artprima\QueryFilterBundle\QueryFilter\Config;
 
 use Artprima\QueryFilterBundle\Exception\MissingArgumentException;
-use Artprima\QueryFilterBundle\Request\Request;
+use Artprima\QueryFilterBundle\Query\Filter;
+use Artprima\QueryFilterBundle\QueryFilter\Request;
 
 /**
- * Class BaseConfig
+ * Class BaseConfig.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
@@ -14,156 +17,143 @@ class BaseConfig implements ConfigInterface
 {
     private const DEFAULT_LIMIT = 10;
 
-    /**
-     * @var Request
-     */
-    protected $request;
+    protected Request $request;
+    protected int $defaultLimit = self::DEFAULT_LIMIT;
+    protected array $allowedLimits = [];
+
+    protected $searchAllowedFields = [];
 
     /**
-     * @var int
+     * @var Alias[]
      */
-    protected $defaultLimit;
+    protected $searchAliases = [];
 
     /**
-     * @var array
+     * @var Filter[]
      */
-    protected $allowedLimits;
+    protected $extraFilters = [];
 
-    /**
-     * @var array
-     */
-    protected $searchBy = [
-        'args' => [],
-        'aliases' => [],
-        'extra' => [],
-    ];
-
-    /**
-     * @var array
-     */
-    protected $sort = [
-        'cols' => [],
-        'default' => [],
-    ];
+    protected $sortFields = [];
+    protected $sortDefaults = [];
 
     /**
      * @var callable
      */
     protected $repositoryCallback;
 
-    /**
-     * @var callable
-     */
-    protected $totalRowsCallback;
+    protected bool $simple = true;
+    protected bool $strictColumns = false;
 
     /**
-     * @var bool
+     * {@inheritdoc}
      */
-    protected $simple = true;
-
-    /**
-     * @var bool
-     */
-    protected $strictColumns = false;
-
-    /**
-     * @inheritdoc
-     */
-    public function setSearchAllowedCols(array $args): ConfigInterface
+    public function setSearchAllowedFields(array $args): self
     {
-        $this->searchBy['args'] = $args;
+        $this->searchAllowedFields = $args;
 
         return $this;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function getSearchAllowedCols(): array
+    public function getSearchAllowedFields(): array
     {
-        return $this->searchBy['args'];
+        return $this->searchAllowedFields;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function setSearchByAliases(array $aliases): ConfigInterface
+    public function setSearchAliases(array $aliases): self
     {
-        /** @var Alias $alias */
-        foreach ($aliases as $alias) {
-            $this->searchBy['aliases'][$alias->getName()] = $alias;
-        }
+        $this->searchAliases = (function (Alias ...$aliases) {
+            $result = [];
+            foreach ($aliases as $alias) {
+                $result[$alias->getName()] = $alias;
+            }
+            return $result;
+        })(...$aliases);
 
         return $this;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function addSearchByAliases(Alias $alias): ConfigInterface
+    public function addSearchAliases(Alias $alias): self
     {
-        $this->searchBy['aliases'][$alias->getName()] = $alias;
+        $this->searchAliases[$alias->getName()] = $alias;
 
         return $this;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function getSearchByAliases(): array
+    public function getSearchAliases(): array
     {
-        return $this->searchBy['aliases'] ?? [];
+        return $this->searchAliases ?? [];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function setSearchByExtra(array $extra): ConfigInterface
+    public function setExtraFilters(array $extra): self
     {
-        $this->searchBy['extra'] = $extra;
+        $this->extraFilters = (fn (Filter ...$items) => $items)(...$extra);
 
         return $this;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function getSearchByExtra(): array
+    public function getExtraFilters(): array
     {
-        return $this->searchBy['extra'];
+        return $this->extraFilters;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function setSortCols(array $cols, array $default = []): ConfigInterface
+    public function setSortFields(array $cols): self
     {
-        $this->sort['cols'] = $cols;
-        $this->sort['default'] = $default;
+        $this->sortFields = $cols;
 
         return $this;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function getSortCols(): array
+    public function getSortFields(): array
     {
-        return $this->sort['cols'];
+        return $this->sortFields;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function getSortColsDefault(): array
+    public function getSortDefaults(): array
     {
-        return $this->sort['default'];
+        return $this->sortDefaults;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function setRepositoryCallback(callable $callback): ConfigInterface
+    public function setSortDefaults(array $sortDefaults): self
+    {
+        $this->sortDefaults = $sortDefaults;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setRepositoryCallback(callable $callback): self
     {
         $this->repositoryCallback = $callback;
 
@@ -171,84 +161,60 @@ class BaseConfig implements ConfigInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getRepositoryCallback(): callable
     {
-        if ($this->repositoryCallback === null) {
+        if (null === $this->repositoryCallback) {
             throw new MissingArgumentException('Repository callback is not set');
         }
 
         return $this->repositoryCallback;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function getAllowedLimits(): array
     {
-        return $this->allowedLimits ?? [];
+        return $this->allowedLimits;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function setAllowedLimits(array $allowedLimits): ConfigInterface
+    public function setAllowedLimits(array $allowedLimits): self
     {
         $this->allowedLimits = $allowedLimits;
 
         return $this;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function setDefaultLimit(int $limit): ConfigInterface
+    public function setDefaultLimit(int $limit): self
     {
         $this->defaultLimit = $limit;
 
         return $this;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function getDefaultLimit(): int
     {
-        return $this->defaultLimit ?? self::DEFAULT_LIMIT;
+        return $this->defaultLimit;
     }
 
-    /**
-     * @return Request
-     */
     public function getRequest(): Request
     {
         return $this->request;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function setRequest(Request $request): ConfigInterface
+    public function setRequest(Request $request): self
     {
         $this->request = $request;
 
         return $this;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function setStrictColumns(bool $strict): ConfigInterface
+    public function setStrictColumns(bool $strict): self
     {
         $this->strictColumns = $strict;
 
         return $this;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function isStrictColumns(): bool
     {
         return $this->strictColumns;

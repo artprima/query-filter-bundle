@@ -1,18 +1,21 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Artprima\QueryFilterBundle\Query\Condition;
 
 use Artprima\QueryFilterBundle\Query\Filter;
 use Doctrine\ORM\QueryBuilder;
+use Stringable;
 
 /**
- * Class In
+ * Class In.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
-class In implements ConditionInterface
+final class In implements ConditionInterface
 {
-    public function getExpr(QueryBuilder $qb, int $index, Filter $filter)
+    public function getExpr(QueryBuilder $qb, int $index, Filter $filter): string|Stringable
     {
         $values = explode(',', $filter->getX() ?? '');
         $values = array_map('trim', $values);

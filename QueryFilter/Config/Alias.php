@@ -1,42 +1,31 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Artprima\QueryFilterBundle\QueryFilter\Config;
 
 /**
- * Class Alias
+ * Class Alias.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
-class Alias
+final class Alias
 {
     /**
-     * @var string alias name, eg.: fullname
+     * Alias constructor.
+     *
+     * @param string|null $name alias name, eg.: fullname
+     * @param string|null $expr expression, eg.: concat(concat(concat(concat(p.firstname, ' '), p.middlename), ' '), p.lastname)
      */
-    private $name;
-
-    /**
-     * @var string expression, eg.: concat(concat(concat(concat(p.firstname, ' '), p.middlename), ' '), p.lastname)
-     */
-    private $expr;
-
-    public function __construct(string $name = null, string $expr = null)
+    public function __construct(private ?string $name = null, private ?string $expr = null)
     {
-        $this->name = $name;
-        $this->expr = $expr;
     }
 
-    /**
-     * @return string
-     */
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     * @return Alias
-     */
     public function setName(string $name): Alias
     {
         $this->name = $name;
@@ -44,18 +33,11 @@ class Alias
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getExpr(): string
+    public function getExpr(): ?string
     {
         return $this->expr;
     }
 
-    /**
-     * @param string $expr
-     * @return Alias
-     */
     public function setExpr(string $expr): Alias
     {
         $this->expr = $expr;

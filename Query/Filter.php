@@ -1,51 +1,29 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Artprima\QueryFilterBundle\Query;
 
 /**
- * Class Filter
+ * Class Filter.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
 class Filter
 {
-    /**
-     * @var string
-     */
-    private $field;
+    private string $field;
+    private string $type;
+    private string $connector = 'and';
+    private bool $having = false;
+    private mixed $x = null;
+    private mixed $y = null;
+    private mixed $extra = null;
 
-    /**
-     * @var string
-     */
-    private $type;
-
-    /**
-     * @var string
-     */
-    private $connector = 'and';
-
-    /**
-     * @var bool
-     */
-    private $having = false;
-
-    private $x;
-    private $y;
-
-    private $extra;
-
-    /**
-     * @return string
-     */
     public function getField(): string
     {
         return $this->field;
     }
 
-    /**
-     * @param string $field
-     * @return Filter
-     */
     public function setField(string $field): Filter
     {
         $this->field = $field;
@@ -53,18 +31,11 @@ class Filter
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     * @return Filter
-     */
     public function setType(string $type): Filter
     {
         $this->type = $type;
@@ -72,18 +43,11 @@ class Filter
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getConnector(): string
     {
         return $this->connector;
     }
 
-    /**
-     * @param string $connector
-     * @return Filter
-     */
     public function setConnector(string $connector): Filter
     {
         $this->connector = $connector;
@@ -91,18 +55,11 @@ class Filter
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isHaving(): bool
     {
         return $this->having;
     }
 
-    /**
-     * @param bool $having
-     * @return Filter
-     */
     public function setHaving(bool $having): Filter
     {
         $this->having = $having;
@@ -110,38 +67,24 @@ class Filter
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getX()
+    public function getX(): mixed
     {
         return $this->x;
     }
 
-    /**
-     * @param mixed $x
-     * @return Filter
-     */
-    public function setX($x): Filter
+    public function setX(mixed $x): Filter
     {
         $this->x = $x;
 
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getY()
+    public function getY(): mixed
     {
         return $this->y;
     }
 
-    /**
-     * @param mixed $y
-     * @return Filter
-     */
-    public function setY($y): Filter
+    public function setY(mixed $y): Filter
     {
         $this->y = $y;
 
@@ -149,18 +92,14 @@ class Filter
     }
 
     /**
-     * @return mixed
+     * @return mixed value specific per query condition (in most cases unused)
      */
-    public function getExtra()
+    public function getExtra(): mixed
     {
         return $this->extra;
     }
 
-    /**
-     * @param mixed $extra
-     * @return Filter
-     */
-    public function setExtra($extra): Filter
+    public function setExtra(mixed $extra): Filter
     {
         $this->extra = $extra;
 

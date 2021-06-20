@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Artprima\QueryFilterBundle;
 
 use Artprima\QueryFilterBundle\DependencyInjection\Compiler\AddQueryBuilderConditionPass;

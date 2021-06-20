@@ -1,18 +1,20 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Unit\Artprima\QueryFilterBundle\ParamConverter;
 
 use Artprima\QueryFilterBundle\ParamConverter\ConfigConverter;
 use Artprima\QueryFilterBundle\QueryFilter\Config\BaseConfig;
+use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectRepository;
-use Doctrine\ORM\EntityManager;
 use PHPUnit\Framework\TestCase;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 
 /**
- * Class ConfigConverterTest
+ * Class ConfigConverterTest.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
@@ -78,10 +80,9 @@ class ConfigConverterTest extends TestCase
 
         $converter = new ConfigConverter($registry);
 
-
         $request = new HttpRequest([
             'limit' => 100,
-            'page'=> 3,
+            'page' => 3,
             'filter' => [
                 'c.dummy' => 'the road to hell',
             ],

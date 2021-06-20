@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Unit\Artprima\QueryFilterBundle\Query;
 
@@ -10,7 +12,7 @@ use Doctrine\ORM\QueryBuilder;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class ConditionManagerTest
+ * Class ConditionManagerTest.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
@@ -57,8 +59,7 @@ class ConditionManagerTest extends TestCase
         self::assertEquals($manager['dummy1'], $conditions['dummy1']);
         self::assertCount(2, $manager);
 
-        foreach ($manager as $id => $item)
-        {
+        foreach ($manager as $id => $item) {
             self::assertSame($conditions[$id], $item);
         }
 

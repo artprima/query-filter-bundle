@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Unit\Artprima\QueryFilterBundle\Query\Condition;
 
@@ -9,7 +11,7 @@ use Doctrine\ORM\QueryBuilder;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class BetweenTest
+ * Class BetweenTest.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */

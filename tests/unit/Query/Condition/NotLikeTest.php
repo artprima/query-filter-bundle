@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Unit\Artprima\QueryFilterBundle\Query\Condition;
 
@@ -9,7 +11,7 @@ use Doctrine\ORM\QueryBuilder;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class NotLikeTest
+ * Class NotLikeTest.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
@@ -39,7 +41,7 @@ class NotLikeTest extends TestCase
             ->setX('road to hell')
         );
 
-        self::assertSame('t.dummy NOT LIKE ?0', (string)$expr);
+        self::assertSame('t.dummy NOT LIKE ?0', (string) $expr);
     }
 
     public function testGetExprExact()
@@ -67,6 +69,6 @@ class NotLikeTest extends TestCase
             ->setExtra('exact')
         );
 
-        self::assertSame('t.dummy NOT LIKE ?0', (string)$expr);
+        self::assertSame('t.dummy NOT LIKE ?0', (string) $expr);
     }
 }

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Artprima\QueryFiMemberOferBundle\Tests\Query\Condition;
 
@@ -9,7 +11,7 @@ use Doctrine\ORM\QueryBuilder;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class MemberOfTest
+ * Class MemberOfTest.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
@@ -39,7 +41,7 @@ class MemberOfTest extends TestCase
             ->setX('1')
         );
 
-        self::assertSame('?0 MEMBER OF t.dummy', (string)$expr);
+        self::assertSame('?0 MEMBER OF t.dummy', (string) $expr);
     }
 
     public function testGetExprMultipleValues()
@@ -66,6 +68,6 @@ class MemberOfTest extends TestCase
             ->setX('1,2,3,4,5')
         );
 
-        self::assertSame('?0 MEMBER OF t.dummy', (string)$expr);
+        self::assertSame('?0 MEMBER OF t.dummy', (string) $expr);
     }
 }

@@ -1,21 +1,25 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Artprima\QueryFilterBundle\Query;
 
+use ArrayAccess;
 use Artprima\QueryFilterBundle\Query\Condition\ConditionInterface;
 use Doctrine\ORM\QueryBuilder;
+use Iterator;
 
 /**
- * Class ConditionManager
+ * Class ConditionManager.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
-class ConditionManager implements \ArrayAccess, \Iterator
+class ConditionManager implements ArrayAccess, Iterator
 {
     /**
      * @var ConditionInterface[]
      */
-    private $conditions = [];
+    private array $conditions = [];
 
     public function wrapQueryBuilder(QueryBuilder $qb): ProxyQueryBuilder
     {
@@ -47,34 +51,40 @@ class ConditionManager implements \ArrayAccess, \Iterator
 
     public function offsetSet($offset, $value)
     {
-        if ($offset === null) {
+        if (null === $offset) {
             $this->conditions[] = $value;
         } else {
             $this->conditions[$offset] = $value;
         }
     }
 
-    public function offsetUnset($offset) {
+    public function offsetUnset($offset)
+    {
         unset($this->conditions[$offset]);
     }
 
-    public function rewind() {
+    public function rewind()
+    {
         return reset($this->conditions);
     }
 
-    public function current() {
+    public function current()
+    {
         return current($this->conditions);
     }
 
-    public function key() {
+    public function key()
+    {
         return key($this->conditions);
     }
 
-    public function next() {
+    public function next()
+    {
         return next($this->conditions);
     }
 
-    public function valid() {
-        return key($this->conditions) !== null;
+    public function valid()
+    {
+        return null !== key($this->conditions);
     }
 }

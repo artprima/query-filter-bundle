@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the QueryFilterBundle package.
@@ -11,11 +13,11 @@
 
 namespace Tests\Unit\Artprima\QueryFilterBundle\Response;
 
-use Artprima\QueryFilterBundle\Response\Response;
+use Artprima\QueryFilterBundle\QueryFilter\Response;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class Response
+ * Class Response.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */

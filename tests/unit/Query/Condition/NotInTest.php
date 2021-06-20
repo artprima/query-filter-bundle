@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Unit\Artprima\QueryFilterBundle\Query\Condition;
 
@@ -9,7 +11,7 @@ use Doctrine\ORM\QueryBuilder;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class NotInTest
+ * Class NotInTest.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
@@ -39,6 +41,6 @@ class NotInTest extends TestCase
             ->setX('1,2,3,4,5')
         );
 
-        self::assertSame('t.dummy NOT IN(?0)', (string)$expr);
+        self::assertSame('t.dummy NOT IN(?0)', (string) $expr);
     }
 }

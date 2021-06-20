@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the QueryFilterBundle package.
  *
@@ -15,7 +17,7 @@ use Artprima\QueryFilterBundle\Controller\Annotations\QueryFilter;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class QueryFilterTest
+ * Class QueryFilterTest.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
