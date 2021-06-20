@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Artprima\QueryFilterBundle\Response;
 
-use Artprima\QueryFilterBundle\Response\Response;
+use Artprima\QueryFilterBundle\QueryFilter\Response;
 use PHPUnit\Framework\TestCase;
 
 /**

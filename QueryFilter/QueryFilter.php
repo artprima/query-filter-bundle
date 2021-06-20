@@ -4,39 +4,47 @@ declare(strict_types=1);
 
 namespace Artprima\QueryFilterBundle\QueryFilter;
 
-use Artprima\QueryFilterBundle\Exception\InvalidArgumentException;
 use Artprima\QueryFilterBundle\Exception\UnexpectedValueException;
 use Artprima\QueryFilterBundle\Query\Filter;
 use Artprima\QueryFilterBundle\QueryFilter\Config\Alias;
 use Artprima\QueryFilterBundle\QueryFilter\Config\ConfigInterface;
-use Artprima\QueryFilterBundle\Response\ResponseInterface;
-use ReflectionClass;
-use ReflectionException;
 
 /**
  * Class QueryFilter.
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
-class QueryFilter
+final class QueryFilter
 {
     /**
-     * QueryFilter constructor.
-     *
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
+     * @var Response
      */
-    public function __construct(private string $responseClassName)
-    {
-        $refClass = new ReflectionClass($responseClassName);
-        if (!$refClass->implementsInterface(ResponseInterface::class)) {
-            throw new InvalidArgumentException(sprintf('Response class "%s" must implement "%s"', $responseClassName, ResponseInterface::class));
-        }
+    private Response $response;
 
-        $constructor = $refClass->getConstructor();
-        if (null !== $constructor && $constructor->getNumberOfRequiredParameters() > 0) {
-            throw new InvalidArgumentException(sprintf('Response class "%s" must have a constructor without required parameters', $responseClassName));
-        }
+    public function __construct(ConfigInterface $config)
+    {
+        $args = $this->getQueryFilterArgs($config);
+
+        $startTime = microtime(true);
+        $filterData = $this->getFilterData($config, $args);
+        $duration = microtime(true) - $startTime;
+
+        $response = new Response();
+        $response->setData($filterData->getResult());
+        $response->addMeta('total_records', $filterData->getTotalRows());
+        $response->addMeta('metrics', [
+            'query_and_transformation' => $duration,
+        ]);
+
+        $this->response = $response;
+    }
+
+    /**
+     * Gets filtered data.
+     */
+    public function getData(): Response
+    {
+        return $this->response;
     }
 
     /**
@@ -61,10 +69,10 @@ class QueryFilter
         ];
 
         if (!isset($sort['field'], $sort['type'])) {
-            return $config->getSortColsDefault();
+            return $config->getSortDefaults();
         }
 
-        $isValidSortColumn = in_array($sort['field'], $config->getSortCols(), true);
+        $isValidSortColumn = in_array($sort['field'], $config->getSortFields(), true);
         $isValidSortType = in_array($sort['type'], ['asc', 'desc'], true);
 
         if ($isValidSortColumn && $isValidSortType) {
@@ -80,7 +88,7 @@ class QueryFilter
         }
 
         // we should never reach this point, but let's keep it
-        return $config->getSortColsDefault();
+        return $config->getSortDefaults();
     }
 
     /**
@@ -197,15 +205,15 @@ class QueryFilter
     {
         // Get basic search by
         $searchBy = $config->getRequest()->isSimple()
-            ? $this->getSimpleSearchBy($config->getSearchAllowedCols(), $config->getRequest()->getQuery(), $config->isStrictColumns())
-            : $this->getFullSearchBy($config->getSearchAllowedCols(), $config->getRequest()->getQuery(), $config->isStrictColumns());
+            ? $this->getSimpleSearchBy($config->getSearchAllowedFields(), $config->getRequest()->getQuery(), $config->isStrictColumns())
+            : $this->getFullSearchBy($config->getSearchAllowedFields(), $config->getRequest()->getQuery(), $config->isStrictColumns());
 
         // Set search aliases to more complicated expressions
-        $this->replaceSearchByAliases($searchBy, $config->getSearchByAliases());
+        $this->replaceSearchByAliases($searchBy, $config->getSearchAliases());
 
         // Set search extra filters (can be used to display entries for one particular entity,
         // or to add some extra conditions/filterings)
-        $searchBy = array_merge($config->getSearchByExtra(), $searchBy);
+        $searchBy = array_merge($config->getExtraFilters(), $searchBy);
 
         return $searchBy;
     }
@@ -234,27 +242,5 @@ class QueryFilter
     private function getFilterData(ConfigInterface $config, QueryFilterArgs $args): QueryResult
     {
         return $config->getRepositoryCallback()($args);
-    }
-
-    /**
-     * Gets filtered data.
-     */
-    public function getData(ConfigInterface $config): ResponseInterface
-    {
-        $args = $this->getQueryFilterArgs($config);
-
-        $startTime = microtime(true);
-        $filterData = $this->getFilterData($config, $args);
-        $duration = microtime(true) - $startTime;
-
-        /** @var ResponseInterface $response */
-        $response = new $this->responseClassName();
-        $response->setData($filterData->getResult());
-        $response->addMeta('total_records', $filterData->getTotalRows());
-        $response->addMeta('metrics', [
-            'query_and_transformation' => $duration,
-        ]);
-
-        return $response;
     }
 }

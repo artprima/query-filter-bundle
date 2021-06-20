@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Artprima\QueryFilterBundle\EventListener;
 
+use Artprima\QueryFilterBundle\Controller\Annotations\QueryFilter;
 use Artprima\QueryFilterBundle\EventListener\QueryFilterListener;
-use Artprima\QueryFilterBundle\QueryFilter\Config\ConfigInterface;
-use Artprima\QueryFilterBundle\QueryFilter\QueryFilter;
-use Artprima\QueryFilterBundle\Response\ResponseInterface;
+use Artprima\QueryFilterBundle\QueryFilter\Config\BaseConfig;
+use Artprima\QueryFilterBundle\QueryFilter\QueryFilterArgs;
+use Artprima\QueryFilterBundle\QueryFilter\QueryResult;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
@@ -17,30 +18,27 @@ class QueryFilterListenerTest extends TestCase
 {
     public function testOnKernelView()
     {
-        $response = $this->getMockBuilder(ResponseInterface::class)
-            ->getMock();
+        $request = new \Artprima\QueryFilterBundle\QueryFilter\Request(new Request());
+        $queryResult = new QueryResult([
+            'value',
+        ], 1);
 
-        $config = $this->getMockBuilder(ConfigInterface::class)
-            ->getMock();
-
-        $queryFilter = $this->getMockBuilder(QueryFilter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $queryFilter
-            ->expects(self::once())
-            ->method('getData')
-            ->with($config)
-            ->willReturn($response);
+        $config = new BaseConfig();
+        $config->setRequest($request);
+        $config->setRepositoryCallback(function (QueryFilterArgs $args) use ($queryResult): QueryResult {
+            return $queryResult;
+        });
 
         $event = $this->getViewEvent($config, $this->createRequest(
-            new \Artprima\QueryFilterBundle\Controller\Annotations\QueryFilter([])
+            new QueryFilter([])
         ));
 
-        $listener = new QueryFilterListener($queryFilter);
+        $listener = new QueryFilterListener();
         $listener->onKernelView($event);
 
-        self::assertEquals($response, $event->getControllerResult());
+        $response = $event->getControllerResult();
+        self::assertEquals(['value'], $response->getData());
+        self::assertEquals(1, $response->getMeta()['total_records']);
     }
 
     /**
@@ -48,25 +46,11 @@ class QueryFilterListenerTest extends TestCase
      */
     public function onKernelViewShouldDoNothingOnQueryfilterAttributeNotSet()
     {
-        $response = $this->getMockBuilder(ResponseInterface::class)
-            ->getMock();
-
-        $config = $this->getMockBuilder(ConfigInterface::class)
-            ->getMock();
-
-        $queryFilter = $this->getMockBuilder(QueryFilter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $queryFilter
-            ->expects(self::never())
-            ->method('getData')
-            ->with($config)
-            ->willReturn($response);
+        $config = new BaseConfig();
 
         $event = $this->getViewEvent($config, $this->createRequest());
 
-        $listener = new QueryFilterListener($queryFilter);
+        $listener = new QueryFilterListener();
         $listener->onKernelView($event);
 
         self::assertEquals($config, $event->getControllerResult());
@@ -77,37 +61,22 @@ class QueryFilterListenerTest extends TestCase
      */
     public function onKernelViewShouldDoNothingOnControllerResultNotInstanceOfConfigInterface()
     {
-        $response = $this->getMockBuilder(ResponseInterface::class)
-            ->getMock();
-
         $config = 'idiocracy';
-
-        $queryFilter = $this->getMockBuilder(QueryFilter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $queryFilter
-            ->expects(self::never())
-            ->method('getData')
-            ->with($config)
-            ->willReturn($response);
-
         $event = $this->getViewEvent($config, $this->createRequest());
-
-        $listener = new QueryFilterListener($queryFilter);
+        $listener = new QueryFilterListener();
         $listener->onKernelView($event);
 
         self::assertEquals($config, $event->getControllerResult());
     }
 
-    private function getViewEvent($config, Request $request)
+    private function getViewEvent($config, Request $request): ViewEvent
     {
         $mockKernel = $this->getMockForAbstractClass('Symfony\Component\HttpKernel\Kernel', ['test', '']);
 
-        return new ViewEvent($mockKernel, $request, HttpKernelInterface::MASTER_REQUEST, $config);
+        return new ViewEvent($mockKernel, $request, HttpKernelInterface::MAIN_REQUEST, $config);
     }
 
-    private function createRequest($queryFilterAnnotation = null)
+    private function createRequest($queryFilterAnnotation = null): Request
     {
         return new Request([], [], [
             '_queryfilter' => $queryFilterAnnotation,

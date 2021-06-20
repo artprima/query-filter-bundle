@@ -13,15 +13,8 @@ use Symfony\Component\HttpKernel\Event\ViewEvent;
  *
  * @author Denis Voytyuk <ask@artprima.cz>
  */
-class QueryFilterListener
+final class QueryFilterListener
 {
-    private QueryFilter $queryFilter;
-
-    public function __construct(QueryFilter $queryFilter)
-    {
-        $this->queryFilter = $queryFilter;
-    }
-
     public function onKernelView(ViewEvent $event): void
     {
         $request = $event->getRequest();
@@ -39,7 +32,8 @@ class QueryFilterListener
             return;
         }
 
-        $result = $this->queryFilter->getData($config);
+        $queryFilter = new QueryFilter($config);
+        $result = $queryFilter->getData();
         $event->setControllerResult($result);
     }
 }

@@ -48,10 +48,10 @@ class DefaultController extends Controller
     {
         // set up the config
         $config = new BaseConfig();
-        $config->setSearchAllowedCols(['t.name']);
+        $config->setSearchAllowedFields(['t.name']);
         $config->setAllowedLimits([10, 25, 50, 100]);
         $config->setDefaultLimit(10);
-        $config->setSortCols(['t.id'], ['t.id' => 'asc']);
+        $config->setSortFields(['t.id'], ['t.id' => 'asc']);
         $config->setRequest(new Request($request));
         
         // Throws an UnexpectedValueException when invalid filter column, sort column or sort type is specified
@@ -260,11 +260,11 @@ class ItemConfig extends BaseConfig
 {
     public function __construct()
     {
-        $this->setSearchAllowedCols([
+        $this->setSearchAllowedFields([
             't.name',
         ]);
 
-        $this->setSortCols(
+        $this->setSortFields(
             ['t.id'],
             ['t.id' => 'desc'] // default
         );

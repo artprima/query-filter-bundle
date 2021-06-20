@@ -73,8 +73,8 @@ class ProxyQueryBuilder
 
         /** @var Filter $val */
         foreach ($filterBy as $val) {
-            if (!($val instanceof Filter)) {
-                throw new InvalidArgumentException(sprintf('Unexpected val php type ("%s")', gettype($val)));
+            if (!$val instanceof Filter) {
+                throw new InvalidArgumentException(sprintf('Unexpected val php type ("%s"), while expected Filter instance', gettype($val)));
             }
 
             ++$i;

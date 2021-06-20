@@ -6,7 +6,7 @@ namespace Artprima\QueryFilterBundle\ParamConverter;
 
 use Artprima\QueryFilterBundle\Exception\InvalidArgumentException;
 use Artprima\QueryFilterBundle\QueryFilter\Config\ConfigInterface;
-use Artprima\QueryFilterBundle\Request\Request;
+use Artprima\QueryFilterBundle\QueryFilter\Request;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;

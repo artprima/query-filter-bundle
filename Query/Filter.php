@@ -91,6 +91,9 @@ class Filter
         return $this;
     }
 
+    /**
+     * @return mixed value specific per query condition (in most cases unused)
+     */
     public function getExtra(): mixed
     {
         return $this->extra;

@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Artprima\QueryFilterBundle\QueryFilter\Config;
 
-use Artprima\QueryFilterBundle\Request\Request;
+use Artprima\QueryFilterBundle\Query\Filter;
+use Artprima\QueryFilterBundle\QueryFilter\QueryFilterArgs;
+use Artprima\QueryFilterBundle\QueryFilter\QueryResult;
+use Artprima\QueryFilterBundle\QueryFilter\Request;
 
 /**
  * Interface ConfigInterface.
@@ -14,20 +17,20 @@ use Artprima\QueryFilterBundle\Request\Request;
 interface ConfigInterface
 {
     /**
-     * @return $this
+     * @param string[]
      */
-    public function setSearchAllowedCols(array $args): self;
+    public function setSearchAllowedFields(array $args): self;
 
     /**
      * Get allowed columns that are used in search.
      */
-    public function getSearchAllowedCols(): array;
+    public function getSearchAllowedFields(): array;
 
     /**
      * Set shortcut expanders (aliaces).
      *
      * For example, concat(concat(concat(concat(p.firstname, ' '), p.middlename), ' '), p.lastname) can be
-     * aliased by 'person_name':
+     * aliased as 'person_name':
      *
      * @see QueryFilter::getTemplateData()
      *
@@ -35,43 +38,46 @@ interface ConfigInterface
      *
      * @return $this
      */
-    public function setSearchByAliases(array $aliases): self;
+    public function setSearchAliases(array $aliases): self;
 
     /**
-     * Set Shortcut Expanders (for more info: {@link ConfigInterface::setSearchByAliases()}).
+     * Set Shortcut Expanders (for more info: {@link ConfigInterface::setSearchAliases()}).
      */
-    public function getSearchByAliases(): array;
+    public function getSearchAliases(): array;
 
     /**
-     * Set extra data for search.
-     *
-     * @param callable $extra
-     *
-     * @return $this
+     * Set extra data for search (can be used by.
+     * @param Filter[] $extra
      */
-    public function setSearchByExtra(array $extra): self;
+    public function setExtraFilters(array $extra): self;
 
     /**
      * Get extra data for search.
+     * @return Filter[]
      */
-    public function getSearchByExtra(): array;
+    public function getExtraFilters(): array;
 
     /**
      * Set sort columns (allowed and default).
      *
      * @return $this
      */
-    public function setSortCols(array $cols, array $default = []): self;
+    public function setSortFields(array $cols): self;
 
     /**
      * Get allowed sort columns.
      */
-    public function getSortCols(): array;
+    public function getSortFields(): array;
+
+    /**
+     * Set default sort column data.
+     */
+    public function setSortDefaults(array $defaults): self;
 
     /**
      * Get default sort column data.
      */
-    public function getSortColsDefault(): array;
+    public function getSortDefaults(): array;
 
     /**
      * Set repository callback [function($searchBy, $sortData, $limit, $offset)].
@@ -81,7 +87,7 @@ interface ConfigInterface
     public function setRepositoryCallback(callable $callback): self;
 
     /**
-     * Get repository callback [function($searchBy, $sortData, $limit, $offset)].
+     * Get repository callback [function (QueryFilterArgs $args): QueryResult].
      */
     public function getRepositoryCallback(): callable;
 

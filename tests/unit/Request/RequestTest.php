@@ -5,16 +5,13 @@ declare(strict_types=1);
 namespace Tests\Unit\Artprima\QueryFilterBundle\Request;
 
 use Artprima\QueryFilterBundle\Exception\InvalidArgumentException;
-use Artprima\QueryFilterBundle\Request\Request;
+use Artprima\QueryFilterBundle\QueryFilter\Request;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 
 class RequestTest extends TestCase
 {
-    /**
-     * @var Request
-     */
-    private static $request;
+    private static Request $request;
 
     public static function setUpBeforeClass(): void
     {

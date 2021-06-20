@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Artprima\QueryFilterBundle\QueryFilter\Config;
 
 use Artprima\QueryFilterBundle\Exception\MissingArgumentException;
-use Artprima\QueryFilterBundle\Request\Request;
+use Artprima\QueryFilterBundle\Query\Filter;
+use Artprima\QueryFilterBundle\QueryFilter\Request;
 
 /**
  * Class BaseConfig.
@@ -19,25 +20,26 @@ class BaseConfig implements ConfigInterface
     protected Request $request;
     protected int $defaultLimit = self::DEFAULT_LIMIT;
     protected array $allowedLimits = [];
-    protected array $searchBy = [
-        'args' => [],
-        'aliases' => [],
-        'extra' => [],
-    ];
-    protected array $sort = [
-        'cols' => [],
-        'default' => [],
-    ];
+
+    protected $searchAllowedFields = [];
+
+    /**
+     * @var Alias[]
+     */
+    protected $searchAliases = [];
+
+    /**
+     * @var Filter[]
+     */
+    protected $extraFilters = [];
+
+    protected $sortFields = [];
+    protected $sortDefaults = [];
 
     /**
      * @var callable
      */
     protected $repositoryCallback;
-
-    /**
-     * @var callable
-     */
-    protected $totalRowsCallback;
 
     protected bool $simple = true;
     protected bool $strictColumns = false;
@@ -45,9 +47,9 @@ class BaseConfig implements ConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function setSearchAllowedCols(array $args): self
+    public function setSearchAllowedFields(array $args): self
     {
-        $this->searchBy['args'] = $args;
+        $this->searchAllowedFields = $args;
 
         return $this;
     }
@@ -55,20 +57,23 @@ class BaseConfig implements ConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function getSearchAllowedCols(): array
+    public function getSearchAllowedFields(): array
     {
-        return $this->searchBy['args'];
+        return $this->searchAllowedFields;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setSearchByAliases(array $aliases): self
+    public function setSearchAliases(array $aliases): self
     {
-        /** @var Alias $alias */
-        foreach ($aliases as $alias) {
-            $this->searchBy['aliases'][$alias->getName()] = $alias;
-        }
+        $this->searchAliases = (function (Alias ...$aliases) {
+            $result = [];
+            foreach ($aliases as $alias) {
+                $result[$alias->getName()] = $alias;
+            }
+            return $result;
+        })(...$aliases);
 
         return $this;
     }
@@ -76,9 +81,9 @@ class BaseConfig implements ConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function addSearchByAliases(Alias $alias): self
+    public function addSearchAliases(Alias $alias): self
     {
-        $this->searchBy['aliases'][$alias->getName()] = $alias;
+        $this->searchAliases[$alias->getName()] = $alias;
 
         return $this;
     }
@@ -86,17 +91,17 @@ class BaseConfig implements ConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function getSearchByAliases(): array
+    public function getSearchAliases(): array
     {
-        return $this->searchBy['aliases'] ?? [];
+        return $this->searchAliases ?? [];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setSearchByExtra(array $extra): self
+    public function setExtraFilters(array $extra): self
     {
-        $this->searchBy['extra'] = $extra;
+        $this->extraFilters = (fn (Filter ...$items) => $items)(...$extra);
 
         return $this;
     }
@@ -104,18 +109,17 @@ class BaseConfig implements ConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function getSearchByExtra(): array
+    public function getExtraFilters(): array
     {
-        return $this->searchBy['extra'];
+        return $this->extraFilters;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setSortCols(array $cols, array $default = []): self
+    public function setSortFields(array $cols): self
     {
-        $this->sort['cols'] = $cols;
-        $this->sort['default'] = $default;
+        $this->sortFields = $cols;
 
         return $this;
     }
@@ -123,17 +127,27 @@ class BaseConfig implements ConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function getSortCols(): array
+    public function getSortFields(): array
     {
-        return $this->sort['cols'];
+        return $this->sortFields;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getSortColsDefault(): array
+    public function getSortDefaults(): array
     {
-        return $this->sort['default'];
+        return $this->sortDefaults;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setSortDefaults(array $sortDefaults): self
+    {
+        $this->sortDefaults = $sortDefaults;
+
+        return $this;
     }
 
     /**

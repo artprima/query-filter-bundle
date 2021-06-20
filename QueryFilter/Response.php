@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Artprima\QueryFilterBundle\Response;
+namespace Artprima\QueryFilterBundle\QueryFilter;
 
 /**
  * Class Response.
  *
  * @author Denis Voytyuk <denis.voytyuk@feedo.cz>
  */
-class Response implements ResponseInterface
+final class Response
 {
     /**
      * @param mixed $data filtered data
@@ -24,7 +24,7 @@ class Response implements ResponseInterface
         return $this->data;
     }
 
-    public function setData($data): ResponseInterface
+    public function setData($data): self
     {
         $this->data = $data;
 
@@ -36,14 +36,14 @@ class Response implements ResponseInterface
         return $this->meta;
     }
 
-    public function setMeta(array $meta): ResponseInterface
+    public function setMeta(array $meta): self
     {
         $this->meta = $meta;
 
         return $this;
     }
 
-    public function addMeta(string $field, $value): ResponseInterface
+    public function addMeta(string $field, mixed $value): self
     {
         $this->meta[$field] = $value;
 

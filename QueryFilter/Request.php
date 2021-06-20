@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Artprima\QueryFilterBundle\Request;
+namespace Artprima\QueryFilterBundle\QueryFilter;
 
 use Artprima\QueryFilterBundle\Exception\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
