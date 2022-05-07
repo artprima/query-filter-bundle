@@ -51,7 +51,7 @@ final class Request
     {
         $this->pageNum = (int)$request->query->get('page', 1);
         $this->limit = (int)$request->query->get('limit', -1);
-        $this->query = $request->query->get('filter');
+        $this->query = $request->query->all('filter');
         if ($this->query !== null && !is_array($this->query)) {
             throw new InvalidArgumentException('Query filter must be an array');
         }
