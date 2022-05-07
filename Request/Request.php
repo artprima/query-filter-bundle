@@ -3,6 +3,7 @@
 namespace Artprima\QueryFilterBundle\Request;
 
 use Artprima\QueryFilterBundle\Exception\InvalidArgumentException;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 
 /**
@@ -49,18 +50,42 @@ final class Request
      */
     public function __construct(HttpRequest $request)
     {
-        $this->pageNum = (int)$request->query->get('page', 1);
-        $this->limit = (int)$request->query->get('limit', -1);
-        $this->query = $request->query->get('filter');
-        if ($this->query !== null && !is_array($this->query)) {
+        try {
+            $this->pageNum = (int)$request->query->get('page', 1);
+        } catch (BadRequestException) {
+            throw new InvalidArgumentException('Query page must be scalar');
+        }
+        try {
+            $this->limit = (int)$request->query->get('limit', -1);
+        } catch (BadRequestException) {
+            throw new InvalidArgumentException('Query limit must be scalar');
+        }
+        try {
+            $this->query = $request->query->all('filter');
+        } catch (BadRequestException) {
             throw new InvalidArgumentException('Query filter must be an array');
         }
-        $this->sortBy = $request->query->get('sortby');
-        $this->sortDir = $request->query->get('sortdir', 'asc');
+        try {
+            $this->sortBy = $request->query->get('sortby');
+        } catch (BadRequestException) {
+            throw new InvalidArgumentException('Query sort by must be scalar');
+        }
+        if (null !== $this->sortBy && !is_string($this->sortBy)) {
+            throw new InvalidArgumentException('Query sort by must be a string');
+        }
+        try {
+            $this->sortDir = $request->query->get('sortdir', 'asc');
+        } catch (BadRequestException) {
+            throw new InvalidArgumentException('Query sort direction must be scalar');
+        }
         if (!is_string($this->sortDir)) {
             throw new InvalidArgumentException('Query sort direction must be a string');
         }
-        $this->simple = (bool)$request->query->get('simple', '1');
+        try {
+            $this->simple = (bool)$request->query->get('simple', '1');
+        } catch (BadRequestException) {
+            throw new InvalidArgumentException('Query simple must be scalar');
+        }
     }
 
     /**

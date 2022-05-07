@@ -15,7 +15,7 @@ class ConditionManager implements \ArrayAccess, \Iterator
     /**
      * @var ConditionInterface[]
      */
-    private $conditions = [];
+    private array $conditions = [];
 
     public function wrapQueryBuilder(QueryBuilder $qb): ProxyQueryBuilder
     {
@@ -35,17 +35,17 @@ class ConditionManager implements \ArrayAccess, \Iterator
         return $this->conditions;
     }
 
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return array_key_exists($offset, $this->conditions);
     }
 
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->offsetExists($offset) ? $this->conditions[$offset] : null;
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         if ($offset === null) {
             $this->conditions[] = $value;
@@ -54,27 +54,27 @@ class ConditionManager implements \ArrayAccess, \Iterator
         }
     }
 
-    public function offsetUnset($offset) {
+    public function offsetUnset($offset): void {
         unset($this->conditions[$offset]);
     }
 
-    public function rewind() {
-        return reset($this->conditions);
+    public function rewind(): void {
+        reset($this->conditions);
     }
 
-    public function current() {
+    public function current(): mixed {
         return current($this->conditions);
     }
 
-    public function key() {
+    public function key(): mixed {
         return key($this->conditions);
     }
 
-    public function next() {
-        return next($this->conditions);
+    public function next(): void {
+        next($this->conditions);
     }
 
-    public function valid() {
+    public function valid(): bool {
         return key($this->conditions) !== null;
     }
 }
