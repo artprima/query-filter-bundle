@@ -4,8 +4,8 @@ namespace Tests\Unit\Artprima\QueryFilterBundle\Request;
 
 use Artprima\QueryFilterBundle\Exception\InvalidArgumentException;
 use Artprima\QueryFilterBundle\Request\Request;
-use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\Request as HttpRequest;
 
 class RequestTest extends TestCase
 {
@@ -109,7 +109,37 @@ class RequestTest extends TestCase
         self::assertSame(true, $request->isSimple());
     }
 
-    public function testInvalidQueryException()
+    public function testInvalidPageException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Query page must be scalar");
+        $httpRequest = new HttpRequest(array(
+            'page' => ['42'],
+            'limit' => '4242',
+            'filter' => ['column' => 'value'],
+            'sortby' => 'sortbydummy',
+            'sortdir' => 'desc',
+            'simple' => '0',
+        ));
+        $request = new Request($httpRequest);
+    }
+
+    public function testInvalidLimitException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Query limit must be scalar");
+        $httpRequest = new HttpRequest(array(
+            'page' => '42',
+            'limit' => ['4242'],
+            'filter' => ['column' => 'value'],
+            'sortby' => 'sortbydummy',
+            'sortdir' => 'desc',
+            'simple' => '0',
+        ));
+        $request = new Request($httpRequest);
+    }
+
+    public function testInvalidQueryException1()
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("Query filter must be an array");
@@ -118,6 +148,51 @@ class RequestTest extends TestCase
             'limit' => '4242',
             'filter' => 'string',
             'sortby' => 'sortbydummy',
+            'sortdir' => 'desc',
+            'simple' => '0',
+        ));
+        $request = new Request($httpRequest);
+    }
+
+    /**
+     * @doesNotPerformAssertions should not throw exceptions when filter is missing
+     */
+    public function testInvalidQueryException2()
+    {
+        $httpRequest = new HttpRequest(array(
+            'page' => '42',
+            'limit' => '4242',
+            'sortby' => 'sortbydummy',
+            'sortdir' => 'desc',
+            'simple' => '0',
+        ));
+        $request = new Request($httpRequest);
+    }
+
+    public function testInvalidSortByException1()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Query sort by must be scalar");
+        $httpRequest = new HttpRequest(array(
+            'page' => '42',
+            'limit' => '4242',
+            'filter' => ['column' => 'value'],
+            'sortby' => ['sortbydummy'],
+            'sortdir' => 'desc',
+            'simple' => '0',
+        ));
+        $request = new Request($httpRequest);
+    }
+
+    public function testInvalidSortByException2()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Query sort by must be a string");
+        $httpRequest = new HttpRequest(array(
+            'page' => '42',
+            'limit' => '4242',
+            'filter' => ['column' => 'value'],
+            'sortby' => 42,
             'sortdir' => 'desc',
             'simple' => '0',
         ));
@@ -143,13 +218,28 @@ class RequestTest extends TestCase
     public function testInvalidSortDirException2()
     {
         $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Query sort direction must be scalar');
+        $httpRequest = new HttpRequest(array(
+            'page' => '42',
+            'limit' => '4242',
+            'filter' => ['column' => 'value'],
+            'sortby' => 'sortbydummy',
+            'sortdir' => ['invalid'],
+            'simple' => '0',
+        ));
+        $request = new Request($httpRequest);
+    }
+
+    public function testInvalidSortDirException3()
+    {
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Query sort direction must be a string');
         $httpRequest = new HttpRequest(array(
             'page' => '42',
             'limit' => '4242',
             'filter' => ['column' => 'value'],
             'sortby' => 'sortbydummy',
-            'sortdir' => array('invalid'),
+            'sortdir' => 42,
             'simple' => '0',
         ));
         $request = new Request($httpRequest);
