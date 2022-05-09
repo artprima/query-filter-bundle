@@ -3,6 +3,7 @@
 namespace Tests\Unit\Artprima\QueryFilterBundle\QueryFilter;
 
 use Artprima\QueryFilterBundle\Exception\InvalidArgumentException;
+use Artprima\QueryFilterBundle\Exception\InvalidLengthException;
 use Artprima\QueryFilterBundle\Exception\MissingArgumentException;
 use Artprima\QueryFilterBundle\Exception\UnexpectedValueException;
 use Artprima\QueryFilterBundle\Query\Filter;
@@ -69,6 +70,53 @@ class QueryFilterTest extends TestCase
         ]));
         $config->setRequest($request);
         $config->setSearchAllowedCols(['c.dummy']);
+        $config->setSortCols(['c.id']);
+        $config->setAllowedLimits([10, 15, 100]);
+        $config->setDefaultLimit(10);
+
+        $config->setRepositoryCallback(function(QueryFilterArgs $args) {
+            self::assertSame(100, $args->getLimit());
+            self::assertSame(200, $args->getOffset());
+            self::assertEquals([
+                (new Filter())
+                    ->setField('c.dummy')
+                    ->setType('like')
+                    ->setX('the road to hell'),
+            ], $args->getSearchBy());
+            self::assertEquals([
+                'c.id' => 'asc',
+            ], $args->getSortBy());
+
+            return new QueryResult([
+                ["dummy"],
+                ["wammy"],
+            ], 1000);
+        });
+        $response = $queryFilter->getData($config);
+        self::assertEquals([
+            ["dummy"],
+            ["wammy"],
+        ], $response->getData());
+        self::assertSame(1000, $response->getMeta()['total_records']);
+    }
+
+    public function testGetDataSimpleBaseCaseWithLengths()
+    {
+        $queryFilter = new QueryFilter(Response::class);
+
+        $config = new BaseConfig();
+        $request = new Request(new HttpRequest([
+            'limit' => 100,
+            'page'=> 3,
+            'filter' => [
+                'c.dummy' => 'the road to hell',
+            ],
+            'sortby' => 'c.id',
+            'sortdir' => 'asc',
+        ]));
+        $config->setRequest($request);
+        $config->setSearchAllowedCols(['c.dummy']);
+        $config->setSearchAllowedColsLengths(['c.dummy' => ['min' => 10, 'max' => 200]]);
         $config->setSortCols(['c.id']);
         $config->setAllowedLimits([10, 15, 100]);
         $config->setDefaultLimit(10);
@@ -476,6 +524,91 @@ class QueryFilterTest extends TestCase
         self::assertSame(1000, $response->getMeta()['total_records']);
     }
 
+    public function testGetDataAdvancedBaseCaseWithLengths()
+    {
+        $queryFilter = new QueryFilter(Response::class);
+
+        $config = new BaseConfig();
+        $request = new Request(new HttpRequest([
+            'limit' => 100,
+            'page'=> 3,
+            'filter' => [
+                [
+                    'field' => 'c.hell',
+                    'type' => 'eq',
+                    'x' => 'the road to hell',
+                ],
+                [
+                    'field' => 'c.heaven',
+                    'type' => 'like',
+                    'x' => 'the road to heaven',
+                ],
+                [
+                    'field' => 'c.latency',
+                    'type' => 'between',
+                    'x' => '10',
+                    'y' => '100',
+                ],
+                [
+                    'field' => 'c.hell',
+                    'type' => 'like',
+                    'x' => 'the road to hell',
+                    'connector' => 'or',
+                    'extra' => 'exact',
+                ],
+            ],
+            'sortby' => 'c.id',
+            'sortdir' => 'asc',
+            'simple' => '0',
+        ]));
+        $config->setRequest($request);
+        $config->setSearchAllowedCols(['c.hell', 'c.heaven', 'c.latency']);
+        $config->setSearchAllowedColsLengths(['c.hell' => ['min' => 10, 'max' => 200]]);
+        $config->setSortCols(['c.id']);
+        $config->setAllowedLimits([10, 15, 100]);
+        $config->setDefaultLimit(10);
+
+        $config->setRepositoryCallback(function(QueryFilterArgs $args) {
+            self::assertSame(100, $args->getLimit());
+            self::assertSame(200, $args->getOffset());
+            self::assertEquals([
+                (new Filter())
+                    ->setField('c.hell')
+                    ->setType('eq')
+                    ->setX('the road to hell'),
+                (new Filter())
+                    ->setField('c.heaven')
+                    ->setType('like')
+                    ->setX('the road to heaven'),
+                (new Filter())
+                    ->setField('c.latency')
+                    ->setType('between')
+                    ->setX('10')
+                    ->setY('100'),
+                (new Filter())
+                    ->setField('c.hell')
+                    ->setType('like')
+                    ->setX('the road to hell')
+                    ->setExtra('exact')
+                    ->setConnector('or')
+            ], $args->getSearchBy());
+            self::assertEquals([
+                'c.id' => 'asc',
+            ], $args->getSortBy());
+
+            return new QueryResult([
+                ["dummy"],
+                ["wammy"],
+            ], 1000);
+        });
+        $response = $queryFilter->getData($config);
+        self::assertEquals([
+            ["dummy"],
+            ["wammy"],
+        ], $response->getData());
+        self::assertSame(1000, $response->getMeta()['total_records']);
+    }
+
     public function testAliases()
     {
         $queryFilter = new QueryFilter(Response::class);
@@ -539,5 +672,249 @@ class QueryFilterTest extends TestCase
             ["wammy"],
         ], $response->getData());
         self::assertSame(1000, $response->getMeta()['total_records']);
+    }
+
+    public function testAliasesWithLengths()
+    {
+        $queryFilter = new QueryFilter(Response::class);
+
+        $config = new BaseConfig();
+        $request = new Request(new HttpRequest([
+            'limit' => 100,
+            'page'=> 3,
+            'filter' => [
+                [
+                    'field' => 'fullname',
+                    'type' => 'eq',
+                    'x' => 'Vassily Poupkine',
+                    'having' => '1',
+                ],
+                [
+                    'field' => 'c.heaven',
+                    'type' => 'like',
+                    'x' => 'the road to heaven',
+                ],
+            ],
+            'sortby' => 'c.id',
+            'sortdir' => 'asc',
+            'simple' => '0',
+        ]));
+        $config->setRequest($request);
+        $config->setSearchAllowedCols(['fullname', 'c.heaven']);
+        $config->setSearchAllowedColsLengths(['fullname' => ['min' => 10, 'max' => 200]]);
+        $config->setSortCols(['c.id']);
+        $config->setAllowedLimits([10, 15, 100]);
+        $config->setDefaultLimit(10);
+        $config->setSearchByAliases([
+            (new Alias('fullname', 'concat(\'c.firstname, \' \', c.lastname\')'))
+        ]);
+
+        $config->setRepositoryCallback(function(QueryFilterArgs $args) {
+            self::assertSame(100, $args->getLimit());
+            self::assertSame(200, $args->getOffset());
+            self::assertEquals([
+                (new Filter())
+                    ->setField('concat(\'c.firstname, \' \', c.lastname\')')
+                    ->setType('eq')
+                    ->setX('Vassily Poupkine')
+                    ->setHaving(true),
+                (new Filter())
+                    ->setField('c.heaven')
+                    ->setType('like')
+                    ->setX('the road to heaven'),
+            ], $args->getSearchBy());
+            self::assertEquals([
+                'c.id' => 'asc',
+            ], $args->getSortBy());
+
+            return new QueryResult([
+                ["dummy"],
+                ["wammy"],
+            ], 1000);
+        });
+        $response = $queryFilter->getData($config);
+        self::assertEquals([
+            ["dummy"],
+            ["wammy"],
+        ], $response->getData());
+        self::assertSame(1000, $response->getMeta()['total_records']);
+    }
+
+    public function testSimpleDataInvalidMinLength()
+    {
+        $this->expectException(InvalidLengthException::class);
+        $this->expectExceptionMessage('Invalid filter min length requested c.knownColumn');
+        $queryFilter = new QueryFilter(Response::class);
+
+        $config = new BaseConfig();
+        $request = new Request(new HttpRequest([
+            'filter' => [
+                'c.knownColumn' => 'foo',
+            ],
+        ]));
+        $config->setRequest($request);
+        $config->setSearchAllowedCols(['c.knownColumn']);
+        $config->setSearchAllowedColsLengths(['c.knownColumn' => ['min' => 4]]);
+        $config->setStrictColumns(true);
+        $config->setRepositoryCallback(function(QueryFilterArgs $args) {
+            return new QueryResult([
+                ["dummy"],
+                ["wammy"],
+            ], 1000);
+        });
+
+        $queryFilter->getData($config);
+    }
+
+    public function testSimpleDataInvalidMaxLength()
+    {
+        $this->expectException(InvalidLengthException::class);
+        $this->expectExceptionMessage('Invalid filter max length requested c.knownColumn');
+        $queryFilter = new QueryFilter(Response::class);
+
+        $config = new BaseConfig();
+        $request = new Request(new HttpRequest([
+            'filter' => [
+                'c.knownColumn' => 'bar',
+            ],
+        ]));
+        $config->setRequest($request);
+        $config->setSearchAllowedCols(['c.knownColumn']);
+        $config->setSearchAllowedColsLengths(['c.knownColumn' => ['max' => 2]]);
+        $config->setStrictColumns(true);
+        $config->setRepositoryCallback(function(QueryFilterArgs $args) {
+            return new QueryResult([
+                ["dummy"],
+                ["wammy"],
+            ], 1000);
+        });
+
+        $queryFilter->getData($config);
+    }
+
+    public function testFullDataInvalidXMinLength()
+    {
+        $this->expectException(InvalidLengthException::class);
+        $this->expectExceptionMessage('Invalid filter min length requested c.knownColumn');
+        $queryFilter = new QueryFilter(Response::class);
+
+        $config = new BaseConfig();
+        $request = new Request(new HttpRequest([
+            'filter' => [
+                [
+                    'field' => 'c.knownColumn',
+                    'type' => 'eq',
+                    'x' => 'foo',
+                ],
+            ],
+            'simple' => '0',
+        ]));
+        $config->setRequest($request);
+        $config->setSearchAllowedCols(['c.knownColumn']);
+        $config->setSearchAllowedColsLengths(['c.knownColumn' => ['min' => 4]]);
+        $config->setStrictColumns(true);
+        $config->setRepositoryCallback(function(QueryFilterArgs $args) {
+            return new QueryResult([
+                ["dummy"],
+                ["wammy"],
+            ], 1000);
+        });
+
+        $queryFilter->getData($config);
+    }
+
+    public function testFullDataInvalidYMinLength()
+    {
+        $this->expectException(InvalidLengthException::class);
+        $this->expectExceptionMessage('Invalid filter min length requested c.knownColumn');
+        $queryFilter = new QueryFilter(Response::class);
+
+        $config = new BaseConfig();
+        $request = new Request(new HttpRequest([
+            'filter' => [
+                [
+                    'field' => 'c.knownColumn',
+                    'type' => 'between',
+                    'x' => 'foo',
+                    'y' => 'bar',
+                ],
+            ],
+            'simple' => '0',
+        ]));
+        $config->setRequest($request);
+        $config->setSearchAllowedCols(['c.knownColumn']);
+        $config->setSearchAllowedColsLengths(['c.knownColumn' => ['min' => 4]]);
+        $config->setStrictColumns(true);
+        $config->setRepositoryCallback(function(QueryFilterArgs $args) {
+            return new QueryResult([
+                ["dummy"],
+                ["wammy"],
+            ], 1000);
+        });
+
+        $queryFilter->getData($config);
+    }
+
+    public function testFullDataInvalidXMaxLength()
+    {
+        $this->expectException(InvalidLengthException::class);
+        $this->expectExceptionMessage('Invalid filter max length requested c.knownColumn');
+        $queryFilter = new QueryFilter(Response::class);
+
+        $config = new BaseConfig();
+        $request = new Request(new HttpRequest([
+            'filter' => [
+                [
+                    'field' => 'c.knownColumn',
+                    'type' => 'eq',
+                    'x' => 'foo',
+                ],
+            ],
+            'simple' => '0',
+        ]));
+        $config->setRequest($request);
+        $config->setSearchAllowedCols(['c.knownColumn']);
+        $config->setSearchAllowedColsLengths(['c.knownColumn' => ['max' => 2]]);
+        $config->setStrictColumns(true);
+        $config->setRepositoryCallback(function(QueryFilterArgs $args) {
+            return new QueryResult([
+                ["dummy"],
+                ["wammy"],
+            ], 1000);
+        });
+
+        $queryFilter->getData($config);
+    }
+
+    public function testFullDataInvalidYMaxLength()
+    {
+        $this->expectException(InvalidLengthException::class);
+        $this->expectExceptionMessage('Invalid filter max length requested c.knownColumn');
+        $queryFilter = new QueryFilter(Response::class);
+
+        $config = new BaseConfig();
+        $request = new Request(new HttpRequest([
+            'filter' => [
+                [
+                    'field' => 'c.knownColumn',
+                    'type' => 'between',
+                    'x' => 'foo',
+                    'y' => 'bar',
+                ],
+            ],
+            'simple' => '0',
+        ]));
+        $config->setRequest($request);
+        $config->setSearchAllowedCols(['c.knownColumn']);
+        $config->setSearchAllowedColsLengths(['c.knownColumn' => ['max' => 2]]);
+        $config->setStrictColumns(true);
+        $config->setRepositoryCallback(function(QueryFilterArgs $args) {
+            return new QueryResult([
+                ["dummy"],
+                ["wammy"],
+            ], 1000);
+        });
+
+        $queryFilter->getData($config);
     }
 }

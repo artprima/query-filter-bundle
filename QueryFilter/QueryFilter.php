@@ -3,6 +3,7 @@
 namespace Artprima\QueryFilterBundle\QueryFilter;
 
 use Artprima\QueryFilterBundle\Exception\InvalidArgumentException;
+use Artprima\QueryFilterBundle\Exception\InvalidLengthException;
 use Artprima\QueryFilterBundle\Exception\UnexpectedValueException;
 use Artprima\QueryFilterBundle\Query\Filter;
 use Artprima\QueryFilterBundle\QueryFilter\Config\Alias;
@@ -124,13 +125,37 @@ class QueryFilter
         return $filter;
     }
 
+    private function checkFilterLengths(Filter $filter, array $allowedColsLengths): void
+    {
+        if (!is_array($fieldLengths = $allowedColsLengths[$filter->getField()] ?? null)) {
+            return;
+        }
+
+        if (isset($fieldLengths['min'])) {
+            if (
+                (null !== $filter->getX() && strlen($filter->getX()) < $fieldLengths['min'])
+                    || (null !== $filter->getY() && strlen($filter->getY()) < $fieldLengths['min'])) {
+                throw new InvalidLengthException(sprintf('Invalid filter min length requested %s', $filter->getField()));
+            }
+        }
+
+        if (isset($fieldLengths['max'])) {
+            if (
+                (null !== $filter->getX() && strlen($filter->getX()) > $fieldLengths['max'])
+                    || (null !== $filter->getY() && strlen($filter->getY()) > $fieldLengths['max'])) {
+                throw new InvalidLengthException(sprintf('Invalid filter max length requested %s', $filter->getField()));
+            }
+        }
+    }
+
     /**
      * @param array $allowedCols
+     * @param array $allowedColsLengths
      * @param array|null $search
      * @param bool $throw
      * @return Filter[]
      */
-    private function getSimpleSearchBy(array $allowedCols, ?array $search, bool $throw): array
+    private function getSimpleSearchBy(array $allowedCols, array $allowedColsLengths, ?array $search, bool $throw): array
     {
         /** @var Filter[] $searchBy */
         $searchBy = [];
@@ -141,7 +166,11 @@ class QueryFilter
 
         foreach ($search as $key => $val) {
             if (in_array($key, $allowedCols, true) && $val !== null) {
-                $searchBy[] = $this->getFilter($key, $val);
+                $filter = $this->getFilter($key, $val);
+
+                $this->checkFilterLengths($filter, $allowedColsLengths);
+
+                $searchBy[] = $filter;
                 continue;
             }
 
@@ -155,11 +184,12 @@ class QueryFilter
 
     /**
      * @param array $allowedCols
+     * @param array $allowedColsLengths
      * @param array|null $search
      * @param bool $throw
      * @return Filter[]
      */
-    private function getFullSearchBy(array $allowedCols, ?array $search, bool $throw): array
+    private function getFullSearchBy(array $allowedCols, array $allowedColsLengths, ?array $search, bool $throw): array
     {
         /** @var Filter[] $searchBy */
         $searchBy = [];
@@ -174,7 +204,11 @@ class QueryFilter
                 throw new UnexpectedValueException(sprintf('Invalid filter column requested %s', $data['field'] ?? '['.$key.']'));
             }
             if ($valid) {
-                $searchBy[$key] = $this->getFilter($data['field'], $data);
+                $filter = $this->getFilter($data['field'], $data);
+
+                $this->checkFilterLengths($filter, $allowedColsLengths);
+
+                $searchBy[$key] = $filter;
             }
         }
 
@@ -223,8 +257,8 @@ class QueryFilter
     {
         // Get basic search by
         $searchBy = $config->getRequest()->isSimple()
-            ? $this->getSimpleSearchBy($config->getSearchAllowedCols(), $config->getRequest()->getQuery(), $config->isStrictColumns())
-            : $this->getFullSearchBy($config->getSearchAllowedCols(), $config->getRequest()->getQuery(), $config->isStrictColumns());
+            ? $this->getSimpleSearchBy($config->getSearchAllowedCols(), $config->getSearchAllowedColsLengths(), $config->getRequest()->getQuery(), $config->isStrictColumns())
+            : $this->getFullSearchBy($config->getSearchAllowedCols(), $config->getSearchAllowedColsLengths(), $config->getRequest()->getQuery(), $config->isStrictColumns());
 
         // Set search aliases to more complicated expressions
         $this->replaceSearchByAliases($searchBy, $config->getSearchByAliases());
