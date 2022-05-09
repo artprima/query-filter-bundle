@@ -49,6 +49,7 @@ class DefaultController extends Controller
         // set up the config
         $config = new BaseConfig();
         $config->setSearchAllowedCols(['t.name']);
+        $config->setSearchAllowedColsLengths(['t.name' => ['min' => 2, 'max' => 255]]);
         $config->setAllowedLimits([10, 25, 50, 100]);
         $config->setDefaultLimit(10);
         $config->setSortCols(['t.id'], ['t.id' => 'asc']);

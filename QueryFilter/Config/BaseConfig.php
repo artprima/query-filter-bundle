@@ -36,6 +36,7 @@ class BaseConfig implements ConfigInterface
         'args' => [],
         'aliases' => [],
         'extra' => [],
+        'lengths' => [],
     ];
 
     /**
@@ -82,6 +83,24 @@ class BaseConfig implements ConfigInterface
     public function getSearchAllowedCols(): array
     {
         return $this->searchBy['args'];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setSearchAllowedColsLengths(array $lengths): ConfigInterface
+    {
+        $this->searchBy['lengths'] = $lengths;
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getSearchAllowedColsLengths(): array
+    {
+        return $this->searchBy['lengths'];
     }
 
     /**

@@ -25,6 +25,19 @@ interface ConfigInterface
     public function getSearchAllowedCols(): array;
 
     /**
+     * @param array $lengths
+     * @return $this
+     */
+    public function setSearchAllowedColsLengths(array $lengths): ConfigInterface;
+
+    /**
+     * Get allowed columns lengths
+     *
+     * @return array
+     */
+    public function getSearchAllowedColsLengths(): array;
+
+    /**
      * Set shortcut expanders (aliaces).
      *
      * For example, concat(concat(concat(concat(p.firstname, ' '), p.middlename), ' '), p.lastname) can be
