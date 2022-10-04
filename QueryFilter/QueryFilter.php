@@ -23,12 +23,17 @@ class QueryFilter
     private $responseClassName;
 
     /**
+     * @var string
+     */
+    private $defaultCondition;
+
+    /**
      * QueryFilter constructor.
      * @param string $responseClassName
      * @throws \ReflectionException
      * @throws InvalidArgumentException
      */
-    public function __construct(string $responseClassName)
+    public function __construct(string $responseClassName, string $defaultCondition = 'like')
     {
         $refClass = new \ReflectionClass($responseClassName);
         if (!$refClass->implementsInterface(ResponseInterface::class)) {
@@ -48,6 +53,7 @@ class QueryFilter
         }
 
         $this->responseClassName = $responseClassName;
+        $this->defaultCondition = $defaultCondition;
     }
 
     /**
@@ -110,12 +116,12 @@ class QueryFilter
         if (!is_array($val)) {
             $val = [
                 'x' => $val,
-                'type' => 'like',
+                'type' => $this->defaultCondition,
             ];
         }
 
         $filter->setField($field);
-        $filter->setType($val['type'] ?? 'like');
+        $filter->setType($val['type'] ?? $this->defaultCondition);
         $filter->setX($val['x'] ?? null);
         $filter->setY($val['y'] ?? null);
         $filter->setExtra($val['extra'] ?? null);
