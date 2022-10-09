@@ -4,7 +4,7 @@
 | [![Coverage Status][Master coverage image]][Master coverage] |
 | [![Quality Status][Master quality image]][Master quality] |
 
-Query Filter Bundle for Symfony 4.3, Symfony 5 and Symfony 6
+Query Filter Bundle for Symfony 4.4, Symfony 5 and Symfony 6
 =================================================
 
 Query Filter Bundle brings request filtering and pagination functionality to Symfony 4.3 / 5 applications that use Doctrine 2.
