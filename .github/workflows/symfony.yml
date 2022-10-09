@@ -39,7 +39,8 @@ jobs:
         coverage: xdebug        
         tools: php-cs-fixer, phpunit
     - name: Download Symfony Binary
-      run:  wget https://get.symfony.com/cli/installer -O - | bash
+      run: |
+        wget https://get.symfony.com/cli/installer -O - | bash -s - --install-dir=/home/runner/.symfony/bin
     - name: Install Symfony
       run: |
         git config --global user.email "${{ github.actor }}"
